@@ -1,0 +1,89 @@
+{
+    "name": "ovipro",
+    "version": "0.1.0",
+    "bin": {
+        "infra": "bin/infra.js"
+    },
+    "config": {
+        "lambda_build_prefix": "ncc build --source-map --minify functions",
+        "lambda_build_suffix": "-o dist/functions"
+    },
+    "scripts": {
+        "build": "tsc",
+        "watch": "node ./node_modules/typescript/bin/tsc -w",
+        "lint:es": "eslint '*/**/*.{ts,tsx}' --max-warnings 0",
+        "cdk": "cdk",
+        "test": "tsc && jest --runInBand",
+        "test:watch": "jest --watch",
+        "clean": "npx rimraf '+(bin|lib|functions|__test__|utils)/**/+(*.d.ts|*.js)'",
+        "build:application": "concurrently 'npm:build:lambda'",
+        "build:lambda": "concurrently 'npm:build:lambda:*'",
+        "build:lambda:sample": "$npm_package_config_lambda_build_prefix/sample/index.ts $npm_package_config_lambda_build_suffix/sample"
+    },
+    "devDependencies": {
+        "@almamedia/cdk-accounts-and-environments": "^0.4.0",
+        "@almamedia/cdk-regions": "0.0.1",
+        "@almamedia/cdk-tag-and-name": "^1.0.0",
+        "@aws-cdk/assert": "1.89.0",
+        "@aws-cdk/assets": "1.89.0",
+        "@aws-cdk/aws-apigateway": "1.89.0",
+        "@aws-cdk/aws-apigatewayv2": "1.89.0",
+        "@aws-cdk/aws-cloudwatch": "1.89.0",
+        "@aws-cdk/aws-ec2": "1.89.0",
+        "@aws-cdk/aws-elasticache": "1.89.0",
+        "@aws-cdk/aws-elasticloadbalancingv2": "1.89.0",
+        "@aws-cdk/aws-events": "1.89.0",
+        "@aws-cdk/aws-events-targets": "1.89.0",
+        "@aws-cdk/aws-iam": "1.89.0",
+        "@aws-cdk/aws-lambda": "1.89.0",
+        "@aws-cdk/aws-lambda-event-sources": "1.89.0",
+        "@aws-cdk/aws-logs": "1.89.0",
+        "@aws-cdk/aws-rds": "1.89.0",
+        "@aws-cdk/aws-route53": "1.89.0",
+        "@aws-cdk/aws-sns": "1.89.0",
+        "@aws-cdk/aws-sns-subscriptions": "1.89.0",
+        "@aws-cdk/aws-sqs": "1.89.0",
+        "@aws-cdk/core": "1.89.0",
+        "@types/aws-lambda": "^8.10.71",
+        "@types/jest": "^26.0.10",
+        "@types/node": "10.17.27",
+        "@typescript-eslint/eslint-plugin": "^4.14.2",
+        "@typescript-eslint/parser": "^4.14.2",
+        "aws-cdk": "1.89.0",
+        "concurrently": "^5.3.0",
+        "eslint": "^7.19.0",
+        "eslint-config-prettier": "^7.2.0",
+        "eslint-plugin-prettier": "^3.3.1",
+        "husky": "^4.3.8",
+        "jest": "^26.4.2",
+        "lint-staged": "^10.5.3",
+        "prettier": "^2.2.1",
+        "source-map-support": "^0.5.19",
+        "ts-jest": "^26.2.0",
+        "ts-node": "^9.0.0",
+        "typescript": "^4.1.3"
+    },
+    "dependencies": {
+        "@dazn/lambda-powertools-correlation-ids": "^1.28.1",
+        "@dazn/lambda-powertools-logger": "^1.28.1",
+        "@dazn/lambda-powertools-middleware-correlation-ids": "^1.28.1",
+        "@middy/core": "^1.5.2",
+        "@middy/http-error-handler": "^1.5.2",
+        "@middy/http-json-body-parser": "^1.5.2",
+        "@middy/validator": "^1.5.2",
+        "aws-sdk": "^2.839.0",
+        "aws-xray-sdk": "^3.2.0",
+        "http-errors": "^1.8.0",
+        "lambda-log": "^2.4.0",
+        "middy-middleware-json-error-handler": "^2.0.6"
+    },
+    "husky": {
+        "hooks": {
+            "pre-commit": "lint-staged"
+        }
+    },
+    "lint-staged": {
+        "*.ts": "eslint --cache --fix",
+        "*.{ts,css,md}": "prettier --write"
+    }
+}

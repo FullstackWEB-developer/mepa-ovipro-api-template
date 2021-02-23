@@ -1,0 +1,15 @@
+{
+    "typescript.preferences.importModuleSpecifier": "non-relative",
+    "files.exclude": {
+        "bin/**/*.js": true,
+        "bin/**/*.d.ts": true,
+        "lib/**/*.js": true,
+        "lib/**/*.d.ts": true,
+        "functions/**/*.js": true,
+        "functions/**/*.d.ts": true,
+        "__test__/**/*.js": true,
+        "__test__/**/*.d.ts": true,
+        "node_modules": true,
+        ".eslintcache": true,
+    }
+}
