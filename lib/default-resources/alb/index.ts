@@ -1,9 +1,7 @@
 import * as cdk from '@aws-cdk/core';
-import * as ssm from '@aws-cdk/aws-ssm';
-import { Ac, Ec } from '@almamedia/cdk-accounts-and-environments';
 import * as elb from '@aws-cdk/aws-elasticloadbalancingv2';
-import { OviproSharedResource } from '../../../utils/shared-resources/OviproSharedResource';
-import { SharedResourceType } from '../../../utils/shared-resources/types';
+import { OviproSharedResource } from '../../utils/shared-resources/OviproSharedResource';
+import { SharedResourceType } from '../../utils/shared-resources/types';
 
 /**
  * ALB stack

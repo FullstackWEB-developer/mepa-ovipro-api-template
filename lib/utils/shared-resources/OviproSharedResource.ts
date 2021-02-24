@@ -25,11 +25,17 @@ export class OviproSharedResource extends cdk.Construct {
      * @param stringValue
      */
     export(resource: SharedResourceType, stringValue: string): void {
-        new ssm.StringParameter(this, `${changeCase.pascalCase(resource.toString())}StringParameter`, {
-            // Hard-coded parameter name, will be used in other projects and repositories
-            parameterName: createParameterName(this, resource),
-            stringValue: stringValue,
-        });
+        const parameter = new ssm.StringParameter(
+            this,
+            `${changeCase.pascalCase(resource.toString())}StringParameter`,
+            {
+                // Hard-coded parameter name, will be used in other projects and repositories
+                parameterName: createParameterName(this, resource),
+                stringValue: stringValue,
+            },
+        );
+
+        parameter.applyRemovalPolicy(cdk.RemovalPolicy.DESTROY);
     }
 
     /**

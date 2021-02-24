@@ -1,34 +1,30 @@
 import * as cdk from '@aws-cdk/core';
-import * as ec from '@aws-cdk/aws-elasticache';
 import * as ec2 from '@aws-cdk/aws-ec2';
-import { Name } from '@almamedia/cdk-tag-and-name';
-import { OviproSharedResource } from '../../../../utils/shared-resources/OviproSharedResource';
-import { SharedResourceType } from '../../../../utils/shared-resources/types';
+import { OviproSharedResource } from '../../../utils/shared-resources/OviproSharedResource';
+import { SharedResourceType } from '../../../utils/shared-resources/types';
 
 interface Props extends cdk.StackProps {
     vpc: ec2.Vpc;
 }
 
-export class ElastiCacheStack extends cdk.Stack {
-    public readonly clusterClientSecurityGroup: ec2.SecurityGroup;
+export class DefaultElasticCache extends cdk.Stack {
+    public readonly endpointAddress: string;
+    public readonly endpointPort: string;
 
     constructor(scope: cdk.Construct, id: string, props: Props) {
         super(scope, id, props);
 
         /**
-         * Import shared cluster's name
+         * Import shared cluster's address and port
+         *
+         * Importing cache cluster as a CDK-resource is not possible, unless either
+         * we or aws creates a class where lookup-function is implemented
          */
         const sharedResource = new OviproSharedResource(this, 'SharedResource');
-        const clusterName = sharedResource.import(SharedResourceType.CACHE_CLUSTER_NAME);
+        const endpointAddress = sharedResource.import(SharedResourceType.CACHE_CLUSTER_ENDPOINT_ADDRESS);
+        const endpointPort = sharedResource.import(SharedResourceType.CACHE_CLUSTER_ENDPOINT_PORT);
 
-        /**
-         * !!!!NOTE!!!!
-         *
-         * I have no idea if this works yet
-         */
-        /** Create Redis cache cluster */
-        const redis = new ec.CfnCacheCluster(this, 'CacheCluster', {
-            clusterName,
-        });
+        this.endpointAddress = endpointAddress;
+        this.endpointPort = endpointPort;
     }
 }

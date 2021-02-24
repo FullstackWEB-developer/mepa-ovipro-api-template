@@ -9,6 +9,8 @@
         "functions/**/*.d.ts": true,
         "__test__/**/*.js": true,
         "__test__/**/*.d.ts": true,
+        "utils/**/*.js": true,
+        "utils/**/*.d.ts": true,
         "node_modules": true,
         ".eslintcache": true,
     }

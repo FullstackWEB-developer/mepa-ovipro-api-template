@@ -2,8 +2,8 @@ import * as cdk from '@aws-cdk/core';
 import * as ecs from '@aws-cdk/aws-ecs';
 import * as ec2 from '@aws-cdk/aws-ec2';
 import { DefaultVpc } from '../vpc';
-import { OviproSharedResource } from '../../../utils/shared-resources/OviproSharedResource';
-import { SharedResourceType } from '../../../utils/shared-resources/types';
+import { OviproSharedResource } from '../../utils/shared-resources/OviproSharedResource';
+import { SharedResourceType } from '../../utils/shared-resources/types';
 
 export class DefaultEcsCluster extends cdk.Construct {
     public readonly cluster: ecs.ICluster;
