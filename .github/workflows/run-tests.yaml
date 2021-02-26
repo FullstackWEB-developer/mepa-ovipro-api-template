@@ -20,6 +20,8 @@ jobs:
     - name: Get access for alma packages
       run: echo "CODEARTIFACT_AUTH_TOKEN=$(aws codeartifact get-authorization-token --domain almamedia --domain-owner 277005280161 --query authorizationToken --output text)" >> $GITHUB_ENV
     - name: Install deps
+      working-directory: ./infra
       run: npm i
     - name: Run tests
+      working-directory: ./infra
       run: npm run test
