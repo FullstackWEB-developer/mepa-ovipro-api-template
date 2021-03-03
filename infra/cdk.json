@@ -21,34 +21,19 @@
             "mock": {
                 "id": "012312312312",
                 "configuration": {
-                    "service": "mock",
-                    "imports": {
-                        "ssmParameters": {
-                            "vpcId": ""
-                        }
-                    }
+                    "service": "mock"
                 }
             },
             "dev": {
                 "id": "675491542586",
                 "configuration": {
-                    "service": "ovipro",
-                    "imports": {
-                        "ssmParameters": {
-                            "vpcId": ""
-                        }
-                    }
+                    "service": "ovipro"
                 }
             },
             "prod": {
                 "id": "799957131063",
                 "configuration": {
-                    "service": "ovipro",
-                    "imports": {
-                        "ssmParameters": {
-                            "vpcId": ""
-                        }
-                    }
+                    "service": "ovipro"
                 }
             }
         }
