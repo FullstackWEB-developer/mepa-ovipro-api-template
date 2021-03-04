@@ -53,6 +53,10 @@ Use them when needed.
 
 ## Installation
 
+Make sure your node version is >14
+
+-   Consider using [n](https://github.com/tj/n) for version management
+
 1. CDK
 
 Follow [AWS-docs](https://docs.aws.amazon.com/cdk/latest/guide/getting_started.html) for latest guide. Includes installing CDK and generating AWS-profiles.
