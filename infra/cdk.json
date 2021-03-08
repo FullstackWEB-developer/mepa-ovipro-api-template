@@ -37,5 +37,8 @@
                 }
             }
         }
-    }
+    },
+    "plugin": [
+        "@almamedia/cdk-assumed-credentials-provider"
+    ]
 }

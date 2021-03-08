@@ -82,7 +82,10 @@ Automatic compilation
 
 -   `npm run watch`
 
-MFA is still needed in every command, which is annoying...
+Temporary credentials / MFA
+
+-   [Assumed credentials-package](https://github.com/almamedia/alma-cdk-jsii-assumed-credentials-provider) is in use to cache MFA!
+-   If you wish to opt-out, just use normal `--profile`-flag in your commands instead
 
 Synthesize cdk stacks
 
