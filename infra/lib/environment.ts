@@ -1,7 +1,7 @@
 import * as cdk from '@aws-cdk/core';
 import { EnvironmentConstruct, Sc } from '@almamedia/cdk-accounts-and-environments';
 import { Tag, Name } from '@almamedia/cdk-tag-and-name';
-import { DefaultVpc } from './default-resources/vpc';
+import { DefaultVpc } from './default-resources/shared/vpc';
 import { addMepaTags } from './utils/tags';
 import { SampleStack } from './sample-stack';
 
