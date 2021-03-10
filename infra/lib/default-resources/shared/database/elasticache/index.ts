@@ -1,7 +1,7 @@
 import * as cdk from '@aws-cdk/core';
 import * as ec2 from '@aws-cdk/aws-ec2';
-import { OviproSharedResource } from '../../../utils/shared-resources/OviproSharedResource';
-import { SharedResourceType } from '../../../utils/shared-resources/types';
+import { OviproSharedResource } from '../../../../utils/shared-resources/OviproSharedResource';
+import { SharedResourceType } from '../../../../utils/shared-resources/types';
 
 interface Props extends cdk.StackProps {
     vpc: ec2.Vpc;

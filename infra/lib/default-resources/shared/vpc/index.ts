@@ -1,7 +1,7 @@
 import * as cdk from '@aws-cdk/core';
 import * as ec2 from '@aws-cdk/aws-ec2';
-import { OviproSharedResource } from '../../utils/shared-resources/OviproSharedResource';
-import { SharedResourceType } from '../../utils/shared-resources/types';
+import { OviproSharedResource } from '../../../utils/shared-resources/OviproSharedResource';
+import { SharedResourceType } from '../../../utils/shared-resources/types';
 
 export class DefaultVpc extends cdk.Construct {
     public readonly vpc: ec2.IVpc;
@@ -19,7 +19,7 @@ export class DefaultVpc extends cdk.Construct {
         const sharedResource = new OviproSharedResource(this, 'SharedResource');
         const vpcId = sharedResource.import(SharedResourceType.VPC_ID);
 
-        const vpc = ec2.Vpc.fromLookup(scope, 'DefaultVpc', {
+        const vpc = ec2.Vpc.fromLookup(this, 'DefaultVpc', {
             vpcId,
         });
 

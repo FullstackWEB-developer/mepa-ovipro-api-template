@@ -2,7 +2,7 @@
     "name": "ovipro",
     "version": "0.1.0",
     "bin": {
-        "infra": "bin/infra.js"
+        "infra": "bin/app.js"
     },
     "config": {
         "lambda_build_prefix": "ncc build --source-map --minify functions",
@@ -10,6 +10,7 @@
     },
     "scripts": {
         "build": "tsc",
+        "build:all": "npm run clean && tsc && npm run build:lambda",
         "watch": "node ./node_modules/typescript/bin/tsc -w",
         "lint:es": "eslint '*/**/*.{ts,tsx}' --max-warnings 0",
         "cdk": "cdk",

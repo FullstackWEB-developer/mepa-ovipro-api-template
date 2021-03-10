@@ -2,8 +2,8 @@ import * as cdk from '@aws-cdk/core';
 import * as ecs from '@aws-cdk/aws-ecs';
 import * as ec2 from '@aws-cdk/aws-ec2';
 import { DefaultVpc } from '../vpc';
-import { OviproSharedResource } from '../../utils/shared-resources/OviproSharedResource';
-import { SharedResourceType } from '../../utils/shared-resources/types';
+import { OviproSharedResource } from '../../../utils/shared-resources/OviproSharedResource';
+import { SharedResourceType } from '../../../utils/shared-resources/types';
 
 export class DefaultEcsCluster extends cdk.Construct {
     public readonly cluster: ecs.ICluster;
@@ -12,7 +12,7 @@ export class DefaultEcsCluster extends cdk.Construct {
     constructor(scope: cdk.Construct, id: string) {
         super(scope, id);
 
-        const { vpc } = new DefaultVpc(scope, 'DefaultVpc');
+        const { vpc } = new DefaultVpc(this, 'DefaultVpc');
 
         /**
          * Now I dont really know if this should be like this.

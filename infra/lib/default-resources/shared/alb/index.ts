@@ -1,7 +1,7 @@
 import * as cdk from '@aws-cdk/core';
 import * as elb from '@aws-cdk/aws-elasticloadbalancingv2';
-import { OviproSharedResource } from '../../utils/shared-resources/OviproSharedResource';
-import { SharedResourceType } from '../../utils/shared-resources/types';
+import { OviproSharedResource } from '../../../utils/shared-resources/OviproSharedResource';
+import { SharedResourceType } from '../../../utils/shared-resources/types';
 
 /**
  * ALB stack
@@ -19,7 +19,7 @@ export class DefaultAlb extends cdk.Construct {
         const sharedResource = new OviproSharedResource(this, 'SharedResource');
         const loadBalancerArn = sharedResource.import(SharedResourceType.ALB_LOAD_BALANCER_ARN);
 
-        const alb = elb.ApplicationLoadBalancer.fromLookup(scope, 'ApplicationLoadBalancer', {
+        const alb = elb.ApplicationLoadBalancer.fromLookup(this, 'ApplicationLoadBalancer', {
             loadBalancerArn,
         });
 

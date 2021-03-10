@@ -1,7 +1,7 @@
 import * as cdk from '@aws-cdk/core';
 import * as rds from '@aws-cdk/aws-rds';
-import { OviproSharedResource } from '../../../utils/shared-resources/OviproSharedResource';
-import { SharedResourceType } from '../../../utils/shared-resources/types';
+import { OviproSharedResource } from '../../../../utils/shared-resources/OviproSharedResource';
+import { SharedResourceType } from '../../../../utils/shared-resources/types';
 
 export class DefaultAuroraCluster extends cdk.Construct {
     public readonly database: rds.IServerlessCluster;
@@ -16,7 +16,7 @@ export class DefaultAuroraCluster extends cdk.Construct {
         const sharedResource = new OviproSharedResource(this, 'SharedResource');
         const clusterIdentifier = sharedResource.import(SharedResourceType.DATABASE_CLUSTER_IDENTIFIER);
 
-        const database = rds.ServerlessCluster.fromServerlessClusterAttributes(scope, 'DefaultServerlessCluster', {
+        const database = rds.ServerlessCluster.fromServerlessClusterAttributes(this, 'DefaultServerlessCluster', {
             clusterIdentifier,
         });
 
