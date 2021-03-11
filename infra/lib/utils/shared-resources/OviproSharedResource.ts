@@ -1,11 +1,13 @@
 import * as cdk from '@aws-cdk/core';
-import changeCase from 'change-case';
+import { pascalCase } from 'change-case';
 import * as ssm from '@aws-cdk/aws-ssm';
 import { Ac, Ec } from '@almamedia/cdk-accounts-and-environments';
 import { SharedResourceType } from './types';
 
+const resourceTypeAsString = (resourceType: SharedResourceType) => SharedResourceType[resourceType];
+
 const createParameterName = (scope: cdk.Construct, resourceType: SharedResourceType) =>
-    `/${Ec.getName(scope)}/${Ac.getConfig(scope, 'service')}/shared-resources/${resourceType}`;
+    `/${Ec.getName(scope)}/${Ac.getConfig(scope, 'service')}/shared-resources/${resourceTypeAsString(resourceType)}`;
 
 /**
  * Custom construct for exporting and importing shared asset and resource data to/from
@@ -27,7 +29,7 @@ export class OviproSharedResource extends cdk.Construct {
     export(resource: SharedResourceType, stringValue: string): void {
         const parameter = new ssm.StringParameter(
             this,
-            `${changeCase.pascalCase(resource.toString())}StringParameter`,
+            `${pascalCase(resourceTypeAsString(resource))}StringParameter`,
             {
                 // Hard-coded parameter name, will be used in other projects and repositories
                 parameterName: createParameterName(this, resource),
