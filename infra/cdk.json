@@ -22,14 +22,21 @@
                 "id": "012312312312",
                 "configuration": {
                     "service": "mock",
-                    "domain": "ovipro.fi"
+                    "domain": "mock-ovipro.net"
                 }
             },
             "dev": {
                 "id": "675491542586",
                 "configuration": {
                     "service": "ovipro",
-                    "domain": "ovipro.fi"
+                    "domain": "dev-ovipro.net"
+                }
+            },
+            "preprod": {
+                "id": "877450183205",
+                "configuration": {
+                    "service": "ovipro",
+                    "domain": "preprod-ovipro.net"
                 }
             },
             "prod": {
