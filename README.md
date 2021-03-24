@@ -11,9 +11,9 @@ This is kesken
 | Name                                                                    | Description                                    |
 | ----------------------------------------------------------------------- | ---------------------------------------------- |
 | **OviPRO template repository**   | Template for quick starting a new repository                            |
-| [OviPRO infrastructure](https://github.com/almamedia/mepa-ovipro-common)                                     | Shared resources for OviPRO AWS infrastructure |                         |
-| [~~Address API~~](https://github.com/almamedia/mepa-ovipro-infra)       | Not yet implemented                            |
-| [~~Some other API~~](https://github.com/almamedia/mepa-ovipro-infra)    | Not yet implemented                            |
+| [OviPRO account wide infrastructure](https://github.com/almamedia/mepa-ovipro-common)| Shared account wide resources for OviPRO AWS infrastructure |
+| [OviPRO shared infrastructure](https://github.com/almamedia/mepa-ovipro-common)| Shared environment specific resources for OviPRO AWS infrastructure |
+| [OviPRO core backend](https://github.com/almamedia/mepa-ovipro-core-backend)       | Core backend                          |
 
 <br/><br/>
 

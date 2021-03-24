@@ -1,11 +1,11 @@
 {
 	"folders": [
-		{
-			"path": ".."
-		},
         {
             "path": "../infra"
-        }
+        },
+		{
+			"path": ".."
+		}
     ],
     "settings": {
         "typescript.preferences.importModuleSpecifier": "non-relative",
