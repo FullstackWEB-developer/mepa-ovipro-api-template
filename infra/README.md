@@ -115,7 +115,7 @@ TBD, current model
 
 1. Develop your new features or changes in a Jira-ticket named branch (eg. JIRA-NNNN)
 2. If you want, you can deploy preview-versions of your resources using a preview-type environment, named as `preview/JIRA-NNNN` (more info about environments in [Accounts & environments](https://github.com/almamedia/alma-cdk-jsii-accounts-and-environments)). If you have dependencies on resources in other repositories, you need to deploy them to same environment (Jira-ticket named branch and environment).
-3. You also have the "lazy" option of deploying your changes and resources to _development_-environment. Remember, that this environment is **not** stable and can be used by anyone.
+3. You also have the "lazy" option of deploying your changes and resources to development-environment by using development branch. Remember, that this environment is **not** stable and can be used by anyone.
 4. When your changes in a PR are ready and reviewed, merge them to _main_-branch. Changes in main-branch are automatically deployed to staging-environment. **Never** deploy anything to staging-environment manually, it is not meant to be used as a development environment
 5. Changes in _staging_-branch will be deployed to preprod-account nightly, if tests are showing green. **Never** deploy anything manually to preprod!
 6. Manual deployments to production-account

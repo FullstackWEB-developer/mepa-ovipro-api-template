@@ -1,5 +1,4 @@
 export enum SharedResourceType {
-    VPC_ID,
     ECS_CLUSTER_NAME,
     DATABASE_CLUSTER_IDENTIFIER,
     DATABASE_SECURITY_GROUP_ID,

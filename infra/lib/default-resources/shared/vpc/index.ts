@@ -1,7 +1,9 @@
 import * as cdk from '@aws-cdk/core';
 import * as ec2 from '@aws-cdk/aws-ec2';
-import { OviproSharedResource } from '../../../utils/shared-resources/OviproSharedResource';
-import { SharedResourceType } from '../../../utils/shared-resources/types';
+import * as ssm from '@aws-cdk/aws-ssm';
+import { Ac } from '@almamedia/cdk-accounts-and-environments';
+
+const createParameterName = (scope: cdk.Construct) => `/${Ac.getConfig(scope, 'service')}/VPC_ID`;
 
 export class DefaultVpc extends cdk.Construct {
     public readonly vpc: ec2.IVpc;
@@ -10,14 +12,13 @@ export class DefaultVpc extends cdk.Construct {
     constructor(scope: cdk.Construct, id: string) {
         super(scope, id);
 
-        // Import an existing VPC from by querying the AWS environment this stack is deployed to
-        // TODO: waiting for fix, not working with imported VPC-id at the moment https://github.com/aws/aws-cdk/issues/3600
-        // This is a workaround solution
         /**
-         * Import shared vpc's vpc-id
+         * Import account specific vpc's vpc-id
+         *
+         * Differs from other shared resources, because VPC is account speficic
          */
-        const sharedResource = new OviproSharedResource(this, 'SharedResource');
-        const vpcId = sharedResource.import(SharedResourceType.VPC_ID);
+
+        const vpcId = ssm.StringParameter.valueFromLookup(this, createParameterName(this));
 
         const vpc = ec2.Vpc.fromLookup(this, 'DefaultVpc', {
             vpcId,
