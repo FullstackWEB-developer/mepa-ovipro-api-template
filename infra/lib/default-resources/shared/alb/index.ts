@@ -1,13 +1,18 @@
 import * as cdk from '@aws-cdk/core';
 import * as elb from '@aws-cdk/aws-elasticloadbalancingv2';
-import { OviproSharedResource } from '../../../utils/shared-resources/OviproSharedResource';
-import { SharedResourceType } from '../../../utils/shared-resources/types';
+import * as ec2 from '@aws-cdk/aws-ec2';
+import * as ssm from '@aws-cdk/aws-ssm';
+import { Ac } from '@almamedia/cdk-accounts-and-environments';
+
+const createParameterName = (scope: cdk.Construct, suffix: string) =>
+    `/${Ac.getConfig(scope, 'service')}/ALB_${suffix}`;
 
 /**
  * ALB stack
  */
 export class DefaultAlb extends cdk.Construct {
     public readonly alb: elb.IApplicationLoadBalancer;
+    public readonly albSecurityGroup: ec2.ISecurityGroup;
 
     /** Creates Alb and an internal security group for the alb */
     constructor(scope: cdk.Construct, id: string) {
@@ -16,13 +21,27 @@ export class DefaultAlb extends cdk.Construct {
         /**
          * Import shared alb's loadBalancerArn
          */
-        const sharedResource = new OviproSharedResource(this, 'SharedResource');
-        const loadBalancerArn = sharedResource.import(SharedResourceType.ALB_LOAD_BALANCER_ARN);
+        const loadBalancerArn = ssm.StringParameter.valueFromLookup(
+            this,
+            createParameterName(this, 'LOAD_BALANCER_ARN'),
+        );
 
         const alb = elb.ApplicationLoadBalancer.fromLookup(this, 'ApplicationLoadBalancer', {
             loadBalancerArn,
         });
 
+        const albSecurityGroupId = ssm.StringParameter.valueFromLookup(
+            this,
+            createParameterName(this, 'LOAD_BALANCER_SECURITY_GROUP_ID'),
+        );
+
+        const albSecurityGroup = ec2.SecurityGroup.fromLookup(
+            this,
+            'ApplicationLoadBalancerSecurityGroup',
+            albSecurityGroupId,
+        );
+
         this.alb = alb;
+        this.albSecurityGroup = albSecurityGroup;
     }
 }
