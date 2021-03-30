@@ -13,6 +13,7 @@ const createParameterName = (scope: cdk.Construct, suffix: string) =>
 export class DefaultAlb extends cdk.Construct {
     public readonly alb: elb.IApplicationLoadBalancer;
     public readonly albSecurityGroup: ec2.ISecurityGroup;
+    public readonly albDefaultListener: elb.IApplicationListener;
 
     /** Creates Alb and an internal security group for the alb */
     constructor(scope: cdk.Construct, id: string) {
@@ -41,7 +42,19 @@ export class DefaultAlb extends cdk.Construct {
             albSecurityGroupId,
         );
 
+        const albDefaultListenerArn = ssm.StringParameter.valueFromLookup(
+            this,
+            createParameterName(this, 'LOAD_BALANCER_SECURITY_GROUP_ID'),
+        );
+
+        const albDefaultListener = elb.ApplicationListener.fromApplicationListenerAttributes(this, 'DefaultListener', {
+            listenerArn: albDefaultListenerArn,
+            securityGroupId: albSecurityGroupId,
+            defaultPort: 80,
+        });
+
         this.alb = alb;
         this.albSecurityGroup = albSecurityGroup;
+        this.albDefaultListener = albDefaultListener;
     }
 }
