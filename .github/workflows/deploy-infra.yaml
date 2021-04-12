@@ -1,0 +1,58 @@
+name: Deploy infra using CDK
+on:
+  push:
+    branches:
+      - "development"
+      - "main"
+      - "preview/**"
+    paths:
+      - "infra/**"
+  create:
+    branches:
+      - "preview/**"
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: set account to dev & environment to staging
+        if: endsWith(github.ref, '/main')
+        run: |
+          echo "ENVIRONMENT=staging" >> $GITHUB_ENV
+          echo "ACCOUNT=dev" >> $GITHUB_ENV
+      - name: set account to dev & environment to development
+        if: endsWith(github.ref, '/development')
+        run: |
+          echo "ENVIRONMENT=development" >> $GITHUB_ENV
+          echo "ACCOUNT=dev" >> $GITHUB_ENV
+      - name: Set account to dev & environment to preview
+        if: startsWith(github.ref, 'refs/heads/preview/')
+        run: |
+          echo "ENVIRONMENT=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+          echo "ACCOUNT=dev" >> $GITHUB_ENV
+      - name: configure AWS credentials for Code Artifact packages
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.CODEARTIFACT_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.CODEARTIFACT_AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-1
+      - name: Get access for alma packages
+        run: echo "CODEARTIFACT_AUTH_TOKEN=$(aws codeartifact get-authorization-token --domain almamedia --domain-owner 277005280161 --query authorizationToken --output text)" >> $GITHUB_ENV
+      - name: install deps & build
+        working-directory: ./infra
+        run: |
+          npm install --prefer-online
+          npm run build:all
+      - name: Run tests
+        working-directory: ./infra
+        run: npm run test
+      - name: deploy all stacks
+        working-directory: ./infra
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.CDK_USER_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.CDK_USER_SECRET_ACCESS_KEY }}
+        run: |
+          aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID --profile deploy_profile
+          aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY --profile deploy_profile
+          aws configure set region eu-west-1 --profile deploy_profile
+          npx cdk deploy --context account=${{ env.ACCOUNT }} --context environment=${{ env.ENVIRONMENT }} --profile deploy_profile --require-approval never --all
