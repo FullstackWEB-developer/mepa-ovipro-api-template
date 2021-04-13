@@ -1,6 +1,6 @@
-## mepa-ovipro-common
+## mepa-ovipro-template
 
-This is kesken
+description
 
 ---
 
@@ -12,7 +12,8 @@ This is kesken
 | ----------------------------------------------------------------------- | ---------------------------------------------- |
 | **OviPRO template repository**   | Template for quick starting a new repository                            |
 | [OviPRO account wide infrastructure](https://github.com/almamedia/mepa-ovipro-common)| Shared account wide resources for OviPRO AWS infrastructure |
-| [OviPRO shared infrastructure](https://github.com/almamedia/mepa-ovipro-common)| Shared environment specific resources for OviPRO AWS infrastructure |
+| [OviPRO shared infrastructure (environment)](https://github.com/almamedia/mepa-ovipro-common-environment)| Shared environment specific resources for OviPRO AWS infrastructure |
+| [OviPRO shared infrastructure (account)](https://github.com/almamedia/mepa-ovipro-common-account)| Shared account specific resources for OviPRO AWS infrastructure |
 | [OviPRO core backend](https://github.com/almamedia/mepa-ovipro-core-backend)       | Core backend                          |
 
 <br/><br/>
