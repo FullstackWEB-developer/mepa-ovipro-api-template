@@ -1,6 +1,6 @@
 import * as cdk from '@aws-cdk/core';
 import * as ec2 from '@aws-cdk/aws-ec2';
-import { OviproSharedResource } from '../../../../utils/shared-resources/OviproSharedResource';
+import { OviproEnvironmentSharedResource } from '../../../../utils/shared-resources/OviproEnvironmentSharedResource';
 import { SharedResourceType } from '../../../../utils/shared-resources/types';
 
 interface Props extends cdk.StackProps {
@@ -20,7 +20,7 @@ export class DefaultElasticCache extends cdk.Stack {
          * Importing cache cluster as a CDK-resource is not possible, unless either
          * we or aws creates a class where lookup-function is implemented
          */
-        const sharedResource = new OviproSharedResource(this, 'SharedResource');
+        const sharedResource = new OviproEnvironmentSharedResource(this, 'SharedResource');
         const endpointAddress = sharedResource.import(SharedResourceType.CACHE_CLUSTER_ENDPOINT_ADDRESS);
         const endpointPort = sharedResource.import(SharedResourceType.CACHE_CLUSTER_ENDPOINT_PORT);
 

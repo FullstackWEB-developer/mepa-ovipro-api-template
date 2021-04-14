@@ -2,7 +2,7 @@ import * as cdk from '@aws-cdk/core';
 import * as ecs from '@aws-cdk/aws-ecs';
 import * as ec2 from '@aws-cdk/aws-ec2';
 import { DefaultVpc } from '../vpc';
-import { OviproSharedResource } from '../../../utils/shared-resources/OviproSharedResource';
+import { OviproEnvironmentSharedResource } from '../../../utils/shared-resources/OviproEnvironmentSharedResource';
 import { SharedResourceType } from '../../../utils/shared-resources/types';
 
 export class DefaultEcsCluster extends cdk.Construct {
@@ -32,7 +32,7 @@ export class DefaultEcsCluster extends cdk.Construct {
         /**
          * Import shared cluster's name
          */
-        const sharedResource = new OviproSharedResource(this, 'SharedResource');
+        const sharedResource = new OviproEnvironmentSharedResource(this, 'SharedResource');
         const clusterName = sharedResource.import(SharedResourceType.ECS_CLUSTER_NAME);
 
         const cluster = ecs.Cluster.fromClusterAttributes(this, 'EcsCluster', {
