@@ -3,7 +3,6 @@ import { pascalCase } from 'change-case';
 import * as ssm from '@aws-cdk/aws-ssm';
 import { Ac } from '@almamedia/cdk-accounts-and-environments';
 import { SharedResourceType } from './types';
-import { RemovalPolicy } from '@aws-cdk/core';
 
 const resourceTypeAsString = (resourceType: SharedResourceType) => SharedResourceType[resourceType];
 
@@ -28,7 +27,7 @@ export class OviproAccountSharedResource extends cdk.Construct {
      * @param stringValue
      * @param removalPolicy, default is DESTROY
      */
-    export(resource: SharedResourceType, stringValue: string, removalPolicy?: RemovalPolicy): void {
+    export(resource: SharedResourceType, stringValue: string, removalPolicy?: cdk.RemovalPolicy): void {
         const parameter = new ssm.StringParameter(
             this,
             `${pascalCase(resourceTypeAsString(resource))}StringParameter`,
@@ -39,7 +38,7 @@ export class OviproAccountSharedResource extends cdk.Construct {
             },
         );
 
-        parameter.applyRemovalPolicy(removalPolicy || RemovalPolicy.DESTROY);
+        parameter.applyRemovalPolicy(removalPolicy || cdk.RemovalPolicy.DESTROY);
     }
 
     /**
