@@ -1,7 +1,10 @@
 ## mepa-ovipro-template
 
-description
+Description
 
+**Add here description of API domain**
+example:
+_Realty API provides infrastructure, data and implementation for all Realty API's microservices._
 ---
 
 <br/>
