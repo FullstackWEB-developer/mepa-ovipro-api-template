@@ -43,7 +43,7 @@ import middy from '@middy/core';
 
 async function processRequest(event: APIGatewayEvent): Promise<unknown> {
     ...
-    const isAuthrized: boolean = checkForPermission({level: OrganizationUnitLevel.CUSTOMER, organizationId: 12345, permission: PermissionType.PRO_VIEWER}, event.requestContext, false);
+    const isAuthorized: boolean = checkForPermission({level: OrganizationUnitLevel.CUSTOMER, organizationId: 12345, permission: PermissionType.PRO_VIEWER}, event.requestContext, false);
     ...
 }
 
