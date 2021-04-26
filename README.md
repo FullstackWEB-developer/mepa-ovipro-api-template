@@ -1,4 +1,3 @@
-import { describe, expect, it } from '@jest/globals';
 ## mepa-ovipro-template
 
 description
