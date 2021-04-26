@@ -31,7 +31,7 @@ description
 
 <br/><br/>
 
-## Authorize requets
+## Authorize requests
 All requests has to be authorized. Authentication is provided by Alma Yritystunnus or AWS Cognito. Both generates JWT that are validated by Authentication Lambda. This lambda will return _OrganisationPermissinTree_ object, that will contain information such _is user allowed to perform action in orgranisation Y_.
 This auhtorization will be done using _has-permission_ functions such as `checkForPermission`. Here is a sample:
 ```javascript
