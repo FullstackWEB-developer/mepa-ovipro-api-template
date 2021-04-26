@@ -1,5 +1,3 @@
-import { describe, expect, it } from '@jest/globals';
-
 import { InheritanceType, CustomerGroup, OrganizationUnitLevel, PermissionType } from './userdetails';
 import { hasPermissionAnywhere } from './index';
 
