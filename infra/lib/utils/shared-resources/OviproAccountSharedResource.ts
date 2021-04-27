@@ -1,13 +1,18 @@
 import * as cdk from '@aws-cdk/core';
+import { CrossRegionParameter } from '@almamedia/cdk-cross-region-parameter';
 import { pascalCase } from 'change-case';
 import * as ssm from '@aws-cdk/aws-ssm';
 import { Ac } from '@almamedia/cdk-accounts-and-environments';
 import { SharedResourceType } from './types';
 
-const resourceTypeAsString = (resourceType: SharedResourceType) => SharedResourceType[resourceType];
-
 const createParameterName = (scope: cdk.Construct, resourceType: SharedResourceType) =>
-    `/${Ac.getConfig(scope, 'service')}/${resourceTypeAsString(resourceType)}`;
+    `/${Ac.getConfig(scope, 'service')}/${resourceType}`;
+
+const createCrossRegionParameterName = (scope: cdk.Construct, resourceType: SharedResourceType) => {
+    // CROSS_REGION/us-east-1/EXAMPLE -> [, 'us-east-1', 'EXAMPLE']
+    const [, region, name] = resourceType.toString().split('/');
+    return `/${Ac.getConfig(scope, 'service')}/${region}/${name}`;
+};
 
 /**
  * Custom construct for exporting and importing shared asset and resource data to/from
@@ -27,18 +32,28 @@ export class OviproAccountSharedResource extends cdk.Construct {
      * @param stringValue
      * @param removalPolicy, default is DESTROY
      */
-    export(resource: SharedResourceType, stringValue: string, removalPolicy?: cdk.RemovalPolicy): void {
-        const parameter = new ssm.StringParameter(
-            this,
-            `${pascalCase(resourceTypeAsString(resource))}StringParameter`,
-            {
+    export(
+        resource: SharedResourceType,
+        stringValue: string,
+        removalPolicy?: cdk.RemovalPolicy,
+        description?: string,
+    ): void {
+        const constructName = `${pascalCase(resource)}StringParameter`;
+        if (!resource.includes('CROSS_REGION')) {
+            const parameter = new ssm.StringParameter(this, constructName, {
                 // Hard-coded parameter name, will be used in other projects and repositories
                 parameterName: createParameterName(this, resource),
                 stringValue: stringValue,
-            },
-        );
-
-        parameter.applyRemovalPolicy(removalPolicy || cdk.RemovalPolicy.DESTROY);
+            });
+            parameter.applyRemovalPolicy(removalPolicy || cdk.RemovalPolicy.DESTROY);
+        } else {
+            new CrossRegionParameter(this, constructName, {
+                region: 'eu-west-1', // hardcoded
+                name: createCrossRegionParameterName(this, resource),
+                description: description || '',
+                value: stringValue,
+            });
+        }
     }
 
     /**
@@ -49,8 +64,10 @@ export class OviproAccountSharedResource extends cdk.Construct {
      * @param resource
      */
     import(resource: SharedResourceType): string {
-        const stringValue = ssm.StringParameter.valueFromLookup(this, createParameterName(this, resource));
-
-        return stringValue;
+        if (!resource.includes('CROSS_REGION')) {
+            return ssm.StringParameter.valueFromLookup(this, createParameterName(this, resource));
+        } else {
+            return ssm.StringParameter.valueFromLookup(this, createCrossRegionParameterName(this, resource));
+        }
     }
 }

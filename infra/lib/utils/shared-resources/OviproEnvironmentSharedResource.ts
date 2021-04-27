@@ -3,11 +3,10 @@ import { pascalCase } from 'change-case';
 import * as ssm from '@aws-cdk/aws-ssm';
 import { Ac, Ec } from '@almamedia/cdk-accounts-and-environments';
 import { SharedResourceType } from './types';
-
-const resourceTypeAsString = (resourceType: SharedResourceType) => SharedResourceType[resourceType];
+import { RemovalPolicy } from '@aws-cdk/core';
 
 const createParameterName = (scope: cdk.Construct, resourceType: SharedResourceType) =>
-    `/${Ec.getName(scope)}/${Ac.getConfig(scope, 'service')}/shared-resources/${resourceTypeAsString(resourceType)}`;
+    `/${Ec.getName(scope)}/${Ac.getConfig(scope, 'service')}/shared-resources/${resourceType}`;
 
 /**
  * Custom construct for exporting and importing shared asset and resource data to/from
@@ -27,21 +26,17 @@ export class OviproEnvironmentSharedResource extends cdk.Construct {
      * @param stringValue
      */
     export(resource: SharedResourceType, stringValue: string): void {
-        const parameter = new ssm.StringParameter(
-            this,
-            `${pascalCase(resourceTypeAsString(resource))}StringParameter`,
-            {
-                // Hard-coded parameter name, will be used in other projects and repositories
-                parameterName: createParameterName(this, resource),
-                stringValue: stringValue,
-            },
-        );
+        const parameter = new ssm.StringParameter(this, `${pascalCase(resource)}StringParameter`, {
+            // Hard-coded parameter name, will be used in other projects and repositories
+            parameterName: createParameterName(this, resource),
+            stringValue: stringValue,
+        });
 
-        parameter.applyRemovalPolicy(cdk.RemovalPolicy.DESTROY);
+        parameter.applyRemovalPolicy(RemovalPolicy.DESTROY);
     }
 
     /**
-     * Import StringParamater string value
+     * Import StringParameter string value
      *
      * Uses StringParameter.valueFromLookup-function, which should work during synth
      *
