@@ -3,10 +3,9 @@ import { pascalCase } from 'change-case';
 import * as ssm from '@aws-cdk/aws-ssm';
 import { Ac, Ec } from '@almamedia/cdk-accounts-and-environments';
 import { SharedResourceType } from './types';
-import { RemovalPolicy } from '@aws-cdk/core';
 
 const createParameterName = (scope: cdk.Construct, resourceType: SharedResourceType) =>
-    `/${Ec.getName(scope)}/${Ac.getConfig(scope, 'service')}/shared-resources/${resourceType}`;
+    `/${pascalCase(Ec.getName(scope))}/${Ac.getConfig(scope, 'service')}/shared-resources/${resourceType}`;
 
 /**
  * Custom construct for exporting and importing shared asset and resource data to/from
@@ -32,11 +31,11 @@ export class OviproEnvironmentSharedResource extends cdk.Construct {
             stringValue: stringValue,
         });
 
-        parameter.applyRemovalPolicy(RemovalPolicy.DESTROY);
+        parameter.applyRemovalPolicy(cdk.RemovalPolicy.DESTROY);
     }
 
     /**
-     * Import StringParameter string value
+     * Import StringParamater string value
      *
      * Uses StringParameter.valueFromLookup-function, which should work during synth
      *
