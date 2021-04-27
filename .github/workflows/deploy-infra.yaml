@@ -56,3 +56,39 @@ jobs:
           aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY --profile deploy_profile
           aws configure set region eu-west-1 --profile deploy_profile
           npx cdk deploy --context account=${{ env.ACCOUNT }} --context environment=${{ env.ENVIRONMENT }} --profile deploy_profile --require-approval never --all
+
+  database:
+    needs: [deploy]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Get access for alma packages
+        run: echo "CODEARTIFACT_AUTH_TOKEN=$(aws codeartifact get-authorization-token --domain almamedia --domain-owner 277005280161 --query authorizationToken --output text)" >> $GITHUB_ENV
+      -name: Migrate database with flyway
+        env:
+          FLYWAY_VERSION: 7.8.1
+          SCHEMA_NAME: name_of_schema
+        - run: |
+          curl -L https://repo1.maven.org/maven2/org/flywaydb/flyway-commandline/${{env.FLYWAY_VERSION}}/flyway-commandline-${{env.FLYWAY_VERSION}}.tar.gz -o flyway-commandline-${{env.FLYWAY_VERSION}}.tar.gz && tar -xzf flyway-commandline-${{env.FLYWAY_VERSION}}.tar.gz --strip-components=1 && rm flyway-commandline-${{env.FLYWAY_VERSION}}.tar.gz
+        - run: PATH=/flyway:$PATH
+        - run: chmod 744 drivers
+        - run: wget -P drivers https://repo1.maven.org/maven2/com/google/cloud/sql/postgres-socket-factory/1.2.0/postgres-socket-factory-1.2.0.jar
+        - run: wget -P drivers https://repo1.maven.org/maven2/com/google/cloud/sql/jdbc-socket-factory-core/1.2.0/jdbc-socket-factory-core-1.2.0.jar
+        - run: wget -P drivers https://repo1.maven.org/maven2/com/google/http-client/google-http-client/1.38.0/google-http-client-1.38.0.jar
+        - run: wget -P drivers https://repo1.maven.org/maven2/com/google/http-client/google-http-client-jackson2/1.38.0/google-http-client-jackson2-1.38.0.jar
+        - run: wget -P drivers https://repo1.maven.org/maven2/com/github/jnr/jnr-unixsocket/0.38.5/jnr-unixsocket-0.38.5.jar
+        - run: wget -P drivers https://repo1.maven.org/maven2/com/google/guava/guava/30.1-jre/guava-30.1-jre.jar
+        - run: wget -P drivers https://repo1.maven.org/maven2/com/google/auth/google-auth-library-credentials/0.22.2/google-auth-library-credentials-0.22.2.jar
+        - run: wget -P drivers https://repo1.maven.org/maven2/com/google/auth/google-auth-library-oauth2-http/0.22.2/google-auth-library-oauth2-http-0.22.2.jar
+        - run: wget -P drivers https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-core/2.12.0/jackson-core-2.12.0.jar
+        - run: wget -P drivers https://repo1.maven.org/maven2/com/google/api-client/google-api-client/1.31.1/google-api-client-1.31.1.jar
+        - run: wget -P drivers https://repo1.maven.org/maven2/com/google/apis/google-api-services-sqladmin/v1beta4-rev76-1.25.0/google-api-services-sqladmin-v1beta4-rev76-1.25.0.jar
+        - run: wget -P drivers https://repo1.maven.org/maven2/com/google/guava/failureaccess/1.0.1/failureaccess-1.0.1.jar
+        - run: wget -P drivers https://repo1.maven.org/maven2/io/opencensus/opencensus-api/0.28.2/opencensus-api-0.28.2.jar
+        - run: wget -P drivers https://repo1.maven.org/maven2/io/opencensus/opencensus-contrib-http-util/0.11.0/opencensus-contrib-http-util-0.11.0.jar
+        - run: wget -P drivers https://repo1.maven.org/maven2/io/grpc/grpc-context/1.0.1/grpc-context-1.0.1.jar
+        - run: |
+          ./flyway -url="jdbc:postgresql://${{ env.DB_URI }} /
+          -locations="filesystem:db/migrations" ${{ env.SCHEMA_NAME }} / 
+          -baselineOnMigrate="true" / 
+          migrate
