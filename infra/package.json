@@ -30,6 +30,7 @@
         "@almamedia/cdk-assumed-credentials-provider": "^0.2.0",
         "@almamedia/cdk-cross-region-parameter": "0.0.2",
         "@almamedia/cdk-regions": "0.0.1",
+        "@almamedia/cdk-open-api": "^0.8.0",
         "@almamedia/cdk-tag-and-name": "^1.1.1",
         "@aws-cdk/assert": "1.100.0",
         "@aws-cdk/assets": "1.100.0",
