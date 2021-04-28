@@ -1,8 +1,12 @@
+import * as sm from '@aws-cdk/aws-secretsmanager';
+import * as ec2 from '@aws-cdk/aws-ec2';
+import * as rds from '@aws-cdk/aws-rds';
 import { Sc } from '@almamedia/cdk-accounts-and-environments';
 import { SynthUtils } from '@aws-cdk/assert';
 import { Name } from '@almamedia/cdk-tag-and-name';
+import { OviproEnvironmentSharedResource } from '../../utils/shared-resources/OviproEnvironmentSharedResource';
+import { SharedResourceType } from '../../utils/shared-resources/types';
 import { createCdkTestContext } from '../../../__test__/context';
-import { AuroraClusterStack } from '../../database/aurora';
 import { AuroraMigratorStack } from '../aurora-migrator';
 import { MigrationBucketStack } from '../migration-bucket';
 
@@ -10,10 +14,18 @@ test('Aurora Migrator', () => {
     // GIVEN
     const scope = createCdkTestContext();
 
-    const auroraStack = new AuroraClusterStack(scope, 'AuroraClusterStack', {
-        stackName: Name.stack(scope, 'AuroraClusterStack'),
-        ...Sc.defineProps(scope, 'Serverless Aurora cluster for OviPRO infrastructure'),
+
+    const sharedResource = new OviproEnvironmentSharedResource(scope, 'SharedResource');
+    const clusterIdentifier = sharedResource.import(SharedResourceType.DATABASE_CLUSTER_IDENTIFIER);
+    const rdsClusterSGId = sharedResource.import(SharedResourceType.DATABASE_SECURITY_GROUP_ID);
+    const database = rds.ServerlessCluster.fromServerlessClusterAttributes(scope, 'DefaultServerlessCluster', {
+        clusterIdentifier,
     });
+    const auroraSecurityGroup = ec2.SecurityGroup.fromSecurityGroupId(scope, 'SG', rdsClusterSGId, {
+       mutable: false
+    });
+    const secretArn = sharedResource.import(SharedResourceType.DATABASE_READ_WRITE_SECRET_ARN);
+    const secret = sm.Secret.fromSecretCompleteArn(scope, 'SharedDatabaseSecret', secretArn);
 
     const { s3Bucket: migrationsBucket } = new MigrationBucketStack(scope, 'MigrationBucketStack', {
         stackName: Name.stack(scope, 'MigrationBucketStack'),
@@ -23,8 +35,8 @@ test('Aurora Migrator', () => {
     const stack = new AuroraMigratorStack(scope, 'AuroraMigratorStack', {
         stackName: Name.stack(scope, 'AuroraMigratorStack'),
         ...Sc.defineProps(scope, 'Serverless Aurora cluster migrator for OviPRO infrastructure'),
-        auroraCredentialsSecret: auroraStack.auroraMigratorCredentialsSecret,
-        auroraSecurityGroup: auroraStack.auroraSecurityGroup,
+        auroraCredentialsSecret: secret,
+        auroraSecurityGroup: auroraSecurityGroup,
         migrationsBucket,
     });
     // THEN

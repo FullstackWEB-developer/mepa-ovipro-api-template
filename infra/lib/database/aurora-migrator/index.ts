@@ -11,8 +11,8 @@ import { DefaultVpc } from '../../default-resources/shared/vpc';
 
 interface Props extends cdk.StackProps {
     migrationsBucket: s3.Bucket;
-    auroraSecurityGroup: ec2.SecurityGroup;
-    auroraCredentialsSecret: sm.Secret;
+    auroraSecurityGroup: ec2.ISecurityGroup;
+    auroraCredentialsSecret: sm.ISecret;
 }
 
 /**
