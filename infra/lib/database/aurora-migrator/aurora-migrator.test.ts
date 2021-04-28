@@ -4,8 +4,6 @@ import * as rds from '@aws-cdk/aws-rds';
 import { Sc } from '@almamedia/cdk-accounts-and-environments';
 import { SynthUtils } from '@aws-cdk/assert';
 import { Name } from '@almamedia/cdk-tag-and-name';
-import { OviproEnvironmentSharedResource } from '../../utils/shared-resources/OviproEnvironmentSharedResource';
-import { SharedResourceType } from '../../utils/shared-resources/types';
 import { createCdkTestContext } from '../../../__test__/context';
 import { AuroraMigratorStack } from '../aurora-migrator';
 import { MigrationBucketStack } from '../migration-bucket';
@@ -13,19 +11,6 @@ import { MigrationBucketStack } from '../migration-bucket';
 test('Aurora Migrator', () => {
     // GIVEN
     const scope = createCdkTestContext();
-
-
-    const sharedResource = new OviproEnvironmentSharedResource(scope, 'SharedResource');
-    const clusterIdentifier = sharedResource.import(SharedResourceType.DATABASE_CLUSTER_IDENTIFIER);
-    const rdsClusterSGId = sharedResource.import(SharedResourceType.DATABASE_SECURITY_GROUP_ID);
-    const database = rds.ServerlessCluster.fromServerlessClusterAttributes(scope, 'DefaultServerlessCluster', {
-        clusterIdentifier,
-    });
-    const auroraSecurityGroup = ec2.SecurityGroup.fromSecurityGroupId(scope, 'SG', rdsClusterSGId, {
-       mutable: false
-    });
-    const secretArn = sharedResource.import(SharedResourceType.DATABASE_READ_WRITE_SECRET_ARN);
-    const secret = sm.Secret.fromSecretCompleteArn(scope, 'SharedDatabaseSecret', secretArn);
 
     const { s3Bucket: migrationsBucket } = new MigrationBucketStack(scope, 'MigrationBucketStack', {
         stackName: Name.stack(scope, 'MigrationBucketStack'),

@@ -36,8 +36,10 @@ export class AuroraMigratorStack extends cdk.Stack {
         const auroraSecurityGroup = ec2.SecurityGroup.fromSecurityGroupId(this, 'SG', rdsClusterSGId, {
            mutable: false
         });
-        const secretArn = sharedResource.import(SharedResourceType.DATABASE_READ_WRITE_SECRET_ARN);
-        const secret = sm.Secret.fromSecretCompleteArn(scope, 'SharedDatabaseSecret', secretArn);
+        let secretArn = sharedResource.import(SharedResourceType.DATABASE_READ_WRITE_SECRET_ARN);
+        if (secretArn.includes('dummy-value-for-'))
+            secretArn = 'arn:aws:service:eu-central-1:123456789012:secret:entity-123456';
+        const secret = sm.Secret.fromSecretCompleteArn(this, 'SharedDatabaseSecret', secretArn);
 
         const { vpc } = new DefaultVpc(this, 'DefaultVpc');
         const lambdaSecurityGroup = new ec2.SecurityGroup(this, 'MigratorLambdaSecurityGroup', {

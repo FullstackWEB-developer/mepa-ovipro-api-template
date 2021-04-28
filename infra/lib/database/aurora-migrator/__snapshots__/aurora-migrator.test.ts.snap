@@ -192,9 +192,7 @@ Object {
             },
             "POWERTOOLS_METRICS_NAMESPACE": "OviproMock1FiAlmamediaOviproMigratorAppHandleRequest",
             "POWERTOOLS_SERVICE_NAME": "OviproMock1Migrator",
-            "SECRET_ARN": Object {
-              "Fn::ImportValue": "Ovipro-Environment-Mock1-AuroraClusterStack:AuroraClusterStackExportsOutputRefMock1DbCredMigratorSecretFD4A1AB6DAA1A8F1",
-            },
+            "SECRET_ARN": "arn:aws:service:eu-central-1:123456789012:secret:entity-123456",
           },
         },
         "FunctionName": "OviproMock1Migrator",
@@ -213,12 +211,7 @@ Object {
         },
         "VpcConfig": Object {
           "SecurityGroupIds": Array [
-            Object {
-              "Fn::GetAtt": Array [
-                "MigratorLambdaSecurityGroup4005CC4E",
-                "GroupId",
-              ],
-            },
+            "dummy-value-for-/mock1/mock/shared-resources/DATABASE_SECURITY_GROUP_ID",
           ],
           "SubnetIds": Array [
             "p-12345",
@@ -241,24 +234,6 @@ Object {
         "VpcId": "vpc-12345",
       },
       "Type": "AWS::EC2::SecurityGroup",
-    },
-    "MigratorLambdaSecurityGroupTestContextProviderAuroraClusterStackServerlessClusterSecurityGroupB8FC79935432to21D3C046": Object {
-      "Properties": Object {
-        "Description": "From Lambda migrator to Aurora cluster",
-        "FromPort": 5432,
-        "GroupId": Object {
-          "Fn::ImportValue": "Ovipro-Environment-Mock1-AuroraClusterStack:AuroraClusterStackExportsOutputFnGetAttServerlessClusterSecurityGroup5151F34FGroupId11D96200",
-        },
-        "IpProtocol": "tcp",
-        "SourceSecurityGroupId": Object {
-          "Fn::GetAtt": Array [
-            "MigratorLambdaSecurityGroup4005CC4E",
-            "GroupId",
-          ],
-        },
-        "ToPort": 5432,
-      },
-      "Type": "AWS::EC2::SecurityGroupIngress",
     },
     "MigratorLogRetentionEDE7FEB6": Object {
       "Properties": Object {
@@ -325,9 +300,7 @@ Object {
                 "secretsmanager:DescribeSecret",
               ],
               "Effect": "Allow",
-              "Resource": Object {
-                "Fn::ImportValue": "Ovipro-Environment-Mock1-AuroraClusterStack:AuroraClusterStackExportsOutputRefMock1DbCredMigratorSecretFD4A1AB6DAA1A8F1",
-              },
+              "Resource": "arn:aws:service:eu-central-1:123456789012:secret:entity-123456",
             },
           ],
           "Version": "2012-10-17",
