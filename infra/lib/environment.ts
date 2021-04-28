@@ -6,8 +6,6 @@ import { EnvironmentConstruct, Sc } from '@almamedia/cdk-accounts-and-environmen
 import { Tag, Name } from '@almamedia/cdk-tag-and-name';
 import { DefaultVpc } from './default-resources/shared/vpc';
 import { addMepaTags } from './utils/tags';
-import { OviproEnvironmentSharedResource } from './utils/shared-resources/OviproEnvironmentSharedResource';
-import { SharedResourceType } from './utils/shared-resources/types';
 import { AuroraMigratorStack } from './database/aurora-migrator';
 import { MigrationBucketStack } from './database/migration-bucket';
 import { SampleStack } from './sample-stack';
@@ -19,18 +17,6 @@ export class Environment extends EnvironmentConstruct {
 
         const { vpc } = new DefaultVpc(this, 'DefaultVpc');
 
-        const sharedResource = new OviproEnvironmentSharedResource(this, 'SharedResource');
-        const clusterIdentifier = sharedResource.import(SharedResourceType.DATABASE_CLUSTER_IDENTIFIER);
-        const rdsClusterSGId = sharedResource.import(SharedResourceType.DATABASE_SECURITY_GROUP_ID);
-        const database = rds.ServerlessCluster.fromServerlessClusterAttributes(scope, 'DefaultServerlessCluster', {
-            clusterIdentifier,
-        });
-        const auroraSecurityGroup = ec2.SecurityGroup.fromSecurityGroupId(this, 'SG', rdsClusterSGId, {
-           mutable: false
-        });
-        const secretArn = sharedResource.import(SharedResourceType.DATABASE_READ_WRITE_SECRET_ARN);
-        const secret = sm.Secret.fromSecretCompleteArn(scope, 'SharedDatabaseSecret', secretArn);
-
         const { s3Bucket: migrationsBucket } = new MigrationBucketStack(this, 'MigrationBucketStack', {
             stackName: Name.stack(this, 'MigrationBucketStack'),
             ...Sc.defineProps(this, 'Migration bucket'),
@@ -39,9 +25,7 @@ export class Environment extends EnvironmentConstruct {
         new AuroraMigratorStack(this, 'AuroraMigratorStack', {
             stackName: Name.stack(this, 'AuroraMigratorStack'),
             ...Sc.defineProps(this, 'Aurora migrator Lambda'),
-            auroraCredentialsSecret: secret,
             migrationsBucket,
-            auroraSecurityGroup,
         });
 
         new SampleStack(this, 'SampleStack', {

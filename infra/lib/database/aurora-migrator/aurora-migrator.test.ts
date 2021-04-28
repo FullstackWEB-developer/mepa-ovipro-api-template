@@ -35,8 +35,6 @@ test('Aurora Migrator', () => {
     const stack = new AuroraMigratorStack(scope, 'AuroraMigratorStack', {
         stackName: Name.stack(scope, 'AuroraMigratorStack'),
         ...Sc.defineProps(scope, 'Serverless Aurora cluster migrator for OviPRO infrastructure'),
-        auroraCredentialsSecret: secret,
-        auroraSecurityGroup: auroraSecurityGroup,
         migrationsBucket,
     });
     // THEN
