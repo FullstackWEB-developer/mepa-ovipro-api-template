@@ -52,3 +52,6 @@ async function processRequest(event: APIGatewayEvent): Promise<unknown> {
 export const handler = middy(processRequest).use(jsonBodyParser());
 
 ```
+
+## Quality and Assurance
+Q&A gate should be checked on every push. We use Sonarqube (sonarcloud) for this. In order to check it, project key has to be created into Sonarcloud (requested from `Antti Koivisto`). All relavent information is to be updated to `sonar-project.properties` file.
