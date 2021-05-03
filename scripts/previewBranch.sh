@@ -1,5 +1,4 @@
 #!/bin/bash
-env
 input="/root/repositories.txt"
 while IFS= read -r line
 do
@@ -9,16 +8,16 @@ do
   if [ $action == "delete" ] 
   then
     echo "POISTA $branch"
-    git branch -d $branch
+    git push origin --delete $branch
   elif [ $action == "create" ] 
   then
     echo "LISÄÄ $branch"
     git branch $branch 
+    git push origin $branch
   else
     echo "EI TOIMINTOA"
   fi
-  git status
-  git push origin $branch
+
   cd ..
   rm -rf repo
 done < "$input"
