@@ -211,7 +211,7 @@ Object {
         },
         "VpcConfig": Object {
           "SecurityGroupIds": Array [
-            "dummy-value-for-/mock1/mock/shared-resources/DATABASE_SECURITY_GROUP_ID",
+            "dummy-value-for-/Mock1/mock/shared-resources/DATABASE_SECURITY_GROUP_ID",
           ],
           "SubnetIds": Array [
             "p-12345",
