@@ -1,0 +1,24 @@
+name: OpenApi lint
+
+on:
+  push:
+    branches: 
+      - main
+      - "preview/**"
+      - development
+    paths:
+    - 'api-specs/**'
+
+jobs:
+  # Any other API's are put as "job" to enable parallel prosessing
+  agency-api-v1:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    # Add yaml files using this step with: file_path: key
+    - name: swagger-cli
+      uses: vaibhav-jain/spectral-action/@v2.6
+      with:
+        file_path: api-specs/*.yml  
