@@ -1,4 +1,4 @@
-name: Preview pipeline
+name: Main pipeline
 on:
   push:
     branches:
