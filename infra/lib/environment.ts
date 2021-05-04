@@ -15,8 +15,6 @@ export class Environment extends EnvironmentConstruct {
     constructor(scope: cdk.Construct) {
         super(scope);
 
-        const { vpc } = new DefaultVpc(this, 'DefaultVpc');
-
         const { s3Bucket: migrationsBucket } = new MigrationBucketStack(this, 'MigrationBucketStack', {
             stackName: Name.stack(this, 'MigrationBucketStack'),
             ...Sc.defineProps(this, 'Migration bucket'),
@@ -31,7 +29,6 @@ export class Environment extends EnvironmentConstruct {
         new SampleStack(this, 'SampleStack', {
             stackName: Name.stack(this, 'Alb'),
             ...Sc.defineProps(this, 'Alb stack for OviPRO infrastructure'),
-            vpc,
         });
 
         // Tag all stacks with default tags
