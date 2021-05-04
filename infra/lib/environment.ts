@@ -1,13 +1,10 @@
 import * as cdk from '@aws-cdk/core';
-import * as sm from '@aws-cdk/aws-secretsmanager';
-import * as ec2 from '@aws-cdk/aws-ec2';
-import * as rds from '@aws-cdk/aws-rds';
 import { EnvironmentConstruct, Sc } from '@almamedia/cdk-accounts-and-environments';
 import { Tag, Name } from '@almamedia/cdk-tag-and-name';
-import { DefaultVpc } from './default-resources/shared/vpc';
 import { addMepaTags } from './utils/tags';
 import { AuroraMigratorStack } from './database/aurora-migrator';
 import { MigrationBucketStack } from './database/migration-bucket';
+import { ResourceRemovalPolicyTesterAspect } from './utils/policy-aspect/ResourceRemovalPolicyTesterAspect';
 import { SampleStack } from './sample-stack';
 
 export class Environment extends EnvironmentConstruct {
@@ -35,5 +32,11 @@ export class Environment extends EnvironmentConstruct {
         Tag.defaults(this.node.children as cdk.Construct[]);
         // Tag all stacks with Mepa-tags
         addMepaTags(this.node.children as cdk.Construct[]);
+
+        this.node.children
+            .filter((construct) => construct instanceof cdk.Stack)
+            .forEach((construct) => {
+                cdk.Aspects.of(construct).add(new ResourceRemovalPolicyTesterAspect());
+            });
     }
 }
