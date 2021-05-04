@@ -14,7 +14,6 @@ export class MigrationBucketStack extends cdk.Stack {
         const name = `ovipro${Ac.getType(this)}${pascalCase(Ec.getName(this))}migrations`;
 
         const s3Bucket = new s3.Bucket(this, Name.withProject(this, name), {
-            bucketName: name.toLowerCase(),
             blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
             encryption: s3.BucketEncryption.S3_MANAGED,
             autoDeleteObjects: !Ec.isStable(this),
