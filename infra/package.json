@@ -14,7 +14,7 @@
     },
     "scripts": {
         "build": "npx tsc",
-        "build:all": "npm run clean && npx tsc && npm run build:lambda",
+        "build:all": "npm run clean && tsc && npm run build:application && tsc",
         "watch": "node ./node_modules/typescript/bin/tsc -w",
         "lint:es": "eslint '*/**/*.{ts,tsx}' --max-warnings 0",
         "cdk": "npx cdk",
@@ -22,8 +22,12 @@
         "test:watch": "jest --watch",
         "clean": "npx rimraf '+(bin|lib|functions|__test__|utils)/**/+(*.d.ts|*.js)'",
         "build:application": "concurrently 'npm:build:lambda'",
-        "build:lambda": "concurrently 'npm:build:lambda:*'",
-        "build:lambda:sample": "$npm_package_config_lambda_build_prefix/sample/index.ts $npm_package_config_lambda_build_suffix/sample"
+        "build:lambda": "concurrently 'npm:build:lambda:java' 'npm:build:lambda:ts'",
+        "build:lambda:java": "concurrently 'npm:build:lambda:java:*'",
+        "build:lambda:ts": "concurrently 'npm:build:lambda:ts:*'",
+        "build:lambda:java:database:aurora:migrator": "./functions/database/aurora/migrator/build-with-docker.sh",
+        "build:lambda:ts:sample": "$npm_package_config_lambda_build_prefix/sample/index.ts $npm_package_config_lambda_build_suffix/sample"
+
     },
     "devDependencies": {
         "@almamedia/cdk-accounts-and-environments": "^0.5.0",
