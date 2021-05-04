@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="info" strict="true" monitorInterval="5" packages="org.apache.logging.log4j.core.layout">
+  <Properties>
+    <Property name="pattern">%d [%t] %-5p %c - %m %n</Property>
+  </Properties>
+  <Filter type="ThresholdFilter" level="trace" />
+
+  <Appenders>
+    <Appender type="Console" name="con" target="SYSTEM_OUT">
+      <Layout type="LambdaJsonLayout" compact="true" eventEol="true"/>
+    </Appender>
+  </Appenders>
+
+  <Loggers>
+    <Logger name="org.apache" level="WARN" additivity="false">
+      <AppenderRef ref="con"/>
+    </Logger>
+
+    <Logger name="com.amazonaws" level="WARN" additivity="false">
+      <AppenderRef ref="con"/>
+    </Logger>
+
+    <Logger name="org.hibernate" level="WARN" additivity="false">
+      <AppenderRef ref="con"/>
+    </Logger>
+
+    <Logger name="org.hibernate.SQL" level="INFO" additivity="false">
+      <AppenderRef ref="con"/>
+    </Logger>
+
+    <Logger name="org.springframework" level="WARN" additivity="false">
+      <AppenderRef ref="con"/>
+    </Logger>
+    
+    <Logger name="httpclient.wire" level="INFO" additivity="false">
+      <AppenderRef ref="con"/>
+    </Logger>
+
+    <Logger name="fi.almamedia.ovipro.migrator" level="DEBUG" additivity="false">
+      <AppenderRef ref="con"/>
+    </Logger>
+    
+    <Root level="DEBUG">
+      <AppenderRef ref="con"/>
+    </Root>
+  </Loggers>
+</Configuration>
