@@ -1,5 +1,5 @@
 ![Staging workflow](https://github.com/almamedia/mepa-ovipro-api-template/actions/workflows/main-pipeline.yml/badge.svg)
-[![GitHub Super-Linter](https://github.com/almamedia/mepa-ovipro-api-template/workflows/Main%20pipeline/badge.svg)](https://github.com/marketplace/actions/super-linter)
+![GitHub Super-Linter](https://github.com/almamedia/mepa-ovipro-api-template/workflows/Main%20pipeline/badge.svg)](https://github.com/marketplace/actions/super-linter)
 
 
 ## mepa-ovipro-template
