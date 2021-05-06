@@ -39,6 +39,15 @@ jobs:
         run: |
           npm install --prefer-online
           npm run build:all
+      ################################
+      # Run Linter against code base #
+      ################################
+      - name: Lint Code Base
+        uses: github/super-linter@v3
+        env:
+          VALIDATE_ALL_CODEBASE: false
+          DEFAULT_BRANCH: master
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Run tests
         working-directory: ./infra
         run: npm run test
