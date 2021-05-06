@@ -1,3 +1,6 @@
+![Staging workflow](https://github.com/almamedia/mepa-ovipro-api-template/actions/workflows/main-pipeline.yml/badge.svg)
+
+
 ## mepa-ovipro-template
 
 Description
