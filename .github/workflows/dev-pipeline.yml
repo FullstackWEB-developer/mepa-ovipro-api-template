@@ -39,42 +39,42 @@ jobs:
         run: |
           npm install --prefer-online
           npm run build:all
-    ################################
-    # Run Linter against code base #
-    ################################
-    - name: Lint Code Base
-      uses: github/super-linter@v3
-      env:
-        VALIDATE_ALL_CODEBASE: true
-        DEFAULT_BRANCH: main
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        VALIDATE_BASH: false
-        VALIDATE_BASH_EXEC: false
-        VALIDATE_DOCKERFILE: false
-        VALIDATE_DOCKERFILE_HADOLINT: false
-        VALIDATE_EDITORCONFIG: false
-        VALIDATE_JAVASCRIPT_STANDARD: false
-        VALIDATE_JSCPD: false
-        VALIDATE_MARKDOWN: false
-        VALIDATE_SHELL_SHFMT: false
+      ################################
+      # Run Linter against code base #
+      ################################
+      - name: Lint Code Base
+        uses: github/super-linter@v3
+        env:
+          VALIDATE_ALL_CODEBASE: true
+          DEFAULT_BRANCH: main
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VALIDATE_BASH: false
+          VALIDATE_BASH_EXEC: false
+          VALIDATE_DOCKERFILE: false
+          VALIDATE_DOCKERFILE_HADOLINT: false
+          VALIDATE_EDITORCONFIG: false
+          VALIDATE_JAVASCRIPT_STANDARD: false
+          VALIDATE_JSCPD: false
+          VALIDATE_MARKDOWN: false
+          VALIDATE_SHELL_SHFMT: false
       - name: Run tests
         working-directory: ./infra
         run: npm run test
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
-    - name: SonarCloud scan
-      uses: sonarsource/sonarcloud-github-action@master
-      with:
-        projectBaseDir: ./infra
-        args: >
-          -Dsonar.organization=almamedia
-          -Dsonar.projectKey=almamedia_<name of the git repo>
-          -Dsonar.javascript.lcov.reportPaths=./coverage/lcov.info
-          -Dsonar.testExecutionReportPaths=test-report.xml
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        SONAR_TOKEN: ${{ secrets.MEPA_ASUMINEN_GH_ACTIONS_BOT_SONARCLOUD_TOKEN }}
+      - name: SonarCloud scan
+        uses: sonarsource/sonarcloud-github-action@master
+        with:
+          projectBaseDir: ./infra
+          args: >
+            -Dsonar.organization=almamedia
+            -Dsonar.projectKey=almamedia_${{ github.event.repository.name }}
+            -Dsonar.javascript.lcov.reportPaths=./coverage/lcov.info
+            -Dsonar.testExecutionReportPaths=test-report.xml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.MEPA_ASUMINEN_GH_ACTIONS_BOT_SONARCLOUD_TOKEN }}
       - name: deploy all stacks
         working-directory: ./infra
         env:
