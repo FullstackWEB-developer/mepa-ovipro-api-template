@@ -25,3 +25,21 @@ jobs:
     - name: Run tests
       working-directory: ./infra
       run: npm run test
+    ################################
+    # Run Linter against code base #
+    ################################
+    - name: Lint Code Base
+      uses: github/super-linter@v3
+      env:
+        VALIDATE_ALL_CODEBASE: true
+        DEFAULT_BRANCH: main
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        VALIDATE_BASH: false
+        VALIDATE_BASH_EXEC: false
+        VALIDATE_DOCKERFILE: false
+        VALIDATE_DOCKERFILE_HADOLINT: false
+        VALIDATE_EDITORCONFIG: false
+        VALIDATE_JAVASCRIPT_STANDARD: false
+        VALIDATE_JSCPD: false
+        VALIDATE_MARKDOWN: false
+        VALIDATE_SHELL_SHFMT: false
