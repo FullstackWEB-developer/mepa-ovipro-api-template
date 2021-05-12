@@ -28,7 +28,6 @@
         "build:lambda:ts": "concurrently 'npm:build:lambda:ts:*'",
         "build:lambda:java:database:aurora:migrator": "./functions/database/aurora/migrator/build-with-docker.sh",
         "build:lambda:ts:sample": "$npm_package_config_lambda_build_prefix/sample/index.ts $npm_package_config_lambda_build_suffix/sample"
-
     },
     "devDependencies": {
         "@almamedia/cdk-accounts-and-environments": "^0.5.0",
@@ -97,11 +96,21 @@
         "@middy/http-error-handler": "^1.5.2",
         "@middy/http-json-body-parser": "^1.5.2",
         "@middy/validator": "^1.5.2",
+        "@types/uuid": "^8.3.0",
         "aws-sdk": "^2.839.0",
         "aws-xray-sdk": "^3.2.0",
         "http-errors": "^1.8.0",
+        "json-colorizer": "^2.2.2",
         "lambda-log": "^2.4.0",
-        "middy-middleware-json-error-handler": "^2.0.6"
+        "lodash": "^4.17.21",
+        "middy-middleware-json-error-handler": "^2.0.6",
+        "sqlite3": "^5.0.2",
+        "typeorm": "0.2.32",
+        "typeorm-aurora-data-api-driver": "2.1.0",
+        "typeorm-naming-strategies": "2.0.0",
+        "typescript-logging": "^1.0.0",
+        "uuid": "^8.3.2",
+        "jest-sonar-reporter": "^2.0.0"
     },
     "husky": {
         "hooks": {

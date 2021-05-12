@@ -4,4 +4,7 @@ module.exports = {
     expand: true,
     verbose: true,
     testMatch: ['**/*.test.ts'],
+    collectCoverage: true,
+    collectCoverageFrom: ['**/*.(tsx|ts)'],
+    testResultsProcessor: 'jest-sonar-reporter',
 };

@@ -17,3 +17,5 @@ dist
 .eslintcache
 
 !.*.js
+coverage/**
+test-report.xml
