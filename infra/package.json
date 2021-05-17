@@ -99,7 +99,9 @@
         "@types/uuid": "^8.3.0",
         "aws-sdk": "^2.839.0",
         "aws-xray-sdk": "^3.2.0",
+        "cdk-dia": "^0.3.0",
         "http-errors": "^1.8.0",
+        "jest-sonar-reporter": "^2.0.0",
         "json-colorizer": "^2.2.2",
         "lambda-log": "^2.4.0",
         "lodash": "^4.17.21",
@@ -109,8 +111,7 @@
         "typeorm-aurora-data-api-driver": "2.1.0",
         "typeorm-naming-strategies": "2.0.0",
         "typescript-logging": "^1.0.0",
-        "uuid": "^8.3.2",
-        "jest-sonar-reporter": "^2.0.0"
+        "uuid": "^8.3.2"
     },
     "husky": {
         "hooks": {

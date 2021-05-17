@@ -27,7 +27,14 @@ TBD
 
 ## Infrastructure
 
-![Current infrastructure](./docs/infra.drawio.png)
+![Current infrastructure](./diagram.png)
+
+Generate new diagram by running
+
+```typescript
+cdk synth --c environment=staging --c account=dev
+npx cdk-dia
+```
 
 ## Tech/framework used
 
