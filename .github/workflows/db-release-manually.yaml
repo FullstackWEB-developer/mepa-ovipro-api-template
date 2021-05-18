@@ -1,1 +1,18 @@
-db-release-manually.yaml
+name: Test and create a DB release
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'db/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: ./db/java/src/main/resources/db
+
+    steps:
+    - uses: actions/checkout@v2
