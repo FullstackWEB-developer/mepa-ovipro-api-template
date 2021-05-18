@@ -80,6 +80,7 @@ jobs:
             -Dsonar.branch.target=main
             -Dsonar.exlusions=**/node_modules/**,**/*.test.ts,**/java/**
             -Dsonar.java.source=11
+            -Dsonar.java.binaries=infra/functions/database/aurora/migrator/target/classes
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.MEPA_ASUMINEN_GH_ACTIONS_BOT_SONARCLOUD_TOKEN }}
