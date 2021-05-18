@@ -11,6 +11,10 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: '14.x'
+    - name: Extract branch name
+      shell: bash
+      run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+      id: extract_branch
     - name: Configure AWS credentials for Code Artifact packages
       uses: aws-actions/configure-aws-credentials@v1
       with:
@@ -19,17 +23,21 @@ jobs:
         aws-region: eu-west-1
     - name: Get access for alma packages
       run: echo "CODEARTIFACT_AUTH_TOKEN=$(aws codeartifact get-authorization-token --domain almamedia --domain-owner 277005280161 --query authorizationToken --output text)" >> $GITHUB_ENV
-    - name: Install deps
+    - name: Install deps & build
       working-directory: ./infra
-      run: npm i
-    - name: Run tests
+      run: |
+        npm install --prefer-online
+        npm run build:lambda:java
+    - name: Build lambdas
       working-directory: ./infra
-      run: npm run test
+      run: |
+        npm run build:lambda:ts
     ################################
     # Run Linter against code base #
     ################################
     - name: Lint Code Base
       uses: github/super-linter@v3
+      continue-on-error: true
       env:
         VALIDATE_ALL_CODEBASE: true
         DEFAULT_BRANCH: main
@@ -43,6 +51,12 @@ jobs:
         VALIDATE_JSCPD: false
         VALIDATE_MARKDOWN: false
         VALIDATE_SHELL_SHFMT: false
+        VALIDATE_JAVASCRIPT_ES: false
+        VALIDATE_TYPESCRIPT_STANDARD: false
+        VALIDATE_TYPESCRIPT_ES: false
+    - name: Run tests
+      working-directory: ./infra
+      run: npm run test
     - name: SonarCloud scan
       uses: sonarsource/sonarcloud-github-action@master
       with:
@@ -53,10 +67,11 @@ jobs:
           -Dsonar.projectKey=almamedia_${{ github.event.repository.name }}
           -Dsonar.javascript.lcov.reportPaths=./coverage/lcov.info
           -Dsonar.testExecutionReportPaths=test-report.xml
-          -Dsonar.branch.name=${{ github.event.ref }}
+          -Dsonar.branch.name=${{ steps.extract_branch.outputs.branch }}
           -Dsonar.branch.target=main
           -Dsonar.exlusions=**/node_modules/**,**/*.test.ts,**/*.java
           -Dsonar.java.source=11
+          -Dsonar.java.binaries=functions/database/aurora/migrator/target/classes
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.MEPA_ASUMINEN_GH_ACTIONS_BOT_SONARCLOUD_TOKEN }}
