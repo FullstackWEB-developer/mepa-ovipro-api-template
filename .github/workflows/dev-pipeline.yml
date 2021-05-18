@@ -57,6 +57,9 @@ jobs:
           VALIDATE_JSCPD: false
           VALIDATE_MARKDOWN: false
           VALIDATE_SHELL_SHFMT: false
+          VALIDATE_JAVASCRIPT_ES: false
+          VALIDATE_TYPESCRIPT_STANDARD: false
+          VALIDATE_TYPESCRIPT_ES: false
       - name: Run tests
         working-directory: ./infra
         run: npm run test
