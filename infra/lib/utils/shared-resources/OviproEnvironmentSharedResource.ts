@@ -44,6 +44,15 @@ export class OviproEnvironmentSharedResource extends cdk.Construct {
     import(resource: SharedResourceType): string {
         const stringValue = ssm.StringParameter.valueFromLookup(this, createParameterName(this, resource));
 
+        if (stringValue.includes('dummy-value-for-') && resource.toString().indexOf('_ARN')) {
+            switch (resource) {
+                case SharedResourceType.DATABASE_READ_WRITE_SECRET_ARN:
+                    return 'arn:aws:service:eu-central-1:123456789012:secret:entity-123456';
+                default:
+                    return stringValue;
+            }
+        }
+
         return stringValue;
     }
 }

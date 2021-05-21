@@ -37,6 +37,7 @@ export class OviproAccountSharedResource extends cdk.Construct {
         stringValue: string,
         removalPolicy?: cdk.RemovalPolicy,
         description?: string,
+        region?: string,
     ): void {
         const constructName = `${pascalCase(resource)}StringParameter`;
         if (!resource.includes('CROSS_REGION')) {
@@ -44,11 +45,12 @@ export class OviproAccountSharedResource extends cdk.Construct {
                 // Hard-coded parameter name, will be used in other projects and repositories
                 parameterName: createParameterName(this, resource),
                 stringValue: stringValue,
+                description: description,
             });
             parameter.applyRemovalPolicy(removalPolicy || cdk.RemovalPolicy.DESTROY);
         } else {
             new CrossRegionParameter(this, constructName, {
-                region: 'eu-west-1', // hardcoded
+                region: region || 'eu-west-1',
                 name: createCrossRegionParameterName(this, resource),
                 description: description || '',
                 value: stringValue,
@@ -64,10 +66,23 @@ export class OviproAccountSharedResource extends cdk.Construct {
      * @param resource
      */
     import(resource: SharedResourceType): string {
+        let stringValue;
+
         if (!resource.includes('CROSS_REGION')) {
-            return ssm.StringParameter.valueFromLookup(this, createParameterName(this, resource));
+            stringValue = ssm.StringParameter.valueFromLookup(this, createParameterName(this, resource));
         } else {
-            return ssm.StringParameter.valueFromLookup(this, createCrossRegionParameterName(this, resource));
+            stringValue = ssm.StringParameter.valueFromLookup(this, createCrossRegionParameterName(this, resource));
         }
+
+        if (stringValue.includes('dummy-value-for-') && resource.toString().indexOf('_ARN')) {
+            switch (resource) {
+                case SharedResourceType.STATIC_MEDIA_S3_BUCKET_ARN:
+                    return 'arn:aws:s3:::dummybucketname';
+                default:
+                    return stringValue;
+            }
+        }
+
+        return stringValue;
     }
 }
