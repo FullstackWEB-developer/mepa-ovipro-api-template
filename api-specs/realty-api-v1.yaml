@@ -1,0 +1,516 @@
+openapi: 3.0.3
+info:
+  version: "1.0"
+  title: Realty API
+  description: |
+    # Introduction
+
+    Realty API allows an agent to provide content for realty. Realty can be sold, rented or purchaced. Realties are divided into different types:
+
+    - Residential share
+    - Other share
+    - Residential property
+    - Plot property
+    - Estate property
+    - Other property
+
+    Each type of realty has its own endpoint with `POST`, `PUT` and `GET` methods.
+
+    ## Contact
+
+    If you have any questions, comments or feedback regarding our APIs, please contact developer@ovipro.fi.
+
+  x-logo:
+    url: "images/Ovi_PRO-logo-grey.png"
+    backgroundColor: "#FFFFFF"
+    altText: "Alma logo"
+    href: "https://ovipro.fi"
+
+externalDocs:
+  description: |
+    Etuovi
+  url: https://etuovi.com
+
+tags:
+#  - name: Realties
+#    description: |
+#      Realty API allows you to fetch realties using different search criteria.
+#  - name: realty_model
+#    x-displayName: Realty Model
+#    description: |
+#      <SchemaDefinition schemaRef="#/components/schemas/Realty" showReadOnly={true} showWriteOnly={true} />
+  - name: Plot Property
+    description: |
+      Plot API allows you to create, update and fetch plot properties.
+  - name: plot_property_model
+    x-displayName: Plot Property Model
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/GetPlotProperty" showReadOnly={true} showWriteOnly={true} />
+
+
+paths:
+
+  #####################################################
+  # Plot Property
+  #####################################################
+
+  /plotProperties/{realtyId}:
+
+    get:
+      operationId: realty-api-get-plot-properties
+      summary: Fetch a plot property
+      description: |
+        Fetch details for a specified plot.
+      tags:
+        - Plot Property
+      parameters:
+        - $ref: "#/components/parameters/Realty-ID"
+        - $ref: "#/components/parameters/Request-ID"
+      responses:
+        '200':
+          description: OK. Response contains a plot property.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetPlotProperty'
+              example:
+                $ref: './examples/plot/get-plot-example-v1.json'
+          headers:
+            Request-ID:
+              $ref: "#/components/parameters/Response-Request-ID"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '5XX':
+          $ref: '#/components/responses/InternalError'
+
+
+    post:
+      operationId: realty-api-post-plot-properties
+      summary: Create a plot property
+      description: |
+        You can create a plot property with the required details.
+      tags:
+        - Plot Property
+      parameters:
+        - $ref: "#/components/parameters/Request-ID"
+      requestBody:
+        description: Plot property.
+        required: true
+        content:
+          application/json:
+              schema:
+                $ref: "#/components/schemas/PostPlotProperty"
+              example:
+                $ref: './examples/plot/post-plot-example-v1.json'
+      responses:
+        '201':
+          description: OK. The plot was successfully created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostPlotPropertyResponse'
+              example:
+                $ref: './examples/plot/post-plot-response-example-v1.json'
+          headers:
+            Request-ID:
+              $ref: "#/components/parameters/Response-Request-ID"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '415':
+          $ref: '#/components/responses/UnsupportedMediaType'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '5XX':
+          $ref: '#/components/responses/InternalError'
+
+    put:
+      operationId: realty-api-put-plot-properties
+      summary: Update a plot property
+      description: |
+        You can update the details for an existing plot property.
+      tags:
+        - Plot Property
+      parameters:
+        - $ref: "#/components/parameters/Realty-ID"
+        - $ref: "#/components/parameters/Request-ID"
+      requestBody:
+        description: Plot property.
+        required: true
+        content:
+          application/json:
+              schema:
+                $ref: "#/components/schemas/PostPlotProperty"
+              example:
+                $ref: './examples/plot/post-plot-response-example-v1.json'
+      responses:
+        '200':
+          description: OK. Response contains a plot property.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostPlotPropertyResponse'
+              example:
+                $ref: './examples/plot/post-plot-response-example-v1.json'
+          headers:
+            Request-ID:
+              $ref: "#/components/parameters/Response-Request-ID"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '5XX':
+          $ref: '#/components/responses/InternalError'
+
+
+  #####################################################
+  # Domains and security
+  #####################################################
+
+
+servers:
+    - url: https://api.ovipro.fi/realty/v1
+      description: API for production usage
+    - url: https://api.preprod-ovipro.net/realty/v1
+      description: API for acceptance testing
+
+security:
+    - bearerAuth: []
+
+components:
+
+    #####################################################
+    # Security Schemes
+    #####################################################
+
+  securitySchemes:
+    bearerAuth:
+        type: http
+        scheme: bearer
+        bearerFormat: JWT
+        description: |
+          Realty API is authenticated with Bearer tokens. Before calling the API endpoints, you first need to request an access token with POST method from the authentication endpoint.
+
+  parameters:
+
+  #####################################################
+  # Reusable Header Elements
+  #####################################################
+
+    Realty-ID:
+      description: Unique realty identifier in UUID format.
+      name: realtyId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      example: ddc25849-7bc7-43c0-9c3b-602cb03f7806
+
+    Request-ID:
+      description: A unique id which identifies the HTTP request. The value of this header must be created by the client. This identifier is used for troubleshooting purposes.
+      name: Request-ID
+      in: header
+      required: true
+      example: "9031d1c5-7d40-41dd-b2b8-7919a2fc4fe9"
+      schema:
+        type: string
+        format: uuid
+
+    Response-Request-ID:
+      description: A unique id which identifies the HTTP request. The value of this header must be created by the client. This identifier is used for troubleshooting purposes.
+      name: Request-ID
+      in: header
+      required: true
+      example: "9031d1c5-7d40-41dd-b2b8-7919a2fc4fe9"
+      schema:
+        type: string
+        format: uuid
+
+  responses:
+
+    #####################################################
+    # Reusable Response Elements
+    #####################################################
+
+    BadRequest:
+      description: Bad request. The server cannot or will not process the request due to invalid request syntax or content.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            $ref: "./examples/errors/bad-request-response-example-v1.json"
+      headers:
+        Request-ID:
+          $ref: "#/components/parameters/Response-Request-ID"
+    Unauthorized:
+      description: Unauthorized. Authentication is required and has failed or has not yet been provided.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            $ref: "./examples/errors/unauthorized-response-example-v1.json"
+      headers:
+        Request-ID:
+          $ref: "#/components/parameters/Response-Request-ID"
+    NotFound:
+      description: Not found. The requested resource could not be found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            $ref: "./examples/errors/not-found-error-response-example-v1.json"
+      headers:
+        Request-ID:
+          $ref: "#/components/parameters/Response-Request-ID"
+    UnsupportedMediaType:
+      description: Unsupported media type. The payload includes an unsupported format.
+      content:
+        application/json:
+          schema:
+              $ref: '#/components/schemas/ErrorResponse'
+          example:
+            $ref: "./examples/errors/unsupported-media-type-response-example-v1.json"
+      headers:
+        Request-ID:
+          $ref: "#/components/parameters/Response-Request-ID"
+    TooManyRequests:
+      description: Too many requests. The rate limit for the caller has been exceeded.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            $ref: "./examples/errors/too-many-requests-response-example-v1.json"
+      headers:
+        Request-ID:
+          $ref: "#/components/parameters/Response-Request-ID"
+    InternalError:
+      description: Technical error. Unexpected technical error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            $ref: "./examples/errors/internal-server-error-response-example-v1.json"
+      headers:
+        Request-ID:
+          $ref: "#/components/parameters/Response-Request-ID"
+
+
+  schemas:
+
+  #####################################################
+  # Realty - Reusable Schema Elements
+  #####################################################
+
+    RealtyOverview:
+      type: object
+      description: Realty details
+      required:
+        - realtyType
+        - agencyId
+      properties:
+        realtyType:
+          $ref: "#/components/schemas/RealtyType"
+        agencyOfficeId:
+          $ref: "#/components/schemas/AgencyOfficeId"
+#        assignmentType:
+#          $ref: "#/components/schemas/AssignmentType"
+
+
+  #####################################################
+  # Plot - Reusable Schema Elements
+  #####################################################
+
+    PlotOverview:
+      type: object
+      description: Plot details
+      required:
+        - yearlyRent
+      properties:
+        leaseEndDate:
+          description: Lease end date
+          $ref: "#/components/schemas/Date"
+        annualRent:
+          description: Annual rent
+          $ref: "#/components/schemas/MonetaryAmount"
+
+    GetPlotProperty:
+      type: object
+      required:
+        - realty
+        - plot
+      properties:
+        realtyId:
+          $ref: "#/components/schemas/RealtyId"
+        statusCode:
+          $ref: "#/components/schemas/RealtyStatusCode"
+        realty:
+          $ref: "#/components/schemas/RealtyOverview"
+        plot:
+          $ref: "#/components/schemas/PlotOverview"
+
+    PostPlotProperty:
+      type: object
+      required:
+        - realty
+        - plot
+      properties:
+        realty:
+          $ref: "#/components/schemas/RealtyOverview"
+        plot:
+          $ref: "#/components/schemas/PlotOverview"
+
+    PostPlotPropertyResponse:
+      type: object
+      required:
+        - realtyId
+      properties:
+        realtyId:
+          $ref: "#/components/schemas/RealtyId"
+
+
+  #####################################################
+  # Individual elements - Reusable Schema Elements
+  #####################################################
+
+    RealtyId:
+      type: string
+      format: uuid
+      description: Unique identifier for the realty.
+      example: "9fd9124c-e6c1-4368-9f17-6938f0e2f524"
+
+    RealtyType:
+        type: string
+        description: Realty type.
+        enum: ["SHARE_RESIDENTIAL", "SHARE_LEISURE", "SHARE_OTHER", "PROPERTY_RESIDENTIAL", "PROPERTY_LEISURE", "PROPERTY_PLOT", "PROPERTY_ESTATE", "PROPERTY_OTHER"]
+        example: "PROPERTY_PLOT"
+
+    AgencyOfficeId:
+      type: string
+      format: uuid
+      description: Unique identifier for the agency office.
+      example: "212114ec-819e-483c-a8e0-f82289ac6e19"
+
+#    AssignmentType:
+#        type: string
+#        description: Indicates the purpose how the realty is assigned with the agency.
+#        enum: ["SALE", "PURCHASE", "RENTAL"]
+#        example: "SALE"
+
+    RealtyStatusCode:
+        type: string
+        description: Realty status. The status defines what actions can be performed for the realty.
+        enum: ["DRAFT", "FOR_SALE", "SOLD", "RESERVED", "CONDITIONAL_OFFER", "CASH_OFFER", "CASH_OFFER_ACCEPTED"]
+        example: "DRAFT"
+
+    Date:
+      type: string
+      format: date
+      description: Date in ISO 8601 format.
+      example: "2022-12-31"
+
+    MonetaryAmount:
+      type: object
+      description: Monetary amount including the amount and currency.
+      required:
+        - amount
+        - currencyCode
+      properties:
+        amount:
+          type: number
+          description: Amount
+          example: 499.90
+        currencyCode:
+          type: string
+          pattern: "^[A-Z]{3}$"
+          description: Currency code as specified in ISO 4217 with alphabetic code.
+
+    Link:
+      type: object
+      description: Link related to the resource.
+      required:
+        - rel
+        - href
+        - method
+      properties:
+        rel:
+          type: string
+          description: Relation indicating how the link relates to the resource.
+          example: addresses
+        href:
+          type: string
+          description: Reference to the resource without the domain and version
+          example: /addresses/ddc25849-7bc7-43c0-9c3b-602cb03f7806
+        method:
+          type: string
+          description: HTTP method required to interact with the provided resource.
+          enum: ["GET", "POST", "PUT", "DELETE"]
+          example: GET
+
+
+  #####################################################
+  # ErrorResponse - Reusable Schema Elements
+  #####################################################
+
+    ErrorResponse:
+      type: object
+      required:
+        - errorCode
+        - message
+      properties:
+        errorCode:
+          type: string
+          description: Error code indicating the reason for request to fail.
+          example: INVALID_REQUEST
+        message:
+          type: string
+          description: Description which tells the reason for the request to fail.
+          example: Invalid request parameters
+        description:
+          type: string
+          description: Detailed description which tells the reason for the request to fail.
+          example: Mandatory request parameter is missing
+        errors:
+          type: array
+          description: Array of errors, for example the fields causing validation errors.
+          items:
+            $ref: "#/components/schemas/Error"
+
+    Error:
+      type: object
+      description: A detailed error message to specify for example the field causing validation error.
+      required:
+        - target
+        - errorCode
+        - message
+      properties:
+        target:
+          type: string
+          description: Identifies the field or element to which the specified error applies to. For a validation error, the value is the field name.
+          example: assignmentId
+        errorCode:
+          type: string
+          description: Error code indicating the reason for action on the target to fail.
+          example: VALUE_REQUIRED
+        message:
+          type: string
+          description: Description which tells the reason for the request to fail.
+          example: Mandatory request parameter assignmentId is missing

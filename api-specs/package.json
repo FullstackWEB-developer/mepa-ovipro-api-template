@@ -1,0 +1,17 @@
+{
+    "name": "ovipro-api-specs",
+    "version": "1.0.0",
+    "description": "API specs entity generation",
+    "main": "index.js",
+    "config": {
+        "file": "realty-api-v1.yaml"
+    },
+    "scripts": {
+        "build": "npx openapi-typescript $npm_package_config_file --output dist/api-schema.ts",
+        "build:out": "npx openapi-typescript $npm_package_config_file",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "devDependencies": {
+        "openapi-typescript": "^3.2.4"
+    }
+}

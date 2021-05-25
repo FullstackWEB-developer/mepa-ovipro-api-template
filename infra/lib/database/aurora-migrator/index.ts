@@ -1,20 +1,16 @@
 import * as cdk from '@aws-cdk/core';
 import * as lambda from '@aws-cdk/aws-lambda';
-import * as s3 from '@aws-cdk/aws-s3';
 import * as sm from '@aws-cdk/aws-secretsmanager';
+import * as cr from '@aws-cdk/custom-resources';
 import * as ec2 from '@aws-cdk/aws-ec2';
 import * as logs from '@aws-cdk/aws-logs';
-import * as rds from '@aws-cdk/aws-rds';
-import { Ec } from '@almamedia/cdk-accounts-and-environments';
 import { Name } from '@almamedia/cdk-tag-and-name';
 import { Duration } from '@aws-cdk/core';
 import { DefaultVpc } from '../../default-resources/shared/vpc';
 import { OviproEnvironmentSharedResource } from '../../utils/shared-resources/OviproEnvironmentSharedResource';
 import { SharedResourceType } from '../../utils/shared-resources/types';
 
-interface Props extends cdk.StackProps {
-    migrationsBucket: s3.Bucket;
-}
+const MIGRATION_SCRIPTS_PATH = '../db/java/src/main/resources';
 
 /**
  * This stack deploys Lambda DB tools for schema migration for the given Serverless cluster.
@@ -23,20 +19,14 @@ interface Props extends cdk.StackProps {
 export class AuroraMigratorStack extends cdk.Stack {
     public readonly handlers: lambda.IFunction[];
 
-    constructor(scope: cdk.Construct, id: string, props: Props) {
+    constructor(scope: cdk.Construct, id: string, props: cdk.StackProps) {
         super(scope, id, props);
 
-
         const sharedResource = new OviproEnvironmentSharedResource(this, 'SharedResource');
-        const clusterIdentifier = sharedResource.import(SharedResourceType.DATABASE_CLUSTER_IDENTIFIER);
         const rdsClusterSGId = sharedResource.import(SharedResourceType.DATABASE_SECURITY_GROUP_ID);
-        const database = rds.ServerlessCluster.fromServerlessClusterAttributes(this, 'DefaultServerlessCluster', {
-            clusterIdentifier,
-        });
-        const auroraSecurityGroup = ec2.SecurityGroup.fromSecurityGroupId(this, 'SG', rdsClusterSGId, {
-           mutable: false
-        });
-        let secretArn = sharedResource.import(SharedResourceType.DATABASE_READ_WRITE_SECRET_ARN);
+
+        const auroraSecurityGroup = ec2.SecurityGroup.fromSecurityGroupId(this, 'SG', rdsClusterSGId);
+        let secretArn = sharedResource.import(SharedResourceType.DATABASE_MIGRATOR_SECRET_ARN);
         if (secretArn.includes('dummy-value-for-'))
             secretArn = 'arn:aws:service:eu-central-1:123456789012:secret:entity-123456';
         const secret = sm.Secret.fromSecretCompleteArn(this, 'SharedDatabaseSecret', secretArn);
@@ -47,7 +37,7 @@ export class AuroraMigratorStack extends cdk.Stack {
         });
 
         auroraSecurityGroup.addIngressRule(
-            auroraSecurityGroup,
+            lambdaSecurityGroup,
             ec2.Port.tcp(5432),
             'From Lambda migrator to Aurora cluster',
             true,
@@ -56,27 +46,46 @@ export class AuroraMigratorStack extends cdk.Stack {
         const migrator = this.createHandler(
             props,
             'Migrator',
-            'fi.almamedia.ovipro.migrator.App::handleRequest',
-            auroraSecurityGroup,
+            lambda.Code.fromAsset('functions/database/aurora/migrator/target/ovi-pro-migrator-lambda-package.zip'),
+            'fi.almamedia.ovipro.commonenvironment.migrator.App::handleFileMigrationRequest',
+            lambdaSecurityGroup,
             vpc,
             secret,
         );
 
-        this.handlers = [migrator];
+        const invoker = new lambda.SingletonFunction(this, 'ResourceEventMigratorInvoker', {
+            uuid: 'd62d28ce-086e-47fa-b648-d8b02c9f0864',
+            handler: 'index.handler',
+            code: lambda.Code.fromAsset('dist/functions/resource-event-callback-invoker'),
+            runtime: lambda.Runtime.NODEJS_14_X,
+            memorySize: 512,
+            description: 'Custom resource ResourceEventMigratorInvoker that invokes Migrator on resource events',
+            functionName: Name.withProject(this, 'ResourceEventMigratorInvoker'),
+            timeout: cdk.Duration.seconds(10),
+            logRetention: logs.RetentionDays.ONE_MONTH,
+            environment: {
+                INIT_CHAIN: migrator.functionArn,
+            },
+        });
 
-        // Cleaner function is only included in select environments,
-        // since we don't want to encourage erasing live environments like prod.
-        if (Ec.isDevelopment(this)) {
-            const cleaner = this.createHandler(
-                props,
-                'Cleaner',
-                'fi.almamedia.ovipro.migrator.App::handleCleanupRequest',
-                auroraSecurityGroup,
-                vpc,
-                secret,
-            );
-            this.handlers.push(cleaner);
-        }
+        migrator.grantInvoke(invoker);
+
+        /**
+         * Creates CustomResource
+         */
+        const provider = new cr.Provider(this, 'DatabaseInitProvider', {
+            onEventHandler: invoker,
+            logRetention: logs.RetentionDays.ONE_DAY,
+        });
+
+        new cdk.CustomResource(this, 'DatabaseMigrationInvokerResource', {
+            serviceToken: provider.serviceToken,
+            properties: {
+                update: 'now',
+            },
+        });
+
+        this.handlers = [migrator];
     }
 
     /**
@@ -87,28 +96,34 @@ export class AuroraMigratorStack extends cdk.Stack {
      * @param lambdaSecurityGroup Security group for all lambdas in this stack.
      */
     private createHandler(
-        props: Props,
+        props: cdk.StackProps,
         id: string,
+        asset: lambda.Code,
         handler: string,
         lambdaSecurityGroup: ec2.ISecurityGroup,
         vpc: ec2.IVpc,
         auroraCredentialsSecret: sm.ISecret,
     ) {
-        const { migrationsBucket } = props;
+        const migrationScriptsLayer = new lambda.LayerVersion(this, `${id}MigrationScriptsLayer`, {
+            code: lambda.Code.fromAsset(MIGRATION_SCRIPTS_PATH),
+        });
 
         const fn = new lambda.Function(this, id, {
             functionName: Name.withProject(this, id),
             handler,
-            code: lambda.Code.fromAsset('functions/database/aurora/migrator/target/migrator-lambda-package.zip'),
+            code: asset,
             description: 'Database schema migration/cleaner utility: ' + Name.withProject(this, id),
             runtime: lambda.Runtime.JAVA_11,
             memorySize: 512,
             timeout: Duration.seconds(599),
+            layers: [migrationScriptsLayer],
             environment: {
                 POWERTOOLS_SERVICE_NAME: Name.withProject(this, id),
                 POWERTOOLS_METRICS_NAMESPACE: Name.withProject(this, handler),
-                BUCKET_NAME: migrationsBucket.bucketName,
+                BUCKET_NAME: '',
+                BUCKET_PATH: '',
                 SECRET_ARN: auroraCredentialsSecret.secretArn,
+                SCHEMAS: 'template',
             },
             // Enable X-ray
             tracing: lambda.Tracing.ACTIVE,
@@ -117,7 +132,6 @@ export class AuroraMigratorStack extends cdk.Stack {
             securityGroups: [lambdaSecurityGroup],
         });
 
-        migrationsBucket.grantRead(fn);
         auroraCredentialsSecret.grantRead(fn);
         return fn;
     }

@@ -1,0 +1,4 @@
+{
+    "errorCode": "TOO_MANY_REQUESTS",
+    "message": "The client has send too many requests in a given time. The next valid request time is specified by the Retry-After header."
+}

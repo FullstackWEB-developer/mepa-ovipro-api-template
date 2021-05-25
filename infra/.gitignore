@@ -19,3 +19,6 @@ dist
 !.*.js
 coverage/**
 test-report.xml
+
+/functions/**/generated/
+/:memory

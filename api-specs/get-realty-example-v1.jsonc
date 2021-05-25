@@ -1,0 +1,66 @@
+[
+  {
+    "realtyId": "63efcb60-c0e3-4744-8dc9-2bfb0c1b0309",
+    "realtyStatus": "DRAFT",
+    "images": [
+      {
+        // Aina originaalikuva, vai tarvitaanko jotain tiettyä versiota. Onko imageproxy asiakkaiden käytössä?
+        "url": "https://d3ls91xgksobn.cloudfront.net/1040x720,fit,q80/ovipro/images/realty/63efcb60-c0e3-4744-8dc9-2bfb0c1b0309/389475094358.jpeg",
+        "type": "MAIN"
+      }
+    ],
+    "address": {
+      "addressLine1": "Main Street 4 C 34",
+      "postcode": "33500",
+      "postalArea": "33500",
+      "localityName": "Tampere",
+      "regionName": "Tampere",
+      "countryCode": "FI"
+    },
+    "agencyId": "78c2a671-d132-49bd-a5a6-33a42256a10a",
+    "realtyType": "HOUSING_COMPANY_SHARE_REALTY",
+    "propertyType": "",
+    "propertySubtype": "",
+    "apartment": {
+      "roomCount": 4,
+      "roomStructure": "4h+k"
+    },
+    "sellingPrice": {
+      "amount": 0,
+      "currencyCode": "EUR"
+    },
+    "realtyNumber": "", // Onko tämä kohdenumero, alias friendlyId vai kiinteistötunnus
+    "agents": [
+      {
+        "businessUserId": "8ea419b8-9309-4e67-93f7-ca56ec44128a", // vai agentId
+        "firstName": "Viljami",
+        "lastName": "Välittäjä",
+        "image": "https://d3ls91xgksobn.cloudfront.net/1040x720,fit,q80/ovipro/images/agent/ac385461-7677-4f08-884b-202124a3aad3/9876324.jpeg",
+        "role": "RESPONSIBLE_AGENT"
+      },
+      {
+        "businessUserId": "8ea419b8-9309-4e67-93f7-ca56ec44128a", // vai agentId
+        "firstName": "Viljami",
+        "lastName": "Välittäjä",
+        "image": "https://d3ls91xgksobn.cloudfront.net/1040x720,fit,q80/ovipro/images/agent/ac385461-7677-4f08-884b-202124a3aad3/9876324.jpeg",
+        "role": "AGENT_FOR_ANNOUNCEMENT"
+      }
+    ],
+    "publicity": { // Onko tämä announcementin tieto?
+      "published": true,
+      "publishingTime": "2021-04-09T08:08:04.126Z"
+    },
+    "showings": [
+      {
+        "showingId": "ac385461-7677-4f08-884b-202124a3aad3",
+        "agent": {
+          "businessUserId": "8ea419b8-9309-4e67-93f7-ca56ec44128a",
+          "firstName": "Viljami",
+          "lastName": "Välittäjä",
+          "role": "SHOWING_AGENT"
+        },
+        "startTime": "2021-04-09T08:08:04.126Z"
+      }
+    ]
+  }
+]
