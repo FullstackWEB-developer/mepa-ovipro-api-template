@@ -17,7 +17,7 @@ jobs:
           SLACK_BOT_TOKEN: ${{ secrets.MEPA_ASUMINEN_OVIPRO_SLACK_NOTIFICATIONS_BOT_TOKEN }}
         uses: voxmedia/github-action-slack-notify-build@v1
         with:
-          channel: ${{ secrets.SLACK_CHANNEL }}
+          channel: ${{ secrets.MEPA_ASUMINEN_OVIPRO_DEPLOYMENTS_SLACK_CHANNEL }}
           status: STARTING
           color: warning    
       - uses: actions/checkout@v2
@@ -78,7 +78,7 @@ jobs:
         with:
           # Updates existing message from the first step
           message_id: ${{ steps.slack.outputs.message_id }}
-          channel: ${{ secrets.SLACK_CHANNEL }}
+          channel: ${{ secrets.MEPA_ASUMINEN_OVIPRO_DEPLOYMENTS_SLACK_CHANNEL }}
           status: SUCCESS
           color: good      
       - name: Notify slack failure
@@ -89,6 +89,6 @@ jobs:
         with:
           # Updates existing message from the first step
           message_id: ${{ steps.slack.outputs.message_id }}
-          channel: ${{ secrets.SLACK_CHANNEL }}
+          channel: ${{ secrets.MEPA_ASUMINEN_OVIPRO_DEPLOYMENTS_SLACK_CHANNEL }}
           status: FAILED
           color: danger
