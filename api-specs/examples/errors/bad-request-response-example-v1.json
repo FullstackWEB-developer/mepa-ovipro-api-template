@@ -1,0 +1,17 @@
+{
+    "errorCode": "BAD_REQUEST_PARAMETERS",
+    "message": "Invalid request parameters",
+    "description": "Request parameters are missing or have invalid type.",
+    "errors": [
+        {
+            "target": "assignmentId",
+            "errorCode": "VALUE_REQUIRED",
+            "message": "Mandatory request parameter assignmentId is missing"
+        },
+        {
+            "target": "authorId",
+            "errorCode": "INVALID_TYPE",
+            "message": "Request parameter authorId must be a string"
+        }        
+    ]
+}

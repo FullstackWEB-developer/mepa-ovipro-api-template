@@ -1,0 +1,825 @@
+{
+    "realtyId": "63efcb60-c0e3-4744-8dc9-2bfb0c1b0309",
+    "realtyStatusCode": "FOR_SALE",
+    "realtyNumber": "q12345", //Kohdenumero josta maallikot puhuu ja jota käytetään esimerkiksi myös Etuovi.comissa, Petri tarkistaa decicion logista vielä
+    "images": [
+        {
+            "id": "e2df50cf-e4fd-4921-b64e-16dc1364fd18",
+            "imageText": {
+                "en": "Livingroom."
+            },
+            "type": "",
+            "url": "https://d3ls91xgksobn.cloudfront.net/1040x720,fit,q80/ovipro/images/realty/63efcb60-c0e3-4744-8dc9-2bfb0c1b0309/e2df50cf-e4fd-4921-b64e-16dc1364fd18.jpeg"
+        }
+    ],
+    "agents": [
+        {
+            "businessUser": {
+                "businessUserId": "8ea419b8-9309-4e67-93f7-ca56ec44128a",
+                "firstName": "Viljami",
+                "lastName": "Välittäjä",
+                "image": "https://d3ls91xgksobn.cloudfront.net/1040x720,fit,q80/ovipro/images/agent/ac385461-7677-4f08-884b-202124a3aad3/9876324.jpeg"
+            },
+            "role": "RESPONSIBLE_AGENT",
+            "status": "ACTIVE"
+        },
+        {
+            "businessUser": {
+                "businessUserId": "8ea419b8-9309-4e67-93f7-ca56ec44128a",
+                "firstName": "Viljami",
+                "lastName": "Välittäjä",
+                "image": "https://d3ls91xgksobn.cloudfront.net/1040x720,fit,q80/ovipro/images/agent/ac385461-7677-4f08-884b-202124a3aad3/9876324.jpeg"
+            },
+            "role": "MARKETING_AGENT",
+            "status": "ACTIVE"
+        }
+    ],
+    "address": {
+        "addressLine1": "Main Street 4 C 34",
+        "postcode": "33500",
+        "postalArea": "33500",
+        "localityName": "Tampere",
+        "regionName": "Tampere",
+        "countryCode": "FI"
+    },
+    "agencyId": "78c2a671-d132-49bd-a5a6-33a42256a10a", // Onko tähän tarpeen nestata agencyn tietoja?
+    "category": "SALE", // Kategoria myynti / vuokra (/ osto)
+    "subcategory": "SHARE", // Osake vai kiinteistö?
+    "propertyType": "APARTMENT", // ????
+    "propertySubtype": "APARTMENTER", // ???
+    "newProperty": false, // Liisan jsonissa näin. Onko sama kuin newBuilding?
+    "newBuilding": true,
+    "ownershipType": "OWN",
+    "administrationType": "APARTMENT_HOUSING_COMPANY",
+    "administrationTypeDescription": {
+        "en": ""
+        }, // mikä tämä on?? Löytyi Realtyltä
+        "title": {
+            "en": "",
+            "fi": "",
+            "sv": ""
+        },
+        "apartment": {
+            "roomCount": 4,
+            "roomStructure": "4h+k",
+            "officialRoomStructure": "",
+            // Pitäisikö tämän olla juuressa, kuten kannan tietomallissa, eikä apartmentin alla?
+            // Pitäisikö groupata sauna, kellari, jne. -tieojen kanssa
+            "rooms": [
+                {
+                    "ceilingMaterialCode": "",
+                    "description": {
+                        "en": ""
+                    },
+                    "floorMaterialCode": "",
+                    "type": "",
+                    "wallMaterialCode": "",
+                    "features": [
+                        {
+                            "description": {
+                                "en": ""
+                            },
+                            "roomFeatureCode": ""
+                        }
+                    ]
+                }
+            ],
+            "refrigeratedCellarDescription": {
+                "en": ""
+            },
+            "boilerRoomDescription": {
+                "en": ""
+            },
+            "utilityServicesRoomDescription": {
+                "en": ""
+            },
+            "storageDescription": {
+                "en": ""
+            },
+            "livingQuartersDescription": {
+                "en": ""
+            },
+            "hasOwnSauna": true,
+            "area": {
+                "livingArea": 14, // Onko tämä sama kuin floorArea, vai pitäisikö sitä käyttää pelkästään ei-asuinkohteiden tapauksessa?
+                "otherSpaceArea": 12,
+                "totalArea": 16,
+                "areaBasis": "MANAGERS_CERTIFICATE",
+                "additionalAreaMeasurementInformation": {
+                    "en": "",
+                    "fi": "",
+                    "sv": ""
+                }
+            },
+            
+            "floor": {
+                "floorLevel": 2,
+                "floorLevelCode": "",
+                "floorCount": 2,
+                "floorCountCode": ""
+            },
+            
+            "heating": {
+                "hearth": "", // Onko väärin laittaa mukaan heating -groupiin
+                "hearthDescription": {
+                    "en": ""
+                },
+                "underFloorHeating": {
+                    "en": ""
+                },
+                "heatingDescription": {
+                    "en": ""
+                }
+            },
+            
+            "balcony": {
+                "hasBalcony": true,
+                "balconyType": "",
+                "balconyGlassMaintenanceResponsibility": "",
+                "balconyTypeDescription": {
+                    "en": ""
+                },
+                "balconyDescription": {
+                    "en": ""
+                },
+                "balconyCompassPoints": ""
+            },
+            
+            "terrace": {
+                "hasTerrace": true,
+                "terraceType": "",
+                "terraceGlassMaintenanceResponsibility": "",
+                "terraceTypeDescription": {
+                    "en": ""
+                },
+                "terraceDescription": {
+                    "en": ""
+                },
+                "terraceCompassPoints": ""
+            },
+            
+            "yard": {
+                "hasPrivateYard": true,
+                "yardBasisForPossession": "",
+                "yardBasisForPossessionDescription": {
+                    "en": ""
+                },
+                "yardDescription": {
+                    "en": ""
+                },
+                "patioDescription": {
+                    // yard group???
+                    "en": ""
+                }
+            },
+            
+            "thingsEffectingHousingComfort": {
+                "en": ""
+            },
+            "asbestos": {
+                // Onko typerä group?
+                "isAsbestosMappingDone": true,
+                "isAsbestosMappingReportAvailable": true,
+                "asbestosMappingDescription": {
+                    "en": ""
+                },
+                "constructionMaterialsMightHaveAsbestos": true
+            },
+            "inspectionsDescription": {
+                "en": ""
+            },
+            "renovationsDescription": {
+                "en": ""
+            },
+            "shareHolderInstallations": {
+                "en": ""
+            },
+            "modificationDocuments": {
+                "en": ""
+            },
+            "interiorMaterialDescription": {
+                "en": ""
+            },
+            "views": {
+                "en": ""
+            },
+            "isFitForWinterHabitation": true
+        },
+        
+        "price": {
+            "currencyCode": "EUR",
+            "debtFreePrice": 25000.0,
+            "debtShareAmount": 1000.0,
+            "sellingPrice": 24000.0,
+            "notifyPriceChanged": true
+        },
+        
+        "costs": [
+            {
+                "currencyCode": "EUR",
+                "amount": 50.0,
+                "description": {
+                    "en": "",
+                    "fi": "Vesimaksu ennakolla. Tasataan aina puolivuosittain.",
+                    "sv": ""
+                },
+                "type": "WATER",
+                "chargePeriod": "MONTH",
+                "subtype": "BY_USE_WITH_ADVANCE"
+            },
+            {
+                "currencyCode": "EUR",
+                "amount": 10.0,
+                "description": {
+                    "en": "",
+                    "fi": "Pirkanmaan jätehuollon taksojen mukaan riippuen tyhjennysvälistä.",
+                    "sv": ""
+                },
+                "type": "WASTE",
+                "chargePeriod": "MONTH"
+            }
+        ],
+        
+        "condition": "GOOD",
+        "conditionDescription": {
+            "en": "Very nice parking space. In the heart of Tampere.",
+            "fi": "Tosi hieno parkkipaikka aivan Tampereen keskustan ytimessä.",
+            "sv": "En riktigt trevlig parkeringsplats mitt i hjärtat av Tammerfors centrum."
+        },
+        
+        "nearbyAmenitiesDescription": {
+            "en": "In the heart of Tampere almost everything is close-by.",
+            "fi": "Tampereen keskustan ytimessä melkein kaikki palvelut aivan vieressä.",
+            "sv": "I hjärtat av Tammerfors centrum finns nästan alla tjänster alldeles intill."
+        },
+        "activitiesAndRecreationDescription": {
+            "en": "In the heart of Tampere almost anything is possible.",
+            "fi": "Tampereen keskustan ytimessä melkein kaikki on mahdollista.",
+            "sv": "I hjärtat av Tammerfors centrum är nästan allt möjligt."
+        },
+        "transportationServicesDescription": {
+            "en": "Located at the very heart of Tampere public transport hub.",
+            "fi": "Tampereen joukoliikenteen solmukohdassa.",
+            "sv": "Vid korsningen av kollektivtrafik i Tammerfors."
+        },
+        "drivingInstructions": {
+            "en": "First straight agead, then turn right.",
+            "fi": "Ensin suoraan, sitten käänny vasemmalle.",
+            "sv": "Först rakt, sedan sväng vänster."
+        },
+        
+        "additionalInformation": {
+            "en": ""
+        },
+        
+        "housingCompanyShare": { // Onko järkevä group vai pitäisikö siirtää kaikki juureen?
+            "parkingSpaceDescription": {
+                "en": ""
+            },
+            "parkingSpaces": [
+                {
+                    "type": "",
+                    "basisForPossession": "",
+                    "transfer": "",
+                    "basisForAllocation": {
+                        "en": ""
+                    }
+                }
+            ],
+        
+            "housingCompanyCharges": {
+                "currencyCode": "EUR",
+                "managementCharge": 25.0,
+                "financingCharge": 5.0,
+                "financingChargeIncludesOnlyInterest": true,
+                "financingChargeRepaymentStartDate": "2021-09-01",
+                "fullFinancingCharge": 105.0,
+                "plotRentCharge": 25.0,
+                "isPlotRedeemable": true,
+                "plotRedempionShare": 10000.0,
+                "specialCharges": 0.0,
+                "maintenanceCharge": 55.0,
+                "housingCompanyChargesDescription": {
+                    // Puuttui Liisan jsonista, mutta löytyy kannan tietomallista. Miksi on housing_company_share_realty -taulussa, eikä housing_company_charge -taulussa?
+                    "en": ""
+                },
+                "additionalInformationAboutCharges": {
+                    //lisäsin tuohon AboutCharges loppuun - ok??
+                    "en": "Charges most likely will be increasing during if major renovations are approved.",
+                    "fi": "Vastikkeet saattavat nousta mikäli isot remontit toteutuvat.",
+                    "sv": "Avgifterna kommer sannolikt att öka om större renoveringar godkänns."
+                }
+            },
+            
+            "limitsOfStorageUsage": {
+                "en": ""
+            },
+            "housingCompanyStorage": [
+                {
+                    "type": "",
+                    "basisForPossession": "",
+                    "transfer": "",
+                    "basisForAllocation": {
+                        "en": ""
+                    }
+                }
+            ],
+
+            "shareSeries": [
+                {
+                    "shareNumberStart": 0,
+                    "shareNumberEnd": 0,
+                    "shareCount": 0,
+                    "shareListTransferred": "",
+                    "electronicOwnerMarking": "",
+                    "apartmentCode": "",
+                    "shareDescription": {
+                        "en": ""
+                    },
+                    "shareDeed": true,
+                    "separatePledgeStatement": true,
+                    "shareDeedPledged": true,
+                    "pledgeHolder": {
+                        "en": ""
+                    },
+                    "deedsAmount": {
+                        "amount": 0,
+                        "currencyCode": "EUR"
+                    },
+                    "deedsSafeHolding": {
+                        "en": ""
+                    },
+                    "otherSpacePlegdeAndHoldingDescription": {
+                        "en": ""
+                    }
+                    // "currencyCode": "###public.&quot;CurrencyCode&quot;",
+                }
+            ],
+            "housingCompany": {
+                "id": "502f42ac-1f6c-4b35-b9ae-f90d2a375239",
+                "type": "",
+                "name": "",
+                "businessId": "",
+                "businessIdType": "",
+                "propertyIdentifier": "",
+                
+                "address": {
+                    "addressLine1": "Main Street 4",
+                    "postcode": "33500",
+                    "postalArea": "33500",
+                    "localityName": "Tampere",
+                    "regionName": "Tampere",
+                    "countryCode": "FI"
+                },
+                
+                "plot": {
+                    // Kiinteistöjen kanssa yhteinen elementti
+                    "holdingType": "",
+                    "holdingTypeDescription": {
+                        "en": ""
+                    },
+                    "isRedeemable": "varchar",
+                    "redemptionShare": {
+                        "amount": 0,
+                        "currencyCode": "EUR"
+                    },
+                    
+                    "identificationNumberOfLandCharge": "", // Mikä tämä on. pitäisikö olla lease -groupissa
+                    
+                    "lease": {
+                        "landlord": "",
+                        "yearlyRent": {
+                            "amount": 0,
+                            "currencyCode": "EUR"
+                        },
+                        "leaseEndDate": "2021-02-03",
+                        "optionalRentDescription": {
+                            "en": ""
+                        },
+                        "leaseRight": {
+                            "en": ""
+                        },
+                        "leaseRightTransferLimitation": true,
+                        "leaseRightTransferLimitationDescription": {
+                            "en": ""
+                        }
+                    },
+                    
+                    "areaInM2": 0,
+                    "areaDisplayUnit": "varchar",
+                    
+                    "zoningTypes": "",
+                    "zoningDescription": {
+                        "en": ""
+                    },
+                    
+                    "waterFront": {
+                        // vai beach, tai waterBody
+                        "beach": "",
+                        "beachType": "",
+                        "beachTypeDescription": {
+                            "en": ""
+                        },
+                        "waterBodyName": "",
+                        "beachDescription": {
+                            "en": ""
+                        }
+                    },
+                    
+                    "plotNumber": "",
+                    
+                    "legalConfirmationOfTitleToRealProperty": {
+                        "en": ""
+                    },
+                    
+                    "constructionRightAsEnumber": 0.01,
+                    "constructionRightAsFloorArea": 0,
+                    "constructionRightDescription": 0,
+                    "unbuiltPlot": true,
+                    
+                    "currencyCode": "###public.&quot;CurrencyCode&quot;"
+                },
+                
+                "hasRedemptionRight": true,
+                "redemptionRightTriggeredBy": "",
+                "redemptionRightConcernsAllShares": true,
+                "redemptionRightDescription": {
+                    "en": ""
+                },
+                
+                "otherRestrictionsForUseAndAssignment": {
+                    "en": ""
+                },
+                
+                "shareGroupId": "",
+                "managerContactDetails": "",
+                
+                "maintenanceTypes": "",
+                "maintenanceDescription": {
+                    "en": ""
+                },
+                
+                "constructionStartYear": 0,
+                "constructionEndYear": 0,
+                "developmentPhase": "",
+                "constructionAndUsageYearDescription": {
+                    "en": ""
+                },
+                "builder": "",
+                "usageStartYear": 0,
+                
+                "constructionMaterials": "",
+                "constructionMaterialsDescription": {
+                    "en": ""
+                },
+                
+                "outerRoof": {
+                    "outerRoofType": "",
+                    "outerRoofMaterial": "",
+                    "outerRoofMaterialOther": {
+                        "en": ""
+                    },
+                    "outerRootDescription": {
+                        "en": ""
+                    }
+                },
+                
+                "heatingSystems": "",
+                "heatingSystemOther": {
+                    "en": ""
+                },
+                "heatingDescription": {
+                    "en": ""
+                },
+                "heatDistributionSystems": "",
+                "heatDistributionSystemOther": {
+                    "en": ""
+                },
+                
+                "ventilationSystems": "",
+                "ventilationSystemsDescription": {
+                    "en": ""
+                },
+                
+                "hasSauna": true,
+                "hasElevator": true,
+                "elevatorTakesToApartment": true,
+                
+                "broadbandAvailable": "",
+                "fiberOpticInternet": "",
+                "housingCompanyBroadband": "",
+                "broadbandOperator": "",
+                "internalNetworkCabling": "",
+                "networkDescription": {
+                    "en": ""
+                },
+                
+                "tvTypes": "",
+                "tvDescription": {
+                    "en": ""
+                },
+                
+                "yardDescription": {
+                    "en": ""
+                },
+                
+                "lastAnnualGeneralMeetingDate": "2021-02-03",
+                "nextAnnualGeneralMeetingDate": "2021-02-03",
+                "houseManagerCertificateDate": "2021-02-03",
+                "otherInformation": {
+                    "en": ""
+                },
+                
+                "costIncurringLiabilities": {
+                    "en": ""
+                },
+                "repairsAndMaintenanceAgreements": "",
+                
+                "loanAmount": {
+                    "amount": 0,
+                    "currencyCode": "EUR"
+                },
+                "mortgageAmount": {
+                    "amount": 0,
+                    "currencyCode": "EUR"
+                },
+                "rentRevenue": {
+                    "amount": 0,
+                    "currencyCode": "EUR"
+                },
+                "bankAccountCreditLimit": {
+                    "amount": 0,
+                    "currencyCode": "EUR"
+                },
+                // "currencyCode": "###public.&quot;CurrencyCode&quot;",
+                
+                "energyCertificateType": "",
+                "energyCertificateDescription": {
+                    "en": ""
+                },
+                
+                "inspectionsDescription": {
+                    "en": ""
+                },
+                "inspections": [
+                    {
+                        "documentId": "416b1f66-0817-4d7d-815f-5b33a409778d",
+                        "type": "",
+                        "pvm": "2021-02-03",
+                        "description": {
+                            "en": ""
+                        }
+                    }
+                ],
+                
+                "identifiedDeficiencies": {
+                    "en": ""
+                },
+                "isAsbestosMappingDone": true,
+                "isAsbestosMappingReportAvailable": true,
+                "asbestosMappingDescription": {
+                    "en": ""
+                },
+                "constructionMaterialsMightHaveAsbestos": true,
+                
+                
+                "renovationsDescription": {
+                    "en": ""
+                },
+                "renovationsPlannedDescription": {
+                    "en": ""
+                },
+                "renovations": [
+                    // Yhteinen elementti realtyn kanssa
+                    {
+                        "description": {
+                            "en": ""
+                        },
+                        "status": "",
+                        "date": "",
+                        "isHousingCompanyNotified": "varchar",
+                        "type": {
+                            "code": "",
+                            "targetType": ""
+                        },
+                        "typeDescription": {
+                            "en": ""
+                        },
+                        "decidedByGeneralMeeting": ""
+                    }
+                ],
+                
+                "parkingSpaceDescription": {
+                    "en": ""
+                },
+                "parkingSpaces": [
+                    {
+                        "type": "",
+                        "count": 0
+                    }
+                ],
+                
+                "housingCompanyPremiseStatDescription": {
+                    "en": ""
+                },
+                "premiseStats": [
+                    {
+                        "permiseType": "",
+                        "count": 0,
+                        "areaInM2": 0,
+                        "managedByHousingCompanyCount": 0,
+                        "managedByHousingCompanyAreaInM2": 0
+                    }
+                ],
+                
+                "premisesDescription": {
+                    "en": ""
+                },
+                "premises": [
+                    {
+                        "code": "",
+                        "description": {
+                            "en": ""
+                        }
+                    }
+                ]
+            }
+        },
+        
+        "contacts": [
+            // There should be only one, but we use array for futureproofness
+            {
+                "contactTarget": "",
+                "emailAddress": "contact.email@nowhere.com",
+                "name": "Viljami Välittäjä",
+                "phoneNumber": "+35850123456789",
+                "profilePictureUrl": "https://d3ls91xgksobn.cloudfront.net/1040x720,fit,q80/ovipro/images/contact/6f0d0961-d170-4f32-8ed3-7f6096e865fe.jpeg"
+            }
+        ],
+        "realtyStorages": [
+            {
+                "type": "",
+                "basisForPossession": "",
+                "transfer": "",
+                "basisForAllocation": {
+                    "en": ""
+                },
+                "belongsToApartment": true
+            }
+        ],
+        "links": [
+            {
+                "linkText": {
+                    "en": ""
+                },
+                "type": "",
+                "url": ""
+            }
+        ],
+        "comments": [
+            {
+                "author": {
+                    "businessUserId": "8ea419b8-9309-4e67-93f7-ca56ec44128a",
+                    "firstName": "Viljami",
+                    "lastName": "Välittäjä"
+                },
+                "commentText": "",
+                "creationTime": "2021-04-20T12:18:51.599Z"
+            }
+        ],
+        "keyLogEntries": [
+            {
+                "businessUserId": {
+                    "businessUserId": "8ea419b8-9309-4e67-93f7-ca56ec44128a",
+                    "firstName": "Viljami",
+                    "lastName": "Välittäjä"
+                },
+                "endDate": "2021-02-03",
+                "startDate": "2021-02-03"
+            }
+        ],
+        "renovations": [
+            // Yhteinen elementti taloyhtiön kanssa
+            {
+                "description": {
+                    "en": ""
+                },
+                "status": "",
+                "date": "",
+                "isHousingCompanyNotified": "varchar",
+                "type": {
+                    "code": "",
+                    "targetType": ""
+                },
+                "typeDescription": {
+                    "en": ""
+                },
+                "decidedByGeneralMeeting": ""
+            }
+        ],
+        "inspections": [
+            {
+                "documentId": "8284f4ef-657e-495c-b35c-f7e41d14bdf9",
+                "type": "",
+                "date": "2021-02-03",
+                "description": {
+                    "en": ""
+                }
+            }
+        ],
+        "problems": [
+            {
+                "type": "",
+                "time": {
+                    "en": ""
+                },
+                "cause": {
+                    "en": ""
+                },
+                "scope": {
+                    "en": ""
+                },
+                "repairAndActionDescription": {
+                    "en": ""
+                },
+                "documentId": "c93c3624-8c41-41fd-9fd7-2793330f140d"
+            }
+        ],
+        "realtyDocuments": [
+            {
+                "documentId": "81891e73-0942-43e9-878a-922e0720b2dc",
+                "description": {
+                    "en": ""
+                },
+                "type": ""
+            }
+        ],
+        "explanatoryAppendix": {
+            "documentId": "67d80629-9b24-4f49-bcef-58a837775c83"
+            // Mitä muuta tähän, vai pitäisikö esittää objektin sijaan pelkkänä documentId:nä???
+            // "signed": true ???
+            // ...
+        },
+        "publicity": {
+            // Onko tämä announcementin tieto?
+            "public": true,
+            "publishingTime": "2021-04-09T08:08:04.126Z"
+        },
+        "showings": [
+            {
+                "showingId": "ac385461-7677-4f08-884b-202124a3aad3",
+                "agent": {
+                    "businessUser": {
+                        "businessUserId": "8ea419b8-9309-4e67-93f7-ca56ec44128a",
+                        "firstName": "Viljami",
+                        "lastName": "Välittäjä"
+                    },
+                    "role": "SHOWING_AGENT"
+                },
+                "startTime": "2021-04-09T08:08:04.126Z"
+            }
+        ],
+        
+        "availability": "DATE",
+        "availabilityDate": "2021-02-03",
+        "availabilityDescription": {
+            "en": "Space is available latest from the beginnning of June, but is negotiable.",
+            "fi": "Paikka vapautuu viimeistään kesäkuun alussa, mutta neuvoteltavissa.",
+            "sv": "Platsen kommer att lämnas senast i början av juni, men kan förhandlas."
+        },
+        "isRented": true,
+        
+        "description": {
+            "en": ""
+        },
+        "transactionDoesNotInclude": {
+            "en": ""
+        },
+        "transactionDescription": {
+            "en": ""
+        },
+        "otherSpecificProblemsDescription": {
+            "en": ""
+        },
+        "otherSpecificProblems": "",
+        "attachmentDescription": {
+            "en": ""
+        },
+        "costsDescription": {
+            "en": ""
+        },
+        "transactionIncludes": {
+            "en": ""
+        },
+        "keyData": {
+            "principalsKeyCount": 0,
+            "housingCompanyKeyCount": 0,
+            "keysAreOrderedFromPropertyManager": "",
+            "securityLockKeyCount": 0,
+            "keysWereGivenToAgencyAt": "2021-02-03",
+            "additionalInformation": {
+                "en": ""
+            }
+        }
+    }
+    

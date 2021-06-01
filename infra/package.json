@@ -14,7 +14,7 @@
     },
     "scripts": {
         "build": "npx tsc",
-        "build:all": "npm run clean && tsc && npm run build:application && tsc",
+        "build:all": "npm run clean && npm run build:lambda:api-model && tsc && npm run build:application && tsc",
         "watch": "node ./node_modules/typescript/bin/tsc -w",
         "lint:es": "eslint '*/**/*.{ts,tsx}' --max-warnings 0",
         "cdk": "npx cdk",
@@ -23,11 +23,13 @@
         "test:watch": "jest --watch",
         "clean": "npx rimraf '+(bin|lib|functions|__test__|utils)/**/+(*.d.ts|*.js)'",
         "build:application": "concurrently 'npm:build:lambda'",
-        "build:lambda": "concurrently 'npm:build:lambda:java' 'npm:build:lambda:ts'",
+        "build:lambda": "npm run build:lambda:api-model && concurrently 'npm:build:lambda:java' 'npm:build:lambda:ts'",
+        "build:lambda:api-model": "(npm list @openapitools/openapi-generator-cli --prefix ../api-specs || npm i --prefix ../api-specs) && npm run build:out --prefix ../api-specs -- -o ../infra/functions/api/generated/api-schema.ts",
         "build:lambda:java": "concurrently 'npm:build:lambda:java:*'",
-        "build:lambda:ts": "concurrently 'npm:build:lambda:ts:*'",
         "build:lambda:java:database:aurora:migrator": "./functions/database/aurora/migrator/build-with-docker.sh",
-        "build:lambda:ts:sample": "$npm_package_config_lambda_build_prefix/sample/index.ts $npm_package_config_lambda_build_suffix/sample"
+        "build:lambda:ts": "concurrently 'npm:build:lambda:ts:*'",
+        "build:lambda:ts:stack-lifecycle-event-callback-invoker": "$npm_package_config_lambda_build_prefix/resource-event-callback-invoker/index.ts $npm_package_config_lambda_build_suffix/resource-event-callback-invoker/index",
+        "build:lambda:ts:sample": "$npm_package_config_lambda_build_prefix/sample/api/handler/index.ts $npm_package_config_lambda_build_suffix/sample/api/handler"
     },
     "devDependencies": {
         "@almamedia/cdk-accounts-and-environments": "^0.5.0",
@@ -89,11 +91,12 @@
         "typescript": "^4.1.3"
     },
     "dependencies": {
-        "@dazn/lambda-powertools-middleware-correlation-ids": "^1.28.1",
         "@middy/core": "^2.2.0",
         "@middy/http-error-handler": "^2.2.0",
         "@middy/http-json-body-parser": "^2.2.0",
         "@middy/validator": "^2.2.0",
+        "@types/http-errors": "^1.8.0",
+        "@types/lodash": "^4.14.170",
         "@types/uuid": "^8.3.0",
         "aws-sdk": "^2.839.0",
         "aws-xray-sdk": "^3.2.0",
@@ -104,9 +107,9 @@
         "lambda-log": "^2.4.0",
         "lodash": "^4.17.21",
         "sqlite3": "^5.0.2",
-        "typeorm": "0.2.32",
-        "typeorm-aurora-data-api-driver": "2.1.0",
-        "typeorm-naming-strategies": "2.0.0",
+        "typeorm": "^0.2.32",
+        "typeorm-aurora-data-api-driver": "^2.1.0",
+        "typeorm-naming-strategies": "^2.0.0",
         "typescript-logging": "^1.0.0",
         "uuid": "^8.3.2"
     },

@@ -1,0 +1,4 @@
+{
+    "errorCode": "UNAUTHORIZED",
+    "message": "Authorization is missing or failed."
+}

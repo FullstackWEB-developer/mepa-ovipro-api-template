@@ -1,0 +1,15 @@
+{
+    "realtyId": "ddc25849-7bc7-43c0-9c3b-602cb03f7806",
+    "realtyStatusCode": "DRAFT",
+    "realty": { 
+        "realtyType": "PROPERTY_PLOT",
+        "agencyOfficeId": "212114ec-819e-483c-a8e0-f82289ac6e19"
+    },
+    "plot": {
+        "leaseEndData": "2022-12-31",
+        "annualRent": {
+            "amount": 13900,
+            "currencyCode": "EUR"
+        }
+    }
+}

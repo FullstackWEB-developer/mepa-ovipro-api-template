@@ -75,7 +75,23 @@ Currently Alma private packages are served from AWS Codeartifact. Access keys ca
 -   run `` export CODEARTIFACT_AUTH_TOKEN=`aws codeartifact get-authorization-token --domain almamedia --domain-owner 277005280161 --query authorizationToken --output text --profile YOUR_CREDENTIAL_OR_PROFILE_HERE`  ``
 -   run `npm i`
 
-3. NCC
+3. Java dependencies
+
+Add at least the following server with your personal Github username and token:
+
+```xml
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" xmlns:xsi="http://www.w3.org/ 2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 https://maven.apache.org/xsd/settings-1.0.0.xsd">
+  <servers>
+    <server>
+      <id>mepa-ovipro</id>
+      <username>GITHUB_USERNAME</username>
+      <password>GITHUB_PERSONAL_ACCESS_TOKEN</password>
+    </server>
+  </servers>
+</settings>
+```
+
+4. NCC
 
 Lambda has no native support for Typescript yet, so we currently use Vercel's NCC to compile Typescript lambdas. NCC must be installed globally.
 

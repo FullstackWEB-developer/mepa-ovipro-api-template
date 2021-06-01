@@ -31,5 +31,5 @@ docker run \
 	-w /var/task \
 	-v $PWD:/var/task \
   lambci/lambda:build-java11 \
-  mvn clean package --no-transfer-progress
+  echo $HOME && mvn clean package --no-transfer-progress
 exit 0

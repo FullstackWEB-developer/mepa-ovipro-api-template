@@ -28,8 +28,205 @@ Object {
       "Description": "S3 key for asset [HASH REMOVED]",
       "Type": "String",
     },
+    "AssetParameters-[HASH REMOVED]": Object {
+      "Description": "Artifact hash for asset [HASH REMOVED]",
+      "Type": "String",
+    },
+    "AssetParameters-[HASH REMOVED]": Object {
+      "Description": "S3 bucket for asset [HASH REMOVED]",
+      "Type": "String",
+    },
+    "AssetParameters-[HASH REMOVED]": Object {
+      "Description": "S3 key for asset [HASH REMOVED]",
+      "Type": "String",
+    },
+    "AssetParameters-[HASH REMOVED]": Object {
+      "Description": "Artifact hash for asset [HASH REMOVED]",
+      "Type": "String",
+    },
+    "AssetParameters-[HASH REMOVED]": Object {
+      "Description": "S3 bucket for asset [HASH REMOVED]",
+      "Type": "String",
+    },
+    "AssetParameters-[HASH REMOVED]": Object {
+      "Description": "S3 key for asset [HASH REMOVED]",
+      "Type": "String",
+    },
+    "AssetParameters-[HASH REMOVED]": Object {
+      "Description": "Artifact hash for asset [HASH REMOVED]",
+      "Type": "String",
+    },
+    "AssetParameters-[HASH REMOVED]": Object {
+      "Description": "S3 bucket for asset [HASH REMOVED]",
+      "Type": "String",
+    },
+    "AssetParameters-[HASH REMOVED]": Object {
+      "Description": "S3 key for asset [HASH REMOVED]",
+      "Type": "String",
+    },
   },
   "Resources": Object {
+    "DatabaseInitProviderframeworkonEvent6E7F5310": Object {
+      "DependsOn": Array [
+        "DatabaseInitProviderframeworkonEventServiceRoleDefaultPolicy97FAF5AD",
+        "DatabaseInitProviderframeworkonEventServiceRoleF7A116E5",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParameters-[HASH REMOVED]",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters-[HASH REMOVED]",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters-[HASH REMOVED]",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Description": "AWS CDK resource provider framework - onEvent (TestContextProvider/AuroraMigratorStack/DatabaseInitProvider)",
+        "Environment": Object {
+          "Variables": Object {
+            "USER_ON_EVENT_FUNCTION_ARN": Object {
+              "Fn::GetAtt": Array [
+                "SingletonLambdad62d28ce086e47fab648d8b02c9f0864A1618A99",
+                "Arn",
+              ],
+            },
+          },
+        },
+        "Handler": "framework.onEvent",
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "DatabaseInitProviderframeworkonEventServiceRoleF7A116E5",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs14.x",
+        "Timeout": 900,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "DatabaseInitProviderframeworkonEventLogRetentionD135DA91": Object {
+      "Properties": Object {
+        "LogGroupName": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "/aws/lambda/",
+              Object {
+                "Ref": "DatabaseInitProviderframeworkonEvent6E7F5310",
+              },
+            ],
+          ],
+        },
+        "RetentionInDays": 1,
+        "ServiceToken": Object {
+          "Fn::GetAtt": Array [
+            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::LogRetention",
+    },
+    "DatabaseInitProviderframeworkonEventServiceRoleDefaultPolicy97FAF5AD": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "SingletonLambdad62d28ce086e47fab648d8b02c9f0864A1618A99",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "DatabaseInitProviderframeworkonEventServiceRoleDefaultPolicy97FAF5AD",
+        "Roles": Array [
+          Object {
+            "Ref": "DatabaseInitProviderframeworkonEventServiceRoleF7A116E5",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "DatabaseInitProviderframeworkonEventServiceRoleF7A116E5": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "DatabaseMigrationInvokerResource": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "ServiceToken": Object {
+          "Fn::GetAtt": Array [
+            "DatabaseInitProviderframeworkonEvent6E7F5310",
+            "Arn",
+          ],
+        },
+        "update": "now",
+      },
+      "Type": "AWS::CloudFormation::CustomResource",
+      "UpdateReplacePolicy": "Delete",
+    },
     "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A": Object {
       "DependsOn": Array [
         "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB",
@@ -187,16 +384,21 @@ Object {
         "Description": "Database schema migration/cleaner utility: OviproMock1Migrator",
         "Environment": Object {
           "Variables": Object {
-            "BUCKET_NAME": Object {
-              "Fn::ImportValue": "Ovipro-Environment-Mock1-MigrationBucketStack:MigrationBucketStackExportsOutputRefOviproMock1OvipromockMock1migrationsD48EF7328136446F",
-            },
-            "POWERTOOLS_METRICS_NAMESPACE": "OviproMock1FiAlmamediaOviproMigratorAppHandleRequest",
+            "BUCKET_NAME": "",
+            "BUCKET_PATH": "",
+            "POWERTOOLS_METRICS_NAMESPACE": "OviproMock1FiAlmamediaOviproCommonenvironmentMigratorAppHandleFileMigrationRequest",
             "POWERTOOLS_SERVICE_NAME": "OviproMock1Migrator",
+            "SCHEMAS": "template",
             "SECRET_ARN": "arn:aws:service:eu-central-1:123456789012:secret:entity-123456",
           },
         },
         "FunctionName": "OviproMock1Migrator",
-        "Handler": "fi.almamedia.ovipro.migrator.App::handleRequest",
+        "Handler": "fi.almamedia.ovipro.commonenvironment.migrator.App::handleFileMigrationRequest",
+        "Layers": Array [
+          Object {
+            "Ref": "MigratorMigrationScriptsLayer59ED1B73",
+          },
+        ],
         "MemorySize": 512,
         "Role": Object {
           "Fn::GetAtt": Array [
@@ -211,7 +413,12 @@ Object {
         },
         "VpcConfig": Object {
           "SecurityGroupIds": Array [
-            "dummy-value-for-/Mock1/mock/shared-resources/DATABASE_SECURITY_GROUP_ID",
+            Object {
+              "Fn::GetAtt": Array [
+                "MigratorLambdaSecurityGroup4005CC4E",
+                "GroupId",
+              ],
+            },
           ],
           "SubnetIds": Array [
             "p-12345",
@@ -258,6 +465,49 @@ Object {
       },
       "Type": "Custom::LogRetention",
     },
+    "MigratorMigrationScriptsLayer59ED1B73": Object {
+      "Properties": Object {
+        "Content": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParameters-[HASH REMOVED]",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters-[HASH REMOVED]",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters-[HASH REMOVED]",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+      },
+      "Type": "AWS::Lambda::LayerVersion",
+    },
     "MigratorServiceRoleDefaultPolicy8BA0D813": Object {
       "Properties": Object {
         "PolicyDocument": Object {
@@ -269,30 +519,6 @@ Object {
               ],
               "Effect": "Allow",
               "Resource": "*",
-            },
-            Object {
-              "Action": Array [
-                "s3:GetObject*",
-                "s3:GetBucket*",
-                "s3:List*",
-              ],
-              "Effect": "Allow",
-              "Resource": Array [
-                Object {
-                  "Fn::ImportValue": "Ovipro-Environment-Mock1-MigrationBucketStack:MigrationBucketStackExportsOutputFnGetAttOviproMock1OvipromockMock1migrationsD48EF732Arn9D99CA52",
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::ImportValue": "Ovipro-Environment-Mock1-MigrationBucketStack:MigrationBucketStackExportsOutputFnGetAttOviproMock1OvipromockMock1migrationsD48EF732Arn9D99CA52",
-                      },
-                      "/*",
-                    ],
-                  ],
-                },
-              ],
             },
             Object {
               "Action": Array [
@@ -350,6 +576,171 @@ Object {
                   "Ref": "AWS::Partition",
                 },
                 ":iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "SGfromTestContextProviderAuroraMigratorStackMigratorLambdaSecurityGroupD9F9735D5432D45E5280": Object {
+      "Properties": Object {
+        "Description": "From Lambda migrator to Aurora cluster",
+        "FromPort": 5432,
+        "GroupId": "dummy-value-for-/Mock1/mock/shared-resources/DATABASE_SECURITY_GROUP_ID",
+        "IpProtocol": "tcp",
+        "SourceSecurityGroupId": Object {
+          "Fn::GetAtt": Array [
+            "MigratorLambdaSecurityGroup4005CC4E",
+            "GroupId",
+          ],
+        },
+        "ToPort": 5432,
+      },
+      "Type": "AWS::EC2::SecurityGroupIngress",
+    },
+    "SingletonLambdad62d28ce086e47fab648d8b02c9f0864A1618A99": Object {
+      "DependsOn": Array [
+        "SingletonLambdad62d28ce086e47fab648d8b02c9f0864ServiceRoleDefaultPolicyD2589DAA",
+        "SingletonLambdad62d28ce086e47fab648d8b02c9f0864ServiceRoleFEA8DA4F",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParameters-[HASH REMOVED]",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters-[HASH REMOVED]",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters-[HASH REMOVED]",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Description": "Custom resource ResourceEventMigratorInvoker that invokes Migrator on resource events",
+        "Environment": Object {
+          "Variables": Object {
+            "INIT_CHAIN": Object {
+              "Fn::GetAtt": Array [
+                "MigratorB44932C8",
+                "Arn",
+              ],
+            },
+          },
+        },
+        "FunctionName": "OviproMock1ResourceEventMigratorInvoker",
+        "Handler": "index.handler",
+        "MemorySize": 512,
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "SingletonLambdad62d28ce086e47fab648d8b02c9f0864ServiceRoleFEA8DA4F",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs14.x",
+        "Timeout": 10,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "SingletonLambdad62d28ce086e47fab648d8b02c9f0864LogRetention038B2AF2": Object {
+      "Properties": Object {
+        "LogGroupName": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "/aws/lambda/",
+              Object {
+                "Ref": "SingletonLambdad62d28ce086e47fab648d8b02c9f0864A1618A99",
+              },
+            ],
+          ],
+        },
+        "RetentionInDays": 30,
+        "ServiceToken": Object {
+          "Fn::GetAtt": Array [
+            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::LogRetention",
+    },
+    "SingletonLambdad62d28ce086e47fab648d8b02c9f0864ServiceRoleDefaultPolicyD2589DAA": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "MigratorB44932C8",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "SingletonLambdad62d28ce086e47fab648d8b02c9f0864ServiceRoleDefaultPolicyD2589DAA",
+        "Roles": Array [
+          Object {
+            "Ref": "SingletonLambdad62d28ce086e47fab648d8b02c9f0864ServiceRoleFEA8DA4F",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "SingletonLambdad62d28ce086e47fab648d8b02c9f0864ServiceRoleFEA8DA4F": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
               ],
             ],
           },

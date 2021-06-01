@@ -1,0 +1,136 @@
+{
+    "id": 0,
+    "addressId": 0,
+    "plotId": 0,
+    "hasRedemptionRight": true,
+    "redemptionRightTriggeredBy": "",
+    "redemptionRightConcernsAllShares": true,
+    "redemptionRightDescription": {
+      "en": ""
+    },
+    "otherRestrictionsForUseAndAssignment": {
+      "en": ""
+    },
+    "name": "",
+    "businessId": "",
+    "shareGroupId": "",
+    "managerContactDetails": "",
+    "maintenanceTypes": "",
+    "maintenanceDescription": {
+      "en": ""
+    },
+    "propertyIdentifier": "",
+    "constructionStartYear": 0,
+    "constructionEndYear": 0,
+    "developmentPhase": "",
+    "constructionAndUsageYearDescription": {
+      "en": ""
+    },
+    "builder": "",
+    "usageStartYear": 0,
+    "constructionMaterials": "",
+    "constructionMaterialsDescription": {
+      "en": ""
+    },
+    "outerRoofType": "",
+    "outerRoofMaterial": "",
+    "outerRootDescription": {
+      "en": ""
+    },
+    "heatingSystems": "",
+    "heatDistributionSystems": "",
+    "heatingDescription": {
+      "en": ""
+    },
+    "ventilationSystems": "",
+    "ventilationSystemsDescription": {
+      "en": ""
+    },
+    "hasSauna": true,
+    "hasElevator": true,
+    "elevatorTakesToApartment": true,
+    "premisesDescription": {
+      "en": ""
+    },
+    "yardDescription": {
+      "en": ""
+    },
+    "broadbandAvailable": "",
+    "fiberOpticInternet": "",
+    "housingCompanyBroadband": "",
+    "broadbandOperator": "",
+    "internalNetworkCabling": "",
+    "networkDescription": {
+      "en": ""
+    },
+    "tvTypes": "",
+    "tvDescription": {
+      "en": ""
+    },
+    "inspectionsDescription": {
+      "en": ""
+    },
+    "renovationsDescription": {
+      "en": ""
+    },
+    "renovationsPlannedDescription": {
+      "en": ""
+    },
+    "lastAnnualGeneralMeetingDate": "2021-02-03",
+    "nextAnnualGeneralMeetingDate": "2021-02-03",
+    "identifiedDeficiencies": {
+      "en": ""
+    },
+    "costIncurringLiabilities": {
+      "en": ""
+    },
+    "repairsAndMaintenanceAgreements": "",
+    "otherInformation": {
+      "en": ""
+    },
+    "houseManagerCertificateDate": "2021-02-03",
+    "loanAmount": {
+      "amount": 0,
+      "currencyCode": "EUR"
+    },
+    "mortgageAmount": {
+      "amount": 0,
+      "currencyCode": "EUR"
+    },
+    "rentRevenue": {
+      "amount": 0,
+      "currencyCode": "EUR"
+    },
+    "bankAccountCreditLimit": {
+      "amount": 0,
+      "currencyCode": "EUR"
+    },
+    "energyCertificateType": "",
+    "energyCertificateDescription": {
+      "en": ""
+    },
+    "type": "",
+    "isAsbestosMappingDone": true,
+    "isAsbestosMappingReportAvailable": true,
+    "asbestosMappingDescription": {
+      "en": ""
+    },
+    "constructionMaterialsMightHaveAsbestos": true,
+    "parkingSpaceDescription": {
+      "en": ""
+    },
+    "heatingSystemOther": {
+      "en": ""
+    },
+    "heatDistributionSystemOther": {
+      "en": ""
+    },
+    "housingCompanyPremiseStatDescription": {
+      "en": ""
+    },
+    "outerRoofMaterialOther": {
+      "en": ""
+    },
+    "currencyCode": "###public.&quot;CurrencyCode&quot;",
+    "businessIdType": ""
+  }
