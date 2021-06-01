@@ -10,6 +10,16 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
+      - name: Notify slack success
+        if: success()
+        id: slack # IMPORTANT: reference this step ID value in future Slack steps
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.MEPA_ASUMINEN_OVIPRO_SLACK_NOTIFICATIONS_BOT_TOKEN }}
+        uses: voxmedia/github-action-slack-notify-build@v1
+        with:
+          channel: ${{ secrets.MEPA_ASUMINEN_OVIPRO_DEPLOYMENTS_SLACK_CHANNEL }}
+          status: STARTING
+          color: warning
       - uses: actions/checkout@v2
       - name: set account to dev & environment to staging
         if: endsWith(github.ref, '/main')
@@ -93,3 +103,25 @@ jobs:
           aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY --profile deploy_profile
           aws configure set region eu-west-1 --profile deploy_profile
           npx cdk deploy --context account=${{ env.ACCOUNT }} --context environment=${{ env.ENVIRONMENT }} --profile deploy_profile --require-approval never --all
+      - name: Notify slack success
+        if: success()
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.MEPA_ASUMINEN_OVIPRO_SLACK_NOTIFICATIONS_BOT_TOKEN }}
+        uses: voxmedia/github-action-slack-notify-build@v1
+        with:
+          # Updates existing message from the first step
+          message_id: ${{ steps.slack.outputs.message_id }}
+          channel: ${{ secrets.MEPA_ASUMINEN_OVIPRO_DEPLOYMENTS_SLACK_CHANNEL }}
+          status: SUCCESS
+          color: good      
+      - name: Notify slack failure
+        if: failure()
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.MEPA_ASUMINEN_OVIPRO_SLACK_NOTIFICATIONS_BOT_TOKEN }}
+        uses: voxmedia/github-action-slack-notify-build@v1
+        with:
+          # Updates existing message from the first step
+          message_id: ${{ steps.slack.outputs.message_id }}
+          channel: ${{ secrets.MEPA_ASUMINEN_OVIPRO_DEPLOYMENTS_SLACK_CHANNEL }}
+          status: FAILED
+          color: danger
