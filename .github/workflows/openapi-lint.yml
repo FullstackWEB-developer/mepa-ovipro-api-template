@@ -41,3 +41,13 @@ jobs:
         VALIDATE_TSX: false
         VALIDATE_TYPESCRIPT_ES: false
         VALIDATE_TYPESCRIPT_STANDARD: false   
+    - name: S3 API-DOCS Copy
+      uses: tpaschalis/s3-cp-action@v0.2.0
+      with:
+          args: --acl public-read
+      env:
+        FILE: ./api-docs
+        AWS_REGION: 'eu-west-1'
+        AWS_S3_BUCKET: ${{ secrets.API_DOCUMENTATION_S3_BUCKET }}
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
