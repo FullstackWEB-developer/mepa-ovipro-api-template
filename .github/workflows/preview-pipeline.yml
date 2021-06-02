@@ -18,7 +18,7 @@ jobs:
         uses: voxmedia/github-action-slack-notify-build@v1
         with:
           channel: ${{ secrets.MEPA_ASUMINEN_OVIPRO_DEPLOYMENTS_SLACK_CHANNEL }}
-          status: STARTING
+          status: STARTED
           color: warning    
       - uses: actions/checkout@v2
       - name: set account to dev & environment to staging
@@ -112,7 +112,7 @@ jobs:
           # Updates existing message from the first step
           message_id: ${{ steps.slack.outputs.message_id }}
           channel: ${{ secrets.MEPA_ASUMINEN_OVIPRO_DEPLOYMENTS_SLACK_CHANNEL }}
-          status: SUCCESS
+          status: STARTED
           color: good      
       - name: Notify slack failure
         if: failure()
