@@ -12,7 +12,7 @@ export class ResourceRemovalPolicyTesterAspect implements cdk.IAspect {
     public visit(node: cdk.IConstruct): void {
         if (node instanceof s3.Bucket || node instanceof dynamodb.Table) {
             const cfn = node.node.defaultChild as cdk.CfnResource;
-            if (Ec.isStable(node)) {
+            if (node instanceof cdk.Construct && Ec.isStable(node)) {
                 if (
                     !cfn.cfnOptions.deletionPolicy ||
                     ![cdk.CfnDeletionPolicy.SNAPSHOT, cdk.CfnDeletionPolicy.RETAIN].includes(

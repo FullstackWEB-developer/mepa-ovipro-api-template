@@ -60,22 +60,42 @@ Use them when needed.
 
 ## Installation
 
-Make sure your node version is >14
+### Node & NPM
 
--   Consider using [n](https://github.com/tj/n) for version management
+Make sure you use latest LTS version for Node.
+Consider using [n](https://github.com/tj/n) for version management.
 
-1. CDK
+-   run `n lts` to install latest LTS
+
+NOTE (23.3.2021): npm 7.x is currently bugged with authenticating private NPM-registries.
+
+-   run `npm i -g npm@6` to downgrade
+
+### CDK
 
 Follow [AWS-docs](https://docs.aws.amazon.com/cdk/latest/guide/getting_started.html) for latest guide. Includes installing CDK and generating AWS-profiles.
 
-2. Node dependencies
+3. Node dependencies
 
-Currently Alma private packages are served from AWS Codeartifact. Access keys can be found on 1PW:s _Mepa Alma Codeartifact_-vault, which can then be used to download the artifacts. Temporary solution, packages will be served from github packages in the future.
+### Almamedia's private NPM packages
 
--   run `` export CODEARTIFACT_AUTH_TOKEN=`aws codeartifact get-authorization-token --domain almamedia --domain-owner 277005280161 --query authorizationToken --output text --profile YOUR_CREDENTIAL_OR_PROFILE_HERE`  ``
--   run `npm i`
+Some of the packages are in a different NPM-registry (Github Packages), and developers needs to be authenticated before installing:
 
-3. Java dependencies
+1. Create a new "personal access token" in Github
+    1. Settings -> Developer Settings -> Personal Access Tokens
+    2. Create a new token with `repo` and `read:packages` permissions
+    3. Save your new access token somewhere (will be shown only once)
+2. Run `npm login --scope @almamedia --registry https://npm.pkg.github.com`
+    - NOTE: Password is your new access token!
+3. Save your access token as an environment variable with key `GITHUB_ACCESS_TOKEN`
+
+    - Ex. `export GITHUB_ACCESS_TOKEN="your_ghp_token_here"`
+
+Now you should have access to Almamedia's private packages.
+
+If any problems occur regarding permissions, ask for help.
+
+### Java dependencies
 
 Add at least the following server with your personal Github username and token:
 
@@ -91,13 +111,27 @@ Add at least the following server with your personal Github username and token:
 </settings>
 ```
 
-4. NCC
-
-Lambda has no native support for Typescript yet, so we currently use Vercel's NCC to compile Typescript lambdas. NCC must be installed globally.
-
--   run `npm i -g @vercel/ncc`
-
 ## Running
+
+### CDK stacks
+
+Automatic compilation
+
+-   `npm run watch`
+
+#### Manual deployments to preview-environments
+
+Synthesize cdk stacks
+
+-   `npx cdk synth --context account=dev --context environment=preview/EXAMPLEJIRA123 --profile ovipro-dev`
+
+Compare deployed cdk stack to current state
+
+-   `npx cdk diff --context account=dev --context environment=preview/EXAMPLEJIRA123 --profile ovipro-dev STACK_TO_DIFF`
+
+Deploy stack to aws
+
+-   `npx cdk deploy --context account=dev --context environment=preview/EXAMPLEJIRA123 --profile ovipro-dev STACK_TO_DEPLOY`
 
 ### CDK stacks
 
