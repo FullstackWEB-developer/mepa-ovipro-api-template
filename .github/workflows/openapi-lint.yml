@@ -48,6 +48,6 @@ jobs:
       env:
         FILE: ./api-docs
         AWS_REGION: 'eu-west-1'
-        AWS_S3_BUCKET: ${{ secrets.API_DOCUMENTATION_S3_BUCKET }}
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_S3_BUCKET: 'apidocs.dev-ovipro.net'
+        AWS_ACCESS_KEY_ID: ${{ secrets.MEPA_ASUMINEN_OVIPRO_DOCUMENTATION_DEPLOYMENT_ACCESS_KEY }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.MEPA_ASUMINEN_OVIPRO_DOCUMENTATION_DEPLOYMENT_SECRET_ACCESS_KEY }}
