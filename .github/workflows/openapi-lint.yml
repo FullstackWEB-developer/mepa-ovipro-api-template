@@ -2,12 +2,9 @@ name: OpenApi lint
 
 on:
   push:
-    branches: 
-      - main
-      - "preview/**"
-      - development
-    paths:
-    - 'api-specs/**'
+    branches: ["feature/**", "preview/**"]
+  pull_request:
+    types: [assigned, opened, synchronize, reopened]
 
 jobs:
   # Any other API's are put as "job" to enable parallel prosessing
@@ -42,9 +39,9 @@ jobs:
         VALIDATE_TYPESCRIPT_ES: false
         VALIDATE_TYPESCRIPT_STANDARD: false   
     - name: S3 API-DOCS Copy
-      uses: tpaschalis/s3-cp-action@v0.2.0
+      uses: tpaschalis/s3-cp-action@v0.3.0
       with:
-          args: --acl public-read
+        args: --recursive
       env:
         FILE: ./api-docs
         AWS_REGION: 'eu-west-1'
