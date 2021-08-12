@@ -5,7 +5,7 @@ import 'reflect-metadata';
 import { validate } from 'uuid';
 import createError, { HttpError } from 'http-errors';
 import httpErrorHandler from '@middy/http-error-handler';
-import { factory, middyLogProxy } from '../utils/logging';
+import { factory, middyLogProxy, provideLogContext } from '../utils/logging';
 import { OfficeDAO } from '../dao/typeorm/OfficeDAO';
 import { components } from '../../../api/generated/api-schema';
 
@@ -43,11 +43,12 @@ export async function processRequest(event: APIGatewayEvent & Event, context: Co
         if (err instanceof HttpError) {
             throw err;
         }
-        throw createError(500);
+        throw new createError.InternalServerError();
     }
 }
 
-/* Sample handler with middy */
-export const handler = middy(processRequest as typeof processRequest)
-    .use(jsonBodyParser())
-    .use(httpErrorHandler({ logger: middyLogProxy(log) }));
+export const handler = provideLogContext(
+    middy(processRequest)
+        .use(jsonBodyParser())
+        .use(httpErrorHandler({ logger: middyLogProxy(log) })),
+);

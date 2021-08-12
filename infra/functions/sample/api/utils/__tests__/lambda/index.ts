@@ -28,7 +28,7 @@ function loadMockData(name: string, options: TestLambdaInputOutputOptions): Mock
     try {
         mockData = loadExpectation(paramCase(name), 'mocks', resolveExpectationsPath(options));
     } catch (e) {
-        console.warn(e);
+        console.debug(`No mock data defined for test '${name}'. ${e.message}`);
     }
     return mockData;
 }
