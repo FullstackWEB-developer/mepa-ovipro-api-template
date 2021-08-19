@@ -18,10 +18,13 @@ _Realty API provides infrastructure, data and implementation for all Realty API'
 | Name                                                                    | Description                                    |
 | ----------------------------------------------------------------------- | ---------------------------------------------- |
 | **OviPRO template repository**   | Template for quick starting a new repository                            |
-| [OviPRO account wide infrastructure](https://github.com/almamedia/mepa-ovipro-common)| Shared account wide resources for OviPRO AWS infrastructure |
-| [OviPRO shared infrastructure (environment)](https://github.com/almamedia/mepa-ovipro-common-environment)| Shared environment specific resources for OviPRO AWS infrastructure |
-| [OviPRO shared infrastructure (account)](https://github.com/almamedia/mepa-ovipro-common-account)| Shared account specific resources for OviPRO AWS infrastructure |
+| [Account infrastructure](https://github.com/almamedia/mepa-ovipro-common-account)|  Account specific resources  |
+| [Environment infrastructure ](https://github.com/almamedia/mepa-ovipro-common-environment)| Environment specific resources  |
 | [OviPRO core backend](https://github.com/almamedia/mepa-ovipro-core-backend)       | Core backend                          |
+| [Assignment API](https://github.com/almamedia/mepa-ovipro-assingment-backend)       | Assignment API                          |
+| [Statistics API](https://github.com/almamedia/mepa-ovipro-statistics-backend)       | Statistics API                  |
+| [Housing company API](https://github.com/almamedia/mepa-ovipro-housing-company-backend)       | Housing company API                         |
+| [Realty API](https://github.com/almamedia/mepa-ovipro-realty-backend)       | Realty API                         |
 
 <br/><br/>
 
