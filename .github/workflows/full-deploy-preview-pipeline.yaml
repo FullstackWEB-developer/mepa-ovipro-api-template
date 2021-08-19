@@ -1,15 +1,17 @@
-name: Main pipeline
+name: Deploy full environment
 on:
-  push:
+  create:
     branches:
-      - main
-    paths:
-      - "/infra"
+      - "preview/**"
+concurrency:
+  group: refs/heads/${{ github.event.ref }}
+  cancel-in-progress: true
 jobs:
-  build:
-    name: Build
+  deploy:
+    if: startsWith(github.event.ref, 'preview/')
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
       - name: Notify slack success
         if: success()
         id: slack # IMPORTANT: reference this step ID value in future Slack steps
@@ -20,19 +22,8 @@ jobs:
           channel: 'ovi_pro_pipeline_development_deployments'
           status: STARTED
           color: warning
-      - uses: actions/checkout@v2
-      - name: set account to dev & environment to staging
-        if: endsWith(github.ref, '/main')
-        run: |
-          echo "ENVIRONMENT=staging" >> $GITHUB_ENV
-          echo "ACCOUNT=dev" >> $GITHUB_ENV
-      - name: set account to dev & environment to development
-        if: endsWith(github.ref, '/development')
-        run: |
-          echo "ENVIRONMENT=development" >> $GITHUB_ENV
-          echo "ACCOUNT=dev" >> $GITHUB_ENV
-      - name: Set account to dev & environment to preview
-        if: startsWith(github.ref, 'refs/heads/preview/')
+      - name: Set account to dev & environment to preview (from branch)
+        if: startsWith(github.event.ref, 'preview/')
         run: |
           echo "ENVIRONMENT=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
           echo "ACCOUNT=dev" >> $GITHUB_ENV
@@ -55,6 +46,44 @@ jobs:
       - name: Run tests
         working-directory: ./infra
         run: npm run test
+      #############################
+      # Deploy common environment #
+      #############################
+      - name: Check if preview branch exists in common-environment
+        run: |
+          branch_status_code=$(curl -I https://api.github.com/repos/almamedia/mepa-ovipro-common-environment/branches/${{ github.event.ref }} -H "Authorization: Bearer ${{ secrets.MEPA_GH_ACTIONS_BOT_TOKEN }}" | grep HTTP/ | awk {'print $2'})
+          branch_exists=$(echo $(if [ "${branch_status_code}" = "200" ] ; then echo true; else echo false; fi))
+          echo "common-env branch exists: ${branch_exists}, status code: ${branch_status_code}"
+          echo "COMMON_ENVIRONMENT_PREVIEW_BRANCH_ALREADY_EXISTS=${branch_exists}" >> $GITHUB_ENV
+      - uses: convictional/trigger-workflow-and-wait@v1.3.0
+        if: env.COMMON_ENVIRONMENT_PREVIEW_BRANCH_ALREADY_EXISTS == 'false'
+        name: Deploy common-environment
+        with:
+          owner: almamedia
+          repo: mepa-ovipro-common-environment
+          github_token: ${{ secrets.MEPA_GH_ACTIONS_BOT_TOKEN }}
+          workflow_file_name: deploy-infra.yaml
+          inputs: '{ "environment_name": "${{ github.event.ref }}" }'
+
+      #######################
+      # Deploy core backend #
+      #######################
+      - name: Check if preview branch in core-backend
+        run: |
+          branch_status_code=$(curl -I https://api.github.com/repos/almamedia/mepa-ovipro-core-backend/branches/${{ github.event.ref }} -H "Authorization: Bearer ${{ secrets.MEPA_GH_ACTIONS_BOT_TOKEN }}" | grep HTTP/ | awk {'print $2'})
+          branch_exists=$(echo $(if [ "${branch_status_code}" = "200" ] ; then echo true; else echo false; fi))
+          echo "core-backend branch exists: ${branch_exists}, status code: ${branch_status_code}"
+          echo "CORE_BACKEND_DEPLOY_PREVIEW_BRANCH_ALREADY_EXISTS=${branch_exists}" >> $GITHUB_ENV
+      - uses: convictional/trigger-workflow-and-wait@v1.3.0
+        if: env.CORE_BACKEND_DEPLOY_PREVIEW_BRANCH_ALREADY_EXISTS == 'false'
+        name: Deploy core-backend
+        with:
+          owner: almamedia
+          repo: mepa-ovipro-core-backend
+          github_token: ${{ secrets.MEPA_GH_ACTIONS_BOT_TOKEN }}
+          workflow_file_name: deploy-infra.yaml
+          inputs: '{ "environment_name": "${{ github.event.ref }}" }'
+
       - name: deploy all stacks
         working-directory: ./infra
         env:

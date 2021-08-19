@@ -1,0 +1,77 @@
+name: Destroy environment infra
+on:
+  delete
+jobs:
+  delete:
+    runs-on: ubuntu-latest
+    if: startsWith(github.event.ref, 'preview/')
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set account to dev & environment to preview
+        if: startsWith(github.event.ref, 'preview/')
+        run: |
+          echo "ENVIRONMENT=${{ github.event.ref }}" >> $GITHUB_ENV
+          echo "ACCOUNT=dev" >> $GITHUB_ENV
+      - name: Get access for alma packages
+        run: echo "GITHUB_ACCESS_TOKEN=${{ secrets.MEPA_GH_ACTIONS_BOT_TOKEN }}" >> $GITHUB_ENV
+      - name: Set up Maven settings
+        uses: s4u/maven-settings-action@v2.3.0
+        with:
+          servers: |
+            [{
+                "id": "mepa-ovipro",
+                "username": "${{ secrets.MEPA_GH_ACTIONS_BOT_USERNAME }}",
+                "password": "${{ secrets.MEPA_GH_ACTIONS_BOT_TOKEN }}"
+            }]
+      - name: install deps
+        working-directory: ./infra
+        run: |
+          npm install --prefer-online
+          npm run build:all
+      - name: destroy all stacks
+        working-directory: ./infra
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.CDK_USER_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.CDK_USER_SECRET_ACCESS_KEY }}
+        run: |
+          aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID --profile deploy_profile
+          aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY --profile deploy_profile
+          aws configure set region eu-west-1 --profile deploy_profile
+          npx cdk destroy --context account=${{ env.ACCOUNT }} --context environment=${{ env.ENVIRONMENT }} --profile deploy_profile --require-approval never --all --force
+      ########################
+      # Destroy core backend #
+      ########################
+      - name: Check if preview branch in core-backend
+        run: |
+          branch_status_code=$(curl -I https://api.github.com/repos/almamedia/mepa-ovipro-core-backend/branches/${{ github.event.ref }} -H "Authorization: Bearer ${{ secrets.MEPA_GH_ACTIONS_BOT_TOKEN }}" | grep HTTP/ | awk {'print $2'})
+          branch_exists=$(echo $(if [ "${branch_status_code}" = "200" ] ; then echo true; else echo false; fi))
+          echo "core-backend branch exists: ${branch_exists}, status code: ${branch_status_code}"
+          echo "CORE_BACKEND_DEPLOY_PREVIEW_BRANCH_ALREADY_EXISTS=${branch_exists}" >> $GITHUB_ENV
+      - uses: convictional/trigger-workflow-and-wait@v1.3.0
+        if: env.CORE_BACKEND_DEPLOY_PREVIEW_BRANCH_ALREADY_EXISTS == 'false'
+        name: Destroy core-backend
+        with:
+          owner: almamedia
+          repo: mepa-ovipro-core-backend
+          github_token: ${{ secrets.MEPA_GH_ACTIONS_BOT_TOKEN }}
+          workflow_file_name: destroy-infra.yaml
+          inputs: '{ "environment_name": "${{ github.event.ref }}" }'
+      ##############################
+      # Destroy common environment #
+      ##############################
+      - name: Check if preview branch exists in common-environment
+        run: |
+          branch_status_code=$(curl -I https://api.github.com/repos/almamedia/mepa-ovipro-common-environment/branches/${{ github.event.ref }} -H "Authorization: Bearer ${{ secrets.MEPA_GH_ACTIONS_BOT_TOKEN }}" | grep HTTP/ | awk {'print $2'})
+          branch_exists=$(echo $(if [ "${branch_status_code}" = "200" ] ; then echo true; else echo false; fi))
+          echo "common-env branch exists: ${branch_exists}, status code: ${branch_status_code}"
+          echo "COMMON_ENVIRONMENT_PREVIEW_BRANCH_ALREADY_EXISTS=${branch_exists}" >> $GITHUB_ENV
+      - uses: convictional/trigger-workflow-and-wait@v1.3.0
+        if: env.COMMON_ENVIRONMENT_PREVIEW_BRANCH_ALREADY_EXISTS == 'false' && env.CORE_BACKEND_DEPLOY_PREVIEW_BRANCH_ALREADY_EXISTS == 'false'
+        name: Destroy common-environment
+        with:
+          owner: almamedia
+          repo: mepa-ovipro-common-environment
+          github_token: ${{ secrets.MEPA_GH_ACTIONS_BOT_TOKEN }}
+          workflow_file_name: destroy-infra.yaml
+          inputs: '{ "environment_name": "${{ github.event.ref }}" }'
+
