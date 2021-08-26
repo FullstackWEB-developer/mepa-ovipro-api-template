@@ -2,7 +2,7 @@ name: OpenApi lint
 
 on:
   push:
-    branches: ["feature/**", "preview/**"]
+    branches: ["main"]
   pull_request:
     types: [assigned, opened, synchronize, reopened]
 
@@ -18,7 +18,7 @@ jobs:
     - name: swagger-cli
       uses: vaibhav-jain/spectral-action/@v2.6
       with:
-        file_path: api-specs/*.yml  
+        file_path: api-specs/*.yml
     ################################
     # Run Linter against code base #
     ################################
@@ -37,14 +37,4 @@ jobs:
         VALIDATE_SQL: false
         VALIDATE_TSX: false
         VALIDATE_TYPESCRIPT_ES: false
-        VALIDATE_TYPESCRIPT_STANDARD: false   
-    - name: S3 API-DOCS Copy
-      uses: tpaschalis/s3-cp-action@v0.3.0
-      with:
-        args: --recursive
-      env:
-        FILE: ./api-docs
-        AWS_REGION: 'eu-west-1'
-        AWS_S3_BUCKET: 'apidocs.dev-ovipro.net'
-        AWS_ACCESS_KEY_ID: ${{ secrets.MEPA_ASUMINEN_OVIPRO_DOCUMENTATION_DEPLOYMENT_ACCESS_KEY }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.MEPA_ASUMINEN_OVIPRO_DOCUMENTATION_DEPLOYMENT_SECRET_ACCESS_KEY }}
+        VALIDATE_TYPESCRIPT_STANDARD: false
