@@ -17,23 +17,18 @@ jobs:
       with:
         file_path: api-specs/*.yml`
     ## Create index page from html files in s3 bucket
-    - name: Create index page
+    - name: Create index page & upload
       run: |
         chmod +x .github/workflows/scripts/create_docs_index_page.sh
         aws configure set aws_access_key_id ${{ secrets.MEPA_ASUMINEN_OVIPRO_DOCUMENTATION_DEPLOYMENT_ACCESS_KEY }} --profile deploy_profile
         aws configure set aws_secret_access_key ${{ secrets.MEPA_ASUMINEN_OVIPRO_DOCUMENTATION_DEPLOYMENT_SECRET_ACCESS_KEY }} --profile deploy_profile
         aws configure set region eu-west-1 --profile deploy_profile
 
+        aws s3 cp api-docs s3://apidocs.dev-ovipro.net/ --region eu-west-1 --recursive --exclude "*" --include "*.html" --profile deploy_profile
+
         aws s3 ls apidocs.dev-ovipro.net --recursive --profile deploy_profile | awk '{if($4~/\.html$/){print $4}}' > files.txt
 
         .github/workflows/scripts/create_docs_index_page.sh files.txt > api-docs/index.html
-    - name: S3 API-DOCS Copy
-      uses: tpaschalis/s3-cp-action@v0.3.0
-      with:
-        args: --recursive
-      env:
-        FILE: ./api-docs
-        AWS_REGION: 'eu-west-1'
-        AWS_S3_BUCKET: 'apidocs.dev-ovipro.net'
-        AWS_ACCESS_KEY_ID: ${{ secrets.MEPA_ASUMINEN_OVIPRO_DOCUMENTATION_DEPLOYMENT_ACCESS_KEY }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.MEPA_ASUMINEN_OVIPRO_DOCUMENTATION_DEPLOYMENT_SECRET_ACCESS_KEY }}
+
+        aws s3 cp api-docs s3://apidocs.dev-ovipro.net/ --region eu-west-1 --recursive --exclude "*" --include "index.html" --profile deploy_profile
+

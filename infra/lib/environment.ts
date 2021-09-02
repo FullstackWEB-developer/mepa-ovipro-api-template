@@ -16,11 +16,6 @@ export class Environment extends EnvironmentConstruct {
             ...Sc.defineProps(this, 'Aurora migrator Lambda'),
         });
 
-        new SampleStack(this, 'SampleStack', {
-            stackName: Name.stack(this, 'Alb'),
-            ...Sc.defineProps(this, 'Alb stack for OviPRO infrastructure'),
-        });
-
         // Tag all stacks with default tags
         Tag.defaults(this.node.children as cdk.Construct[]);
         // Tag all stacks with Mepa-tags
