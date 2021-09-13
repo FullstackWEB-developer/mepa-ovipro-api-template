@@ -1,0 +1,19 @@
+name: Tag creation workflow
+
+on:
+  create:
+    tags:
+      - 'v*'
+jobs:
+  create_tag:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      # Drafts your next Release notes as new v TAG (example v1.0.0) is created
+      - uses: release-drafter/release-drafter@v5.15.0
+        # (Optional) specify config name to use, relative to .github/. Default: release-drafter.yml
+        # with:
+        #   config-name: my-config.yml
+        #   disable-autolabeler: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
