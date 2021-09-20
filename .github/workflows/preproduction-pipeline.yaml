@@ -3,7 +3,7 @@ name: Preproduction pipeline
 on:
   release:
     types: [prereleased]
-    
+
 jobs:
   Preproduction_infra:
     runs-on: ubuntu-latest
@@ -24,7 +24,7 @@ jobs:
       - name: install deps & build
         working-directory: ./infra
         run: |
-          npm install --prefer-online
+          npm install
           npm run build:all
       - name: Run tests
         working-directory: ./infra
@@ -60,7 +60,7 @@ jobs:
     - name: install deps & build
       working-directory: ./infra
       run: |
-        npm install --prefer-online
+        npm install
         npm run build:all
     - name: deploy all stacks
       working-directory: ./infra

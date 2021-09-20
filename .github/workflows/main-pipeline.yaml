@@ -18,21 +18,16 @@ jobs:
           channel: 'ovi_pro_pipeline_development_deployments'
           status: STARTED
           color: warning
-      - uses: actions/checkout@v2
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+          cache: 'npm'
+          cache-dependency-path: './infra/package-lock.json'
       - name: set account to dev & environment to staging
         if: endsWith(github.ref, '/main')
         run: |
           echo "ENVIRONMENT=staging" >> $GITHUB_ENV
-          echo "ACCOUNT=dev" >> $GITHUB_ENV
-      - name: set account to dev & environment to development
-        if: endsWith(github.ref, '/development')
-        run: |
-          echo "ENVIRONMENT=development" >> $GITHUB_ENV
-          echo "ACCOUNT=dev" >> $GITHUB_ENV
-      - name: Set account to dev & environment to preview
-        if: startsWith(github.ref, 'refs/heads/preview/')
-        run: |
-          echo "ENVIRONMENT=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
           echo "ACCOUNT=dev" >> $GITHUB_ENV
       - name: Get access for alma packages
         run: echo "GITHUB_ACCESS_TOKEN=${{ secrets.MEPA_GH_ACTIONS_BOT_TOKEN }}" >> $GITHUB_ENV
@@ -48,11 +43,13 @@ jobs:
       - name: install deps & build
         working-directory: ./infra
         run: |
-          npm install --prefer-online
+          npm install
           npm run build:all
       - name: Run tests
         working-directory: ./infra
-        run: npm run test
+        run: |
+          npm run test
+          npm run it
       - name: deploy all stacks
         working-directory: ./infra
         env:

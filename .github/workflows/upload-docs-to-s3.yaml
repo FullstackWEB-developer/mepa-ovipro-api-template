@@ -3,7 +3,7 @@ name: OpenApi docs upload
 on:
   push:
     paths:
-      - 'api-specs/**'
+      - 'api-docs/**'
 
 jobs:
   upload-docs-to-s3:
@@ -12,10 +12,6 @@ jobs:
     if: github.ref == 'refs/heads/main'
     steps:
     - uses: actions/checkout@v2
-    - name: swagger-cli
-      uses: vaibhav-jain/spectral-action/@v2.6
-      with:
-        file_path: api-specs/*.yml`
     ## Create index page from html files in s3 bucket
     - name: Create index page & upload
       run: |

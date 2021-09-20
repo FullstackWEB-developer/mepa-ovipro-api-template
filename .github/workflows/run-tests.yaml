@@ -7,47 +7,37 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v2
-    - name: Setup NodeJS
-      uses: actions/setup-node@v1
+    - name: Setup Node.js
+      uses: actions/setup-node@v2
       with:
-        node-version: '14.x'
+        node-version: '14'
+        cache: 'npm'
+        cache-dependency-path: './infra/package-lock.json'
     - name: Extract branch name
       shell: bash
       run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
       id: extract_branch
     - name: Get access for alma packages
       run: echo "GITHUB_ACCESS_TOKEN=${{ secrets.MEPA_GH_ACTIONS_BOT_TOKEN }}" >> $GITHUB_ENV
+    - name: Set up Maven settings
+      uses: s4u/maven-settings-action@v2.3.0
+      with:
+        servers: |
+          [{
+              "id": "mepa-ovipro",
+              "username": "${{ secrets.MEPA_GH_ACTIONS_BOT_USERNAME }}",
+              "password": "${{ secrets.MEPA_GH_ACTIONS_BOT_TOKEN }}"
+          }]
     - name: Install deps & build
       working-directory: ./infra
       run: |
-        npm install --prefer-online
+        npm install
         npm run build:lambda:java
+        npm run build:lambda:api-model
     - name: Build lambdas
       working-directory: ./infra
       run: |
         npm run build:lambda:ts
-    ################################
-    # Run Linter against code base #
-    ################################
-    - name: Lint Code Base
-      uses: github/super-linter@v3
-      continue-on-error: true
-      env:
-        VALIDATE_ALL_CODEBASE: true
-        DEFAULT_BRANCH: main
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        VALIDATE_BASH: false
-        VALIDATE_BASH_EXEC: false
-        VALIDATE_DOCKERFILE: false
-        VALIDATE_DOCKERFILE_HADOLINT: false
-        VALIDATE_EDITORCONFIG: false
-        VALIDATE_JAVASCRIPT_STANDARD: false
-        VALIDATE_JSCPD: false
-        VALIDATE_MARKDOWN: false
-        VALIDATE_SHELL_SHFMT: false
-        VALIDATE_JAVASCRIPT_ES: false
-        VALIDATE_TYPESCRIPT_STANDARD: false
-        VALIDATE_TYPESCRIPT_ES: false
     - name: Run tests
       working-directory: ./infra
       run: npm run test

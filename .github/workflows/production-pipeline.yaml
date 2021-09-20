@@ -1,20 +1,20 @@
 name: Production pipeline
 
-on: 
+on:
   workflow_dispatch:
     inputs:
         version_tag:
           description: 'Version Tag'
           required: true
           default: '1.0.0'
-    
+
 jobs:
   Production_infra:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
         with:
-          ref: ${{ github.event.inputs.version_tag }}      
+          ref: ${{ github.event.inputs.version_tag }}
       - name: set account to production & environment to production
         run: |
           echo "ENVIRONMENT=production" >> $GITHUB_ENV
@@ -30,7 +30,7 @@ jobs:
       - name: install deps & build
         working-directory: ./infra
         run: |
-          npm install --prefer-online
+          npm install
           npm run build:all
       - name: Run tests
         working-directory: ./infra
@@ -52,7 +52,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
       with:
-        ref: ${{ github.event.inputs.version_tag }}    
+        ref: ${{ github.event.inputs.version_tag }}
     - name: set account to production & environment to production
       run: |
         echo "ENVIRONMENT=production" >> $GITHUB_ENV
@@ -68,7 +68,7 @@ jobs:
     - name: install deps & build
       working-directory: ./infra
       run: |
-        npm install --prefer-online
+        npm install
         npm run build:all
     - name: deploy all stacks
       working-directory: ./infra

@@ -10,6 +10,12 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+            node-version: '14'
+            cache: 'npm'
+            cache-dependency-path: './infra/package-lock.json'
       - name: Notify slack success
         if: success()
         id: slack # IMPORTANT: reference this step ID value in future Slack steps
@@ -40,7 +46,7 @@ jobs:
       - name: install deps & build
         working-directory: ./infra
         run: |
-          npm install --prefer-online
+          npm install
           npm run build:all
       - name: Run tests
         working-directory: ./infra
