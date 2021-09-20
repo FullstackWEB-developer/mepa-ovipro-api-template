@@ -4,7 +4,6 @@ import { Tag, Name } from '@almamedia/cdk-tag-and-name';
 import { addMepaTags } from './utils/tags';
 import { AuroraMigratorStack } from './database/aurora-migrator';
 import { ResourceRemovalPolicyTesterAspect } from './utils/policy-aspect/ResourceRemovalPolicyTesterAspect';
-import { SampleStack } from './sample-stack';
 
 export class Environment extends EnvironmentConstruct {
     /**Defines environmental CDK Stacks. */
