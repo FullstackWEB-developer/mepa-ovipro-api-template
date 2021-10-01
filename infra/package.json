@@ -19,7 +19,7 @@
         "test:watch": "jest --watch",
         "clean": "npx rimraf '+(bin|lib|functions|__test__|utils)/**/+(*.d.ts|*.js)'",
         "build:application": "concurrently 'npm:build:lambda'",
-        "build:lambda": "npm run build:lambda:api-model && concurrently 'npm:build:lambda:java' 'npm:build:lambda:ts'",
+        "build:lambda": "npm run build:lambda:api-model && concurrently 'npm:build:lambda:java'",
         "build:lambda:api-model": "(npm list @openapitools/openapi-generator-cli --prefix ../api-specs || npm i --prefix ../api-specs) && npm run build:out --prefix ../api-specs -- -o ../infra/functions/api/generated/api-schema.ts",
         "build:lambda:java": "concurrently 'npm:build:lambda:java:*'",
         "build:lambda:java:database:aurora:migrator": "./functions/database/aurora/migrator/build-with-docker.sh"
