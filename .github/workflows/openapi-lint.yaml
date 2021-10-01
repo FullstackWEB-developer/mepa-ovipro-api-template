@@ -8,7 +8,7 @@ on:
 
 jobs:
   # Any other API's are put as "job" to enable parallel prosessing
-  agency-api-v1:
+  api_name-v1:
     runs-on: ubuntu-latest
 
     steps:
