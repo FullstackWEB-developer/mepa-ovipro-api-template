@@ -34,10 +34,6 @@ jobs:
         npm install
         npm run build:lambda:java
         npm run build:lambda:api-model
-    - name: Build lambdas
-      working-directory: ./infra
-      run: |
-        npm run build:lambda:ts
     - name: Run tests
       working-directory: ./infra
       run: npm run test
