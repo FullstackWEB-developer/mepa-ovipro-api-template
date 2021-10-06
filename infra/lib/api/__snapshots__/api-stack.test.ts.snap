@@ -1,0 +1,1491 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`api-stack 1`] = `
+Object {
+  "Description": "Mock1 Environment: API lambdas for the sample API",
+  "Outputs": Object {
+    "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiEndpoint7EDA89CE": Object {
+      "Value": Object {
+        "Fn::Join": Array [
+          "",
+          Array [
+            "https://",
+            Object {
+              "Ref": "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiFF1A4C9E",
+            },
+            ".execute-api.eu-west-1.",
+            Object {
+              "Ref": "AWS::URLSuffix",
+            },
+            "/",
+            Object {
+              "Ref": "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiDeploymentStagev119A09E0B",
+            },
+            "/",
+          ],
+        ],
+      },
+    },
+  },
+  "Parameters": Object {
+    "AssetParameters-[HASH REMOVED]": Object {
+      "Description": "Artifact hash for asset [HASH REMOVED]",
+      "Type": "String",
+    },
+    "AssetParameters-[HASH REMOVED]": Object {
+      "Description": "S3 bucket for asset [HASH REMOVED]",
+      "Type": "String",
+    },
+    "AssetParameters-[HASH REMOVED]": Object {
+      "Description": "S3 key for asset [HASH REMOVED]",
+      "Type": "String",
+    },
+    "AssetParameters-[HASH REMOVED]": Object {
+      "Description": "Artifact hash for asset [HASH REMOVED]",
+      "Type": "String",
+    },
+    "AssetParameters-[HASH REMOVED]": Object {
+      "Description": "S3 bucket for asset [HASH REMOVED]",
+      "Type": "String",
+    },
+    "AssetParameters-[HASH REMOVED]": Object {
+      "Description": "S3 key for asset [HASH REMOVED]",
+      "Type": "String",
+    },
+  },
+  "Resources": Object {
+    "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A": Object {
+      "DependsOn": Array [
+        "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB",
+        "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParameters-[HASH REMOVED]",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters-[HASH REMOVED]",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters-[HASH REMOVED]",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Handler": "index.handler",
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs14.x",
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "logs:PutRetentionPolicy",
+                "logs:DeleteRetentionPolicy",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB",
+        "Roles": Array [
+          Object {
+            "Ref": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "SampleApiSampleApiV1AuthorizerLambdaInvokeServicePrincipalapigatewayamazonawscom16EB2E34": Object {
+      "Properties": Object {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": "dummy-value-for-/Mock1/mock/shared-resources/LAMBDA_AUTHORIZER_ARN",
+        "Principal": "apigateway.amazonaws.com",
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "SampleApiSampleApiV1OviproMock1SampleApiV11ApiApigwMapping7A567E64": Object {
+      "Properties": Object {
+        "ApiId": Object {
+          "Ref": "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiFF1A4C9E",
+        },
+        "ApiMappingKey": "sample/v1",
+        "DomainName": "api-mock1.dummy-value-for-/mock/top_level_hosted_zone_name",
+        "Stage": Object {
+          "Ref": "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiDeploymentStagev119A09E0B",
+        },
+      },
+      "Type": "AWS::ApiGatewayV2::ApiMapping",
+    },
+    "SampleApiSampleApiV1OviproMock1SampleApiV11FrontendApigwMapping74546B22": Object {
+      "DependsOn": Array [
+        "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiAccessDeniedEFD5061B",
+        "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiAccount4B59CB81",
+        "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiBadRequestBody61E91666",
+        "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiBadRequestParameters63B13E5F",
+        "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiCloudWatchRole58216494",
+        "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiDefault4XX490A62C1",
+        "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiDefault5XX6F2901DB",
+        "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiDeployment71E2C269d469e14e470a2d1a7de919f1a61412c6",
+        "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiDeploymentStagev119A09E0B",
+        "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiExpiredTokenE6110584",
+        "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiInvalidApiKeyDAF804F2",
+        "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiInvalidSignatureD21B1ED6",
+        "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiMissingAuthenticationTokenFDF4FF6F",
+        "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiFF1A4C9E",
+        "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiResourceNotFoundB5967FB3",
+        "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiThrottledEBEB252D",
+        "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiUnauthorizedFCEBB92D",
+      ],
+      "Properties": Object {
+        "ApiId": Object {
+          "Ref": "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiFF1A4C9E",
+        },
+        "ApiMappingKey": "sample/v1",
+        "DomainName": "www-mock1.dummy-value-for-/mock/top_level_hosted_zone_name",
+        "Stage": Object {
+          "Ref": "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiDeploymentStagev119A09E0B",
+        },
+      },
+      "Type": "AWS::ApiGatewayV2::ApiMapping",
+    },
+    "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiAccessDeniedEFD5061B": Object {
+      "Properties": Object {
+        "ResponseParameters": Object {},
+        "ResponseTemplates": Object {
+          "application/json": "{\\"errorCode\\":\\"$context.error.responseType\\",\\"message\\":\\"$context.error.message\\"}",
+        },
+        "ResponseType": "ACCESS_DENIED",
+        "RestApiId": Object {
+          "Ref": "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiFF1A4C9E",
+        },
+        "StatusCode": "404",
+      },
+      "Type": "AWS::ApiGateway::GatewayResponse",
+    },
+    "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiAccount4B59CB81": Object {
+      "DependsOn": Array [
+        "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiFF1A4C9E",
+      ],
+      "Properties": Object {
+        "CloudWatchRoleArn": Object {
+          "Fn::GetAtt": Array [
+            "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiCloudWatchRole58216494",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::ApiGateway::Account",
+    },
+    "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiBadRequestBody61E91666": Object {
+      "Properties": Object {
+        "ResponseTemplates": Object {
+          "application/json": "{\\"errorCode\\":\\"$context.error.responseType\\",\\"message\\":\\"$context.error.message\\",\\"description\\":\\"$context.error.validationErrorString\\"}",
+        },
+        "ResponseType": "BAD_REQUEST_BODY",
+        "RestApiId": Object {
+          "Ref": "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiFF1A4C9E",
+        },
+      },
+      "Type": "AWS::ApiGateway::GatewayResponse",
+    },
+    "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiBadRequestParameters63B13E5F": Object {
+      "Properties": Object {
+        "ResponseParameters": Object {},
+        "ResponseTemplates": Object {
+          "application/json": "{\\"errorCode\\":\\"$context.error.responseType\\",\\"message\\":\\"$context.error.message\\",\\"details\\":[{\\"target\\":\\"$context.error.validationErrorString\\",\\"errorCode\\":\\"$context.error.responseType\\",\\"message\\":\\"$context.error.message\\"}]}",
+        },
+        "ResponseType": "BAD_REQUEST_PARAMETERS",
+        "RestApiId": Object {
+          "Ref": "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiFF1A4C9E",
+        },
+      },
+      "Type": "AWS::ApiGateway::GatewayResponse",
+    },
+    "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiCloudWatchRole58216494": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "apigateway.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiDefault4XX490A62C1": Object {
+      "Properties": Object {
+        "ResponseParameters": Object {},
+        "ResponseTemplates": Object {
+          "application/json": "{\\"errorCode\\":\\"$context.error.responseType\\",\\"message\\":\\"$context.error.message\\"}",
+        },
+        "ResponseType": "DEFAULT_4XX",
+        "RestApiId": Object {
+          "Ref": "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiFF1A4C9E",
+        },
+      },
+      "Type": "AWS::ApiGateway::GatewayResponse",
+    },
+    "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiDefault5XX6F2901DB": Object {
+      "Properties": Object {
+        "ResponseParameters": Object {},
+        "ResponseTemplates": Object {
+          "application/json": "{\\"errorCode\\":\\"$context.error.responseType\\",\\"message\\":\\"$context.error.message\\"}",
+        },
+        "ResponseType": "DEFAULT_5XX",
+        "RestApiId": Object {
+          "Ref": "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiFF1A4C9E",
+        },
+      },
+      "Type": "AWS::ApiGateway::GatewayResponse",
+    },
+    "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiDeployment71E2C269d469e14e470a2d1a7de919f1a61412c6": Object {
+      "DependsOn": Array [
+        "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiAccessDeniedEFD5061B",
+        "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiBadRequestBody61E91666",
+        "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiBadRequestParameters63B13E5F",
+        "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiDefault4XX490A62C1",
+        "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiDefault5XX6F2901DB",
+        "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiExpiredTokenE6110584",
+        "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiInvalidApiKeyDAF804F2",
+        "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiInvalidSignatureD21B1ED6",
+        "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiMissingAuthenticationTokenFDF4FF6F",
+        "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiResourceNotFoundB5967FB3",
+        "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiThrottledEBEB252D",
+        "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiUnauthorizedFCEBB92D",
+      ],
+      "Properties": Object {
+        "Description": "Automatically created by the RestApi construct",
+        "RestApiId": Object {
+          "Ref": "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiFF1A4C9E",
+        },
+      },
+      "Type": "AWS::ApiGateway::Deployment",
+    },
+    "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiDeploymentStagev119A09E0B": Object {
+      "Properties": Object {
+        "DeploymentId": Object {
+          "Ref": "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiDeployment71E2C269d469e14e470a2d1a7de919f1a61412c6",
+        },
+        "RestApiId": Object {
+          "Ref": "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiFF1A4C9E",
+        },
+        "StageName": "v1",
+        "TracingEnabled": true,
+      },
+      "Type": "AWS::ApiGateway::Stage",
+    },
+    "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiExpiredTokenE6110584": Object {
+      "Properties": Object {
+        "ResponseParameters": Object {},
+        "ResponseTemplates": Object {
+          "application/json": "{\\"errorCode\\":\\"$context.error.responseType\\",\\"message\\":\\"$context.error.message\\"}",
+        },
+        "ResponseType": "EXPIRED_TOKEN",
+        "RestApiId": Object {
+          "Ref": "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiFF1A4C9E",
+        },
+      },
+      "Type": "AWS::ApiGateway::GatewayResponse",
+    },
+    "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiFF1A4C9E": Object {
+      "Properties": Object {
+        "Body": Object {
+          "components": Object {
+            "parameters": Object {
+              "Realty-ID": Object {
+                "description": "Unique realty identifier in UUID format.",
+                "example": "ddc25849-7bc7-43c0-9c3b-602cb03f7806",
+                "in": "path",
+                "name": "realtyId",
+                "required": true,
+                "schema": Object {
+                  "format": "uuid",
+                  "type": "string",
+                },
+              },
+              "Request-ID": Object {
+                "description": "A unique id which identifies the HTTP request. The value of this header must be created by the client. This identifier is used for troubleshooting purposes.",
+                "example": "9031d1c5-7d40-41dd-b2b8-7919a2fc4fe9",
+                "in": "header",
+                "name": "Request-ID",
+                "required": true,
+                "schema": Object {
+                  "format": "uuid",
+                  "type": "string",
+                },
+              },
+              "Response-Request-ID": Object {
+                "description": "A unique id which identifies the HTTP request. The value of this header must be created by the client. This identifier is used for troubleshooting purposes.",
+                "example": "9031d1c5-7d40-41dd-b2b8-7919a2fc4fe9",
+                "in": "header",
+                "name": "Request-ID",
+                "required": true,
+                "schema": Object {
+                  "format": "uuid",
+                  "type": "string",
+                },
+              },
+            },
+            "responses": Object {
+              "BadRequest": Object {
+                "content": Object {
+                  "application/json": Object {
+                    "example": Object {
+                      "$ref": "./examples/errors/bad-request-response-example-v1.json",
+                    },
+                    "schema": Object {
+                      "$ref": "#/components/schemas/ErrorResponse",
+                    },
+                  },
+                },
+                "description": "Bad request. The server cannot or will not process the request due to invalid request syntax or content.",
+                "headers": Object {
+                  "Request-ID": Object {
+                    "$ref": "#/components/parameters/Response-Request-ID",
+                  },
+                },
+              },
+              "InternalError": Object {
+                "content": Object {
+                  "application/json": Object {
+                    "example": Object {
+                      "$ref": "./examples/errors/internal-server-error-response-example-v1.json",
+                    },
+                    "schema": Object {
+                      "$ref": "#/components/schemas/ErrorResponse",
+                    },
+                  },
+                },
+                "description": "Technical error. Unexpected technical error.",
+                "headers": Object {
+                  "Request-ID": Object {
+                    "$ref": "#/components/parameters/Response-Request-ID",
+                  },
+                },
+              },
+              "NotFound": Object {
+                "content": Object {
+                  "application/json": Object {
+                    "example": Object {
+                      "$ref": "./examples/errors/not-found-error-response-example-v1.json",
+                    },
+                    "schema": Object {
+                      "$ref": "#/components/schemas/ErrorResponse",
+                    },
+                  },
+                },
+                "description": "Not found. The requested resource could not be found.",
+                "headers": Object {
+                  "Request-ID": Object {
+                    "$ref": "#/components/parameters/Response-Request-ID",
+                  },
+                },
+              },
+              "TooManyRequests": Object {
+                "content": Object {
+                  "application/json": Object {
+                    "example": Object {
+                      "$ref": "./examples/errors/too-many-requests-response-example-v1.json",
+                    },
+                    "schema": Object {
+                      "$ref": "#/components/schemas/ErrorResponse",
+                    },
+                  },
+                },
+                "description": "Too many requests. The rate limit for the caller has been exceeded.",
+                "headers": Object {
+                  "Request-ID": Object {
+                    "$ref": "#/components/parameters/Response-Request-ID",
+                  },
+                },
+              },
+              "Unauthorized": Object {
+                "content": Object {
+                  "application/json": Object {
+                    "example": Object {
+                      "$ref": "./examples/errors/unauthorized-response-example-v1.json",
+                    },
+                    "schema": Object {
+                      "$ref": "#/components/schemas/ErrorResponse",
+                    },
+                  },
+                },
+                "description": "Unauthorized. Authentication is required and has failed or has not yet been provided.",
+                "headers": Object {
+                  "Request-ID": Object {
+                    "$ref": "#/components/parameters/Response-Request-ID",
+                  },
+                },
+              },
+              "UnsupportedMediaType": Object {
+                "content": Object {
+                  "application/json": Object {
+                    "example": Object {
+                      "$ref": "./examples/errors/unsupported-media-type-response-example-v1.json",
+                    },
+                    "schema": Object {
+                      "$ref": "#/components/schemas/ErrorResponse",
+                    },
+                  },
+                },
+                "description": "Unsupported media type. The payload includes an unsupported format.",
+                "headers": Object {
+                  "Request-ID": Object {
+                    "$ref": "#/components/parameters/Response-Request-ID",
+                  },
+                },
+              },
+            },
+            "schemas": Object {
+              "AgencyOfficeId": Object {
+                "description": "Unique identifier for the agency office.",
+                "example": "212114ec-819e-483c-a8e0-f82289ac6e19",
+                "format": "uuid",
+                "type": "string",
+              },
+              "Date": Object {
+                "description": "Date in ISO 8601 format.",
+                "example": "2022-12-31",
+                "format": "date",
+                "type": "string",
+              },
+              "Error": Object {
+                "description": "A detailed error message to specify for example the field causing validation error.",
+                "properties": Object {
+                  "errorCode": Object {
+                    "description": "Error code indicating the reason for action on the target to fail.",
+                    "example": "VALUE_REQUIRED",
+                    "type": "string",
+                  },
+                  "message": Object {
+                    "description": "Description which tells the reason for the request to fail.",
+                    "example": "Mandatory request parameter assignmentId is missing",
+                    "type": "string",
+                  },
+                  "target": Object {
+                    "description": "Identifies the field or element to which the specified error applies to. For a validation error, the value is the field name.",
+                    "example": "assignmentId",
+                    "type": "string",
+                  },
+                },
+                "required": Array [
+                  "target",
+                  "errorCode",
+                  "message",
+                ],
+                "type": "object",
+              },
+              "ErrorResponse": Object {
+                "properties": Object {
+                  "description": Object {
+                    "description": "Detailed description which tells the reason for the request to fail.",
+                    "example": "Mandatory request parameter is missing",
+                    "type": "string",
+                  },
+                  "errorCode": Object {
+                    "description": "Error code indicating the reason for request to fail.",
+                    "example": "INVALID_REQUEST",
+                    "type": "string",
+                  },
+                  "errors": Object {
+                    "description": "Array of errors, for example the fields causing validation errors.",
+                    "items": Object {
+                      "$ref": "#/components/schemas/Error",
+                    },
+                    "type": "array",
+                  },
+                  "message": Object {
+                    "description": "Description which tells the reason for the request to fail.",
+                    "example": "Invalid request parameters",
+                    "type": "string",
+                  },
+                },
+                "required": Array [
+                  "errorCode",
+                  "message",
+                ],
+                "type": "object",
+              },
+              "GetPlotProperty": Object {
+                "properties": Object {
+                  "plot": Object {
+                    "$ref": "#/components/schemas/PlotOverview",
+                  },
+                  "realty": Object {
+                    "$ref": "#/components/schemas/RealtyOverview",
+                  },
+                  "realtyId": Object {
+                    "$ref": "#/components/schemas/RealtyId",
+                  },
+                  "statusCode": Object {
+                    "$ref": "#/components/schemas/RealtyStatusCode",
+                  },
+                },
+                "required": Array [
+                  "realty",
+                  "plot",
+                ],
+                "type": "object",
+              },
+              "Link": Object {
+                "description": "Link related to the resource.",
+                "properties": Object {
+                  "href": Object {
+                    "description": "Reference to the resource without the domain and version",
+                    "example": "/addresses/ddc25849-7bc7-43c0-9c3b-602cb03f7806",
+                    "type": "string",
+                  },
+                  "method": Object {
+                    "description": "HTTP method required to interact with the provided resource.",
+                    "enum": Array [
+                      "GET",
+                      "POST",
+                      "PUT",
+                      "DELETE",
+                    ],
+                    "example": "GET",
+                    "type": "string",
+                  },
+                  "rel": Object {
+                    "description": "Relation indicating how the link relates to the resource.",
+                    "example": "addresses",
+                    "type": "string",
+                  },
+                },
+                "required": Array [
+                  "rel",
+                  "href",
+                  "method",
+                ],
+                "type": "object",
+              },
+              "MonetaryAmount": Object {
+                "description": "Monetary amount including the amount and currency.",
+                "properties": Object {
+                  "amount": Object {
+                    "description": "Amount",
+                    "example": 499.9,
+                    "type": "number",
+                  },
+                  "currencyCode": Object {
+                    "description": "Currency code as specified in ISO 4217 with alphabetic code.",
+                    "pattern": "^[A-Z]{3}$",
+                    "type": "string",
+                  },
+                },
+                "required": Array [
+                  "amount",
+                  "currencyCode",
+                ],
+                "type": "object",
+              },
+              "PlotOverview": Object {
+                "description": "Plot details",
+                "properties": Object {
+                  "annualRent": Object {
+                    "$ref": "#/components/schemas/MonetaryAmount",
+                    "description": "Annual rent",
+                  },
+                  "leaseEndDate": Object {
+                    "$ref": "#/components/schemas/Date",
+                    "description": "Lease end date",
+                  },
+                },
+                "required": Array [
+                  "yearlyRent",
+                ],
+                "type": "object",
+              },
+              "PostPlotProperty": Object {
+                "properties": Object {
+                  "plot": Object {
+                    "$ref": "#/components/schemas/PlotOverview",
+                  },
+                  "realty": Object {
+                    "$ref": "#/components/schemas/RealtyOverview",
+                  },
+                },
+                "required": Array [
+                  "realty",
+                  "plot",
+                ],
+                "type": "object",
+              },
+              "PostPlotPropertyResponse": Object {
+                "properties": Object {
+                  "realtyId": Object {
+                    "$ref": "#/components/schemas/RealtyId",
+                  },
+                },
+                "required": Array [
+                  "realtyId",
+                ],
+                "type": "object",
+              },
+              "RealtyId": Object {
+                "description": "Unique identifier for the realty.",
+                "example": "9fd9124c-e6c1-4368-9f17-6938f0e2f524",
+                "format": "uuid",
+                "type": "string",
+              },
+              "RealtyOverview": Object {
+                "description": "Realty details",
+                "properties": Object {
+                  "agencyOfficeId": Object {
+                    "$ref": "#/components/schemas/AgencyOfficeId",
+                  },
+                  "realtyType": Object {
+                    "$ref": "#/components/schemas/RealtyType",
+                  },
+                },
+                "required": Array [
+                  "realtyType",
+                  "agencyId",
+                ],
+                "type": "object",
+              },
+              "RealtyStatusCode": Object {
+                "description": "Realty status. The status defines what actions can be performed for the realty.",
+                "enum": Array [
+                  "DRAFT",
+                  "FOR_SALE",
+                  "SOLD",
+                  "RESERVED",
+                  "CONDITIONAL_OFFER",
+                  "CASH_OFFER",
+                  "CASH_OFFER_ACCEPTED",
+                ],
+                "example": "DRAFT",
+                "type": "string",
+              },
+              "RealtyType": Object {
+                "description": "Realty type.",
+                "enum": Array [
+                  "SHARE_RESIDENTIAL",
+                  "SHARE_LEISURE",
+                  "SHARE_OTHER",
+                  "PROPERTY_RESIDENTIAL",
+                  "PROPERTY_LEISURE",
+                  "PROPERTY_PLOT",
+                  "PROPERTY_ESTATE",
+                  "PROPERTY_OTHER",
+                ],
+                "example": "PROPERTY_PLOT",
+                "type": "string",
+              },
+            },
+            "securitySchemes": Object {
+              "customAuthorizer": Object {
+                "in": "header",
+                "name": "Authorization",
+                "type": "apiKey",
+                "x-amazon-apigateway-authorizer": Object {
+                  "authorizerResultTtlInSeconds": 300,
+                  "authorizerUri": "arn:aws:apigateway:eu-west-1:lambda:path/2015-03-31/functions/dummy-value-for-/Mock1/mock/shared-resources/LAMBDA_AUTHORIZER_ARN/invocations",
+                  "enableSimpleResponses": false,
+                  "identitySource": "method.request.header.Authorization",
+                  "type": "request",
+                },
+                "x-amazon-apigateway-authtype": "Custom authorizer",
+              },
+            },
+          },
+          "externalDocs": Object {
+            "description": "Etuovi
+",
+            "url": "https://etuovi.com",
+          },
+          "info": Object {
+            "description": "# Introduction
+
+Realty API allows an agent to provide content for realty. Realty can be sold, rented or purchaced. Realties are divided into different types:
+
+- Residential share
+- Other share
+- Residential property
+- Plot property
+- Estate property
+- Other property
+
+Each type of realty has its own endpoint with \`POST\`, \`PUT\` and \`GET\` methods.
+
+## Contact
+
+If you have any questions, comments or feedback regarding our APIs, please contact developer@ovipro.fi.
+",
+            "title": "Realty API",
+            "version": "1.0",
+            "x-logo": Object {
+              "altText": "Alma logo",
+              "backgroundColor": "#FFFFFF",
+              "href": "https://ovipro.fi",
+              "url": "images/Ovi_PRO-logo-grey.png",
+            },
+          },
+          "openapi": "3.0.3",
+          "paths": Object {
+            "/plotProperties/{realtyId}": Object {
+              "get": Object {
+                "description": "Fetch details for a specified plot.
+",
+                "operationId": "realty-api-get-plot-properties",
+                "parameters": Array [
+                  Object {
+                    "$ref": "#/components/parameters/Realty-ID",
+                  },
+                  Object {
+                    "$ref": "#/components/parameters/Request-ID",
+                  },
+                ],
+                "responses": Object {
+                  "200": Object {
+                    "content": Object {
+                      "application/json": Object {
+                        "example": Object {
+                          "$ref": "./examples/plot/get-plot-example-v1.json",
+                        },
+                        "schema": Object {
+                          "$ref": "#/components/schemas/GetPlotProperty",
+                        },
+                      },
+                    },
+                    "description": "OK. Response contains a plot property.",
+                    "headers": Object {
+                      "Request-ID": Object {
+                        "$ref": "#/components/parameters/Response-Request-ID",
+                      },
+                    },
+                  },
+                  "400": Object {
+                    "$ref": "#/components/responses/BadRequest",
+                  },
+                  "401": Object {
+                    "$ref": "#/components/responses/Unauthorized",
+                  },
+                  "404": Object {
+                    "$ref": "#/components/responses/NotFound",
+                  },
+                  "429": Object {
+                    "$ref": "#/components/responses/TooManyRequests",
+                  },
+                  "5XX": Object {
+                    "$ref": "#/components/responses/InternalError",
+                  },
+                },
+                "security": Array [
+                  Object {
+                    "customAuthorizer": Array [],
+                  },
+                ],
+                "summary": "Fetch a plot property",
+                "tags": Array [
+                  "Plot Property",
+                ],
+                "x-amazon-apigateway-integration": Object {
+                  "httpMethod": "POST",
+                  "passthroughBehavior": "WHEN_NO_MATCH",
+                  "payloadFormatVersion": "1.0",
+                  "responses": Object {
+                    "default": Object {
+                      "statusCode": "200",
+                    },
+                  },
+                  "type": "AWS_PROXY",
+                  "uri": Object {
+                    "Fn::Join": Array [
+                      "",
+                      Array [
+                        "arn:aws:apigateway:eu-west-1:lambda:path/2015-03-31/functions/",
+                        Object {
+                          "Fn::GetAtt": Array [
+                            "SampleGet8A4BA493",
+                            "Arn",
+                          ],
+                        },
+                        "/invocations",
+                      ],
+                    ],
+                  },
+                },
+              },
+              "post": Object {
+                "description": "You can create a plot property with the required details.
+",
+                "operationId": "realty-api-post-plot-properties",
+                "parameters": Array [
+                  Object {
+                    "$ref": "#/components/parameters/Request-ID",
+                  },
+                ],
+                "requestBody": Object {
+                  "content": Object {
+                    "application/json": Object {
+                      "example": Object {
+                        "$ref": "./examples/plot/post-plot-example-v1.json",
+                      },
+                      "schema": Object {
+                        "$ref": "#/components/schemas/PostPlotProperty",
+                      },
+                    },
+                  },
+                  "description": "Plot property.",
+                  "required": true,
+                },
+                "responses": Object {
+                  "201": Object {
+                    "content": Object {
+                      "application/json": Object {
+                        "example": Object {
+                          "$ref": "./examples/plot/post-plot-response-example-v1.json",
+                        },
+                        "schema": Object {
+                          "$ref": "#/components/schemas/PostPlotPropertyResponse",
+                        },
+                      },
+                    },
+                    "description": "OK. The plot was successfully created.",
+                    "headers": Object {
+                      "Request-ID": Object {
+                        "$ref": "#/components/parameters/Response-Request-ID",
+                      },
+                    },
+                  },
+                  "400": Object {
+                    "$ref": "#/components/responses/BadRequest",
+                  },
+                  "401": Object {
+                    "$ref": "#/components/responses/Unauthorized",
+                  },
+                  "404": Object {
+                    "$ref": "#/components/responses/NotFound",
+                  },
+                  "415": Object {
+                    "$ref": "#/components/responses/UnsupportedMediaType",
+                  },
+                  "429": Object {
+                    "$ref": "#/components/responses/TooManyRequests",
+                  },
+                  "5XX": Object {
+                    "$ref": "#/components/responses/InternalError",
+                  },
+                },
+                "security": Array [
+                  Object {
+                    "customAuthorizer": Array [],
+                  },
+                ],
+                "summary": "Create a plot property",
+                "tags": Array [
+                  "Plot Property",
+                ],
+                "x-amazon-apigateway-integration": Object {
+                  "httpMethod": "POST",
+                  "passthroughBehavior": "WHEN_NO_MATCH",
+                  "payloadFormatVersion": "1.0",
+                  "responses": Object {
+                    "default": Object {
+                      "statusCode": "200",
+                    },
+                  },
+                  "type": "AWS_PROXY",
+                  "uri": Object {
+                    "Fn::Join": Array [
+                      "",
+                      Array [
+                        "arn:aws:apigateway:eu-west-1:lambda:path/2015-03-31/functions/",
+                        Object {
+                          "Fn::GetAtt": Array [
+                            "SampleGet8A4BA493",
+                            "Arn",
+                          ],
+                        },
+                        "/invocations",
+                      ],
+                    ],
+                  },
+                },
+              },
+              "put": Object {
+                "description": "You can update the details for an existing plot property.
+",
+                "operationId": "realty-api-put-plot-properties",
+                "parameters": Array [
+                  Object {
+                    "$ref": "#/components/parameters/Realty-ID",
+                  },
+                  Object {
+                    "$ref": "#/components/parameters/Request-ID",
+                  },
+                ],
+                "requestBody": Object {
+                  "content": Object {
+                    "application/json": Object {
+                      "example": Object {
+                        "$ref": "./examples/plot/post-plot-response-example-v1.json",
+                      },
+                      "schema": Object {
+                        "$ref": "#/components/schemas/PostPlotProperty",
+                      },
+                    },
+                  },
+                  "description": "Plot property.",
+                  "required": true,
+                },
+                "responses": Object {
+                  "200": Object {
+                    "content": Object {
+                      "application/json": Object {
+                        "example": Object {
+                          "$ref": "./examples/plot/post-plot-response-example-v1.json",
+                        },
+                        "schema": Object {
+                          "$ref": "#/components/schemas/PostPlotPropertyResponse",
+                        },
+                      },
+                    },
+                    "description": "OK. Response contains a plot property.",
+                    "headers": Object {
+                      "Request-ID": Object {
+                        "$ref": "#/components/parameters/Response-Request-ID",
+                      },
+                    },
+                  },
+                  "400": Object {
+                    "$ref": "#/components/responses/BadRequest",
+                  },
+                  "401": Object {
+                    "$ref": "#/components/responses/Unauthorized",
+                  },
+                  "404": Object {
+                    "$ref": "#/components/responses/NotFound",
+                  },
+                  "429": Object {
+                    "$ref": "#/components/responses/TooManyRequests",
+                  },
+                  "5XX": Object {
+                    "$ref": "#/components/responses/InternalError",
+                  },
+                },
+                "security": Array [
+                  Object {
+                    "customAuthorizer": Array [],
+                  },
+                ],
+                "summary": "Update a plot property",
+                "tags": Array [
+                  "Plot Property",
+                ],
+                "x-amazon-apigateway-integration": Object {
+                  "httpMethod": "POST",
+                  "passthroughBehavior": "WHEN_NO_MATCH",
+                  "payloadFormatVersion": "1.0",
+                  "responses": Object {
+                    "default": Object {
+                      "statusCode": "200",
+                    },
+                  },
+                  "type": "AWS_PROXY",
+                  "uri": Object {
+                    "Fn::Join": Array [
+                      "",
+                      Array [
+                        "arn:aws:apigateway:eu-west-1:lambda:path/2015-03-31/functions/",
+                        Object {
+                          "Fn::GetAtt": Array [
+                            "SampleGet8A4BA493",
+                            "Arn",
+                          ],
+                        },
+                        "/invocations",
+                      ],
+                    ],
+                  },
+                },
+              },
+            },
+          },
+          "security": Array [
+            Object {
+              "bearerAuth": Array [],
+            },
+          ],
+          "servers": Array [
+            Object {
+              "description": "API for production usage",
+              "url": "https://api.ovipro.fi/realty/v1",
+            },
+            Object {
+              "description": "API for acceptance testing",
+              "url": "https://api.preprod-ovipro.net/realty/v1",
+            },
+          ],
+          "tags": Array [
+            Object {
+              "description": "Plot API allows you to create, update and fetch plot properties.
+",
+              "name": "Plot Property",
+            },
+            Object {
+              "description": "<SchemaDefinition schemaRef=\\"#/components/schemas/GetPlotProperty\\" showReadOnly={true} showWriteOnly={true} />
+",
+              "name": "plot_property_model",
+              "x-displayName": "Plot Property Model",
+            },
+          ],
+          "x-amazon-apigateway-request-validator": "all",
+          "x-amazon-apigateway-request-validators": Object {
+            "all": Object {
+              "validateRequestBody": true,
+              "validateRequestParameters": true,
+            },
+          },
+        },
+        "DisableExecuteApiEndpoint": "true",
+        "EndpointConfiguration": Object {
+          "Types": Array [
+            "REGIONAL",
+          ],
+        },
+        "Name": "OviproMock1SampleApiV1",
+      },
+      "Type": "AWS::ApiGateway::RestApi",
+    },
+    "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiInvalidApiKeyDAF804F2": Object {
+      "Properties": Object {
+        "ResponseParameters": Object {},
+        "ResponseTemplates": Object {
+          "application/json": "{\\"errorCode\\":\\"$context.error.responseType\\",\\"message\\":\\"$context.error.message\\"}",
+        },
+        "ResponseType": "INVALID_API_KEY",
+        "RestApiId": Object {
+          "Ref": "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiFF1A4C9E",
+        },
+        "StatusCode": "404",
+      },
+      "Type": "AWS::ApiGateway::GatewayResponse",
+    },
+    "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiInvalidSignatureD21B1ED6": Object {
+      "Properties": Object {
+        "ResponseParameters": Object {},
+        "ResponseTemplates": Object {
+          "application/json": "{\\"errorCode\\":\\"$context.error.responseType\\",\\"message\\":\\"$context.error.message\\"}",
+        },
+        "ResponseType": "INVALID_SIGNATURE",
+        "RestApiId": Object {
+          "Ref": "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiFF1A4C9E",
+        },
+        "StatusCode": "404",
+      },
+      "Type": "AWS::ApiGateway::GatewayResponse",
+    },
+    "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiMissingAuthenticationTokenFDF4FF6F": Object {
+      "Properties": Object {
+        "ResponseParameters": Object {},
+        "ResponseTemplates": Object {
+          "application/json": "{\\"errorCode\\":\\"$context.error.responseType\\",\\"message\\":\\"$context.error.message\\"}",
+        },
+        "ResponseType": "MISSING_AUTHENTICATION_TOKEN",
+        "RestApiId": Object {
+          "Ref": "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiFF1A4C9E",
+        },
+        "StatusCode": "404",
+      },
+      "Type": "AWS::ApiGateway::GatewayResponse",
+    },
+    "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiResourceNotFoundB5967FB3": Object {
+      "Properties": Object {
+        "ResponseParameters": Object {},
+        "ResponseTemplates": Object {
+          "application/json": "{\\"errorCode\\":\\"$context.error.responseType\\",\\"message\\":\\"$context.error.message\\"}",
+        },
+        "ResponseType": "RESOURCE_NOT_FOUND",
+        "RestApiId": Object {
+          "Ref": "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiFF1A4C9E",
+        },
+      },
+      "Type": "AWS::ApiGateway::GatewayResponse",
+    },
+    "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiThrottledEBEB252D": Object {
+      "Properties": Object {
+        "ResponseParameters": Object {},
+        "ResponseTemplates": Object {
+          "application/json": "{\\"errorCode\\":\\"$context.error.responseType\\",\\"message\\":\\"$context.error.message\\"}",
+        },
+        "ResponseType": "THROTTLED",
+        "RestApiId": Object {
+          "Ref": "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiFF1A4C9E",
+        },
+      },
+      "Type": "AWS::ApiGateway::GatewayResponse",
+    },
+    "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiUnauthorizedFCEBB92D": Object {
+      "Properties": Object {
+        "ResponseParameters": Object {},
+        "ResponseTemplates": Object {
+          "application/json": "{\\"errorCode\\":\\"$context.error.responseType\\",\\"message\\":\\"$context.error.message\\"}",
+        },
+        "ResponseType": "UNAUTHORIZED",
+        "RestApiId": Object {
+          "Ref": "SampleApiSampleApiV1OviproMock1SampleApiV1OpenApiSpecRestApiFF1A4C9E",
+        },
+      },
+      "Type": "AWS::ApiGateway::GatewayResponse",
+    },
+    "SampleGet8A4BA493": Object {
+      "DependsOn": Array [
+        "SampleGetServiceRoleDefaultPolicyE291BD6C",
+        "SampleGetServiceRoleC0D57FE1",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParameters-[HASH REMOVED]",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters-[HASH REMOVED]",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters-[HASH REMOVED]",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Description": "Sample API with GET /plotProperties",
+        "Environment": Object {
+          "Variables": Object {
+            "API_VERSION": "v1",
+            "DB_CLUSTER_ARN": Object {
+              "Fn::Join": Array [
+                "",
+                Array [
+                  "arn:",
+                  Object {
+                    "Ref": "AWS::Partition",
+                  },
+                  ":rds:eu-west-1:012312312312:cluster:dummy-value-for-/Mock1/mock/shared-resources/DATABASE_CLUSTER_IDENTIFIER",
+                ],
+              ],
+            },
+            "DB_LOGGING_ENABLED": "true",
+            "DB_NAME": "ovipro",
+            "ENVIRONMENT": "Mock1",
+            "METHOD": "GET",
+            "MODULE_NAME": "SampleAPI",
+            "NODE_OPTIONS": "--enable-source-maps",
+            "READ_WRITE_SECRET_ARN": "arn:aws:service:eu-central-1:123456789012:secret:entity-123456",
+            "SAMPLE_LOG_DEBUG_RATE": "100",
+            "SERVICE_NAME": "sample",
+          },
+        },
+        "FunctionName": "OviproMock1SampleGet",
+        "Handler": "index.handler",
+        "MemorySize": 1024,
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "SampleGetServiceRoleC0D57FE1",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs14.x",
+        "Timeout": 10,
+        "TracingConfig": Object {
+          "Mode": "Active",
+        },
+        "VpcConfig": Object {
+          "SecurityGroupIds": Array [
+            Object {
+              "Fn::GetAtt": Array [
+                "SampleGetSecurityGroup773A44F3",
+                "GroupId",
+              ],
+            },
+          ],
+          "SubnetIds": Array [
+            "p-12345",
+            "p-67890",
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "SampleGetAlarm7035DA74": Object {
+      "Properties": Object {
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "Dimensions": Array [
+          Object {
+            "Name": "FunctionName",
+            "Value": Object {
+              "Ref": "SampleGet8A4BA493",
+            },
+          },
+        ],
+        "EvaluationPeriods": 2,
+        "MetricName": "Errors",
+        "Namespace": "AWS/Lambda",
+        "Period": 300,
+        "Statistic": "Sum",
+        "Threshold": 100,
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "SampleGetInvokeServicePrincipalapigatewayamazonawscom6D074C50": Object {
+      "Properties": Object {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": Object {
+          "Fn::GetAtt": Array [
+            "SampleGet8A4BA493",
+            "Arn",
+          ],
+        },
+        "Principal": "apigateway.amazonaws.com",
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "SampleGetLogRetentionF484D9BD": Object {
+      "Properties": Object {
+        "LogGroupName": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "/aws/lambda/",
+              Object {
+                "Ref": "SampleGet8A4BA493",
+              },
+            ],
+          ],
+        },
+        "RetentionInDays": 30,
+        "ServiceToken": Object {
+          "Fn::GetAtt": Array [
+            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::LogRetention",
+    },
+    "SampleGetSecurityGroup773A44F3": Object {
+      "Properties": Object {
+        "GroupDescription": "Automatic security group for Lambda Function TestContextProviderSampleApiStackSampleGetD10AF89E",
+        "SecurityGroupEgress": Array [
+          Object {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow all outbound traffic by default",
+            "IpProtocol": "-1",
+          },
+        ],
+        "VpcId": "vpc-12345",
+      },
+      "Type": "AWS::EC2::SecurityGroup",
+    },
+    "SampleGetServiceRoleC0D57FE1": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "SampleGetServiceRoleDefaultPolicyE291BD6C": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            Object {
+              "Action": "secretsmanager:GetSecretValue",
+              "Effect": "Allow",
+              "Resource": "arn:aws:service:eu-central-1:123456789012:secret:entity-123456",
+            },
+            Object {
+              "Action": Array [
+                "rds-data:BatchExecuteStatement",
+                "rds-data:BeginTransaction",
+                "rds-data:CommitTransaction",
+                "rds-data:ExecuteStatement",
+                "rds-data:RollbackTransaction",
+              ],
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    "arn:",
+                    Object {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":rds:eu-west-1:012312312312:cluster:dummy-value-for-/Mock1/mock/shared-resources/DATABASE_CLUSTER_IDENTIFIER",
+                  ],
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "SampleGetServiceRoleDefaultPolicyE291BD6C",
+        "Roles": Array [
+          Object {
+            "Ref": "SampleGetServiceRoleC0D57FE1",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+  },
+}
+`;

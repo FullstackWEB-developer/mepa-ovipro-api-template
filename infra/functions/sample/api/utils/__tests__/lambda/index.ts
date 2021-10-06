@@ -27,8 +27,10 @@ function loadMockData(name: string, options: TestLambdaInputOutputOptions): Mock
     let mockData = {};
     try {
         mockData = loadExpectation(paramCase(name), 'mocks', resolveExpectationsPath(options));
-    } catch (e) {
-        console.debug(`No mock data defined for test '${name}'. ${e.message}`);
+    } catch (e: unknown) {
+        if (e instanceof Error) {
+            console.debug(`No mock data defined for test '${name}'. ${e.message}`);
+        }
     }
     return mockData;
 }
@@ -88,9 +90,11 @@ async function executeHandler(
 
         // Finally, the input/output expectation
         expect(response).toMatchObject(output);
-    } catch (e) {
+    } catch (e: unknown) {
         // Allow user defined onCatch function
-        ctx.done(e);
+        if (e instanceof Error) {
+            ctx.done(e);
+        }
         callCatchHook(hooks?.catchHandler, mockData, e);
     }
 

@@ -1,5 +1,6 @@
-import { Connection, EntityManager, EntityTarget, FindConditions, ObjectLiteral, Repository } from 'typeorm';
+import { DeepPartial, EntityManager, EntityTarget, FindConditions, ObjectLiteral, Repository } from 'typeorm';
 import { ConnectionFactory } from './ConnectionFactory';
+import { QueryDAO } from './QueryDAO';
 
 export type CastFind = ObjectLiteral | FindConditions<EntityTarget<unknown>>;
 
@@ -11,34 +12,44 @@ export interface Options {
      * Entity manager. When this is given by the caller, an existing transaction context is assumed.
      */
     transactionalEntityManager?: EntityManager;
-    /**
-     * If uuid query conditions should be cast to uuid type or not.
-     * Some databases and connections require type casting with the current ORM plus driver combo.
-     */
-    castUuid?: boolean;
 }
 
 /**
  * Base class for DAOs. Provides utility methods.
  */
-export abstract class BaseDAO {
-    /**
-     * Get connection. This is just a proxy to ConnectionFactory.
-     */
-    protected static async getConnection(): Promise<Connection> {
-        return await ConnectionFactory.getConnection();
+export abstract class BaseDAO<Entity extends ObjectLiteral> extends QueryDAO {
+    private entityType: EntityTarget<Entity>;
+
+    constructor(entityType: EntityTarget<Entity>) {
+        super();
+        this.entityType = entityType;
     }
 
     /**
      * Get entity repository using a new connection or the given manager.
+     * TODO: entityType param is unnecessary and can be dropped.
+     * @param entityType Deprecated, unnecessary. Drop the param or use {@link getRepositoryFor} instead.
      */
-    protected static async getRepository<Entity extends ObjectLiteral>(
-        entity: EntityTarget<Entity>,
+    protected async getRepository(
+        entityType?: EntityTarget<Entity>,
         transactionalEntityManager?: EntityManager,
     ): Promise<Repository<Entity>> {
         return (
-            transactionalEntityManager?.getRepository(entity) ??
-            (await ConnectionFactory.getConnection()).getRepository(entity)
+            transactionalEntityManager?.getRepository(this.entityType) ??
+            (await ConnectionFactory.getConnection()).getRepository(this.entityType)
+        );
+    }
+
+    /**
+     * Type alternative to {@link getRepository}
+     */
+    protected async getRepositoryFor<T extends ObjectLiteral>(
+        entityType: EntityTarget<T>,
+        transactionalEntityManager?: EntityManager,
+    ): Promise<Repository<T>> {
+        return (
+            transactionalEntityManager?.getRepository(entityType) ??
+            (await ConnectionFactory.getConnection()).getRepository(entityType)
         );
     }
 
@@ -46,33 +57,25 @@ export abstract class BaseDAO {
      * Entity findOne by uuid type id method that tries to hide the ugly uuid handling.
      * Query condition is generated using
      */
-    protected static async findOneCast<Entity extends ObjectLiteral>(
+    protected async findOneCast(
         uuid: string,
+        key: string,
         repository: Repository<Entity>,
-        castUuid: boolean,
+        /** @deprecated This flag is set with a global env var. See ConnectionFactory.ts. */
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        castUuid?: boolean,
     ): Promise<Entity | undefined> {
-        const where = this.uuidToWhereCondition('id', uuid, castUuid);
+        const where = BaseDAO.uuidToWhereCondition(key, uuid);
 
         return repository.findOne({ where });
     }
 
     /**
-     * Uuid type incompatibility hack to support both SQLite and PG.
+     * Insert given entity. Returns persisted entity.
      */
-    protected static uuidToWhereCondition(key: string, value: string, castUuid: boolean): CastFind {
-        let where: CastFind;
-        // PostgreSQL uuid query conditions need a cast parameter, e.g:
-        // where: { id: { value: uuid, cast: 'uuid' } }
-        if (castUuid) {
-            where = {
-                [key]: {
-                    value,
-                    cast: 'uuid',
-                },
-            };
-        } else {
-            where = { [key]: value };
-        }
-        return where;
+    protected async insertReturning(entity: Entity, transactionalEntityManager?: EntityManager): Promise<Entity> {
+        const repository = await this.getRepository(undefined, transactionalEntityManager);
+        const result = await repository.createQueryBuilder().insert().values(entity).returning('*').execute();
+        return repository.create(result.generatedMaps[0] as DeepPartial<Entity>);
     }
 }

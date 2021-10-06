@@ -1,8 +1,8 @@
 {
     "statusCode": 200,
     "body": {
-        "officeId": {
-            "id": 123
+        "office": {
+            "publicId": "1234"
         }
     }
 }

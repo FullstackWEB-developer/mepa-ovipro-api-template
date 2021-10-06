@@ -1,11 +1,11 @@
+import { oviproEntity } from '@almamedia/ovipro-common-entities';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { oviproEntity } from '../../dao/typeorm/EntityRegistry';
 
 @Entity({
-    schema: 'common',
+    schema: 'public',
 })
 @oviproEntity
-export class Office {
+export class SimpleOffice {
     @PrimaryGeneratedColumn({ name: 'id' })
     id: number;
 

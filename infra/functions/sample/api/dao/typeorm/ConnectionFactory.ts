@@ -1,7 +1,19 @@
 import { Connection, ConnectionOptions, createConnection } from 'typeorm';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { factory } from '../../utils/logging';
-import { entities } from './EntityRegistry';
+import { Logger as TypeormLogger } from 'typeorm';
+import { Logger } from 'typescript-logging';
+import { entities } from '@almamedia/ovipro-common-entities';
+
+const serviceName = process.env.SERVICE_NAME || 'UNDEFINED';
+const moduleName = process.env.MODULE_NAME || 'UNDEFINED';
+const environmentName = process.env.ENVIRONMENT || 'UNDEFINED';
+
+// Sorry about negation. It's for backwards compatibility.
+/**
+ * Flag that tells if special handling uuids should be enabled or not.
+ */
+export const uuidCastingRequired = !(process.env.DB_IS_STANDARD_DRIVER === 'true');
 
 /**
  * Get an existing connection configuration object if available or create a new connection.
@@ -16,6 +28,55 @@ export const ConnectionFactory = {
     },
 };
 
+/**
+ * Custom logger for Typeorm.
+ */
+export class CustomTypeormLogger implements TypeormLogger {
+    private readonly logger: Logger;
+    constructor(log: Logger) {
+        this.logger = log;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    logQuery(query: string, parameters?: any[]): any {
+        this.logger.debug(`query: ${query}, parameters: ${JSON.stringify(parameters)}`);
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    logQueryError(error: string | Error, query: string, parameters?: any[]): void {
+        this.logger.error(`query ${query}, error: ${error.toString()}, parameters: ${JSON.stringify(parameters)}`, {
+            name: 'dbError',
+            message: error.toString(),
+        });
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    logQuerySlow(time: number, query: string, parameters?: any[]): void {
+        this.logger.debug(`Slow query ${query} executed in ${time} with parameters: ${JSON.stringify(parameters)}`);
+    }
+
+    logSchemaBuild(message: string): void {
+        this.logger.debug(`Schema build ${message}`);
+    }
+
+    logMigration(message: string): void {
+        this.logger.debug(`Schema migration ${message}`);
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    log(level: 'log' | 'info' | 'warn', message: string): void {
+        switch (level) {
+            case 'info':
+                this.logger.info(message);
+                break;
+            case 'log':
+                this.logger.debug(message);
+                break;
+            case 'warn':
+                this.logger.warn(message);
+        }
+    }
+}
+
 let cachedConnection: Connection;
 
 const getConnection = async (): Promise<Connection> => {
@@ -28,20 +89,23 @@ const getConnection = async (): Promise<Connection> => {
     const dbClusterArn = process.env.DB_CLUSTER_ARN || '';
     const enableDbLogging = process.env.DB_LOGGING_ENABLED === 'true' || false;
 
+    // UUID casting is supposedly true by default for the data API driver. Data API client is weird. Stuff like uuids are fragile.
+    // See automatic casting at https://github.com/ArsenyYankovsky/typeorm-aurora-data-api-driver#automatic-casting
+    const formatOptions = uuidCastingRequired ? { castParameters: true } : undefined;
+
     const options: ConnectionOptions = {
         type: 'aurora-data-api-pg',
         database: dbName,
         secretArn: readWriteUserSecretArn,
         resourceArn: dbClusterArn,
         region: process.env.AWS_REGION || 'eu-west-1',
+        extra: { applicationNane: `${serviceName}|${moduleName}|${environmentName}` },
         // All queried and linked entities must be listed here.
         entities,
         // Debug logging enabled
         logging: enableDbLogging,
-        formatOptions: {
-            // See automatic casting at https://github.com/ArsenyYankovsky/typeorm-aurora-data-api-driver#automatic-casting
-            castParameters: true,
-        },
+        logger: typeormLogger,
+        formatOptions,
         namingStrategy: new SnakeNamingStrategy(),
     };
 
@@ -52,4 +116,5 @@ const getConnection = async (): Promise<Connection> => {
     return cachedConnection;
 };
 
-const log = factory.getLogger(ConnectionFactory.constructor.name);
+const log = factory.getLogger('ConnectionFactory');
+const typeormLogger = new CustomTypeormLogger(log);

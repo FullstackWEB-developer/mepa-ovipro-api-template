@@ -1,54 +1,54 @@
 import { hasPermission } from './index';
-import { InheritanceType, OrganizationUnitLevel, PermissionType, UserDetails } from './userdetails';
+import { InheritanceType, OrganizationType, UserDetails } from './userdetails';
 
 const emptyUser: UserDetails = {
     emailAddress: 'empty@user.test',
-    userId: 1,
+    accountId: '1',
     organizationPermissionTree: {
         customerGroups: [],
     },
-    globalPermissions: [PermissionType.PRO_SELF_VIEWER],
+    globalPermissions: ['PRO_SELF_VIEWER'],
 };
 
 const officeUser: UserDetails = {
     emailAddress: 'office@user.test',
-    userId: 2,
+    accountId: '2',
     organizationPermissionTree: {
         customerGroups: [
             {
-                id: 1,
-                level: OrganizationUnitLevel.CUSTOMER_GROUP,
+                id: '1',
+                level: OrganizationType.CUSTOMER_GROUP,
                 children: [
                     {
-                        id: 3,
-                        level: OrganizationUnitLevel.CUSTOMER,
+                        id: '3',
+                        level: OrganizationType.CUSTOMER,
                         children: [
                             {
-                                id: 14,
-                                level: OrganizationUnitLevel.OFFICE,
+                                id: '14',
+                                level: OrganizationType.OFFICE,
                                 children: [],
                                 permissions: [
                                     {
-                                        permission: PermissionType.PRO_PROPERTY,
+                                        permission: 'PRO_PROPERTY',
                                         inheritanceType: InheritanceType.NONE,
                                     },
                                     {
-                                        permission: PermissionType.PRO_EXTRA_VISIBILITY_PURCHASES,
+                                        permission: 'PRO_EXTRA_VISIBILITY_PURCHASES',
                                         inheritanceType: InheritanceType.NONE,
                                     },
                                 ],
                             },
                             {
-                                id: 13,
-                                level: OrganizationUnitLevel.OFFICE,
+                                id: '13',
+                                level: OrganizationType.OFFICE,
                                 children: [],
                                 permissions: [
                                     {
-                                        permission: PermissionType.PRO_PROPERTY,
+                                        permission: 'PRO_PROPERTY',
                                         inheritanceType: InheritanceType.NONE,
                                     },
                                     {
-                                        permission: PermissionType.PRO_SHOWING_EDIT,
+                                        permission: 'PRO_SHOWING_EDIT',
                                         inheritanceType: InheritanceType.NONE,
                                     },
                                 ],
@@ -66,69 +66,69 @@ const officeUser: UserDetails = {
 
 const customerUser: UserDetails = {
     emailAddress: 'customer@user.test',
-    userId: 3,
+    accountId: '3',
     organizationPermissionTree: {
         customerGroups: [
             {
-                id: 1,
-                level: OrganizationUnitLevel.CUSTOMER_GROUP,
+                id: '1',
+                level: OrganizationType.CUSTOMER_GROUP,
                 children: [
                     {
-                        id: 3,
-                        level: OrganizationUnitLevel.CUSTOMER,
+                        id: '3',
+                        level: OrganizationType.CUSTOMER,
                         children: [
                             {
-                                id: 14,
-                                level: OrganizationUnitLevel.OFFICE,
+                                id: '14',
+                                level: OrganizationType.OFFICE,
                                 children: [],
                                 permissions: [],
                             },
                             {
-                                id: 13,
-                                level: OrganizationUnitLevel.OFFICE,
+                                id: '13',
+                                level: OrganizationType.OFFICE,
                                 children: [],
                                 permissions: [],
                             },
                         ],
                         permissions: [
                             {
-                                permission: PermissionType.PRO_PROPERTY,
+                                permission: 'PRO_PROPERTY',
                                 inheritanceType: InheritanceType.INHERIT,
                             },
                             {
-                                permission: PermissionType.PRO_EXTRA_VISIBILITY_PURCHASES,
+                                permission: 'PRO_EXTRA_VISIBILITY_PURCHASES',
                                 inheritanceType: InheritanceType.NONE,
                             },
                             {
-                                permission: PermissionType.PRO_VIEWER,
+                                permission: 'PRO_VIEWER',
                                 inheritanceType: InheritanceType.INHERIT,
                             },
                             {
-                                permission: PermissionType.PRO_SHOWING_EDIT,
+                                permission: 'PRO_SHOWING_EDIT',
                                 inheritanceType: InheritanceType.INHERIT,
                             },
                         ],
                     },
                     {
-                        id: 5,
-                        level: OrganizationUnitLevel.CUSTOMER,
+                        id: '5',
+                        level: OrganizationType.CUSTOMER,
                         children: [
                             {
-                                id: 24,
-                                level: OrganizationUnitLevel.OFFICE,
+                                id: '24',
+                                level: OrganizationType.OFFICE,
                                 children: [],
                                 permissions: [],
                             },
                             {
-                                id: 23,
-                                level: OrganizationUnitLevel.OFFICE,
+                                id: '23',
+                                level: OrganizationType.OFFICE,
                                 children: [],
                                 permissions: [],
                             },
                         ],
                         permissions: [
                             {
-                                permission: PermissionType.PRO_SHOWING_EDIT,
+                                permission: 'PRO_SHOWING_EDIT',
                                 inheritanceType: InheritanceType.INHERIT,
                             },
                         ],
@@ -143,26 +143,26 @@ const customerUser: UserDetails = {
 
 const customerGroupUser: UserDetails = {
     emailAddress: 'cg@user.test',
-    userId: 3,
+    accountId: '3',
     organizationPermissionTree: {
         customerGroups: [
             {
-                id: 1,
-                level: OrganizationUnitLevel.CUSTOMER_GROUP,
+                id: '1',
+                level: OrganizationType.CUSTOMER_GROUP,
                 children: [
                     {
-                        id: 3,
-                        level: OrganizationUnitLevel.CUSTOMER,
+                        id: '3',
+                        level: OrganizationType.CUSTOMER,
                         children: [
                             {
-                                id: 14,
-                                level: OrganizationUnitLevel.OFFICE,
+                                id: '14',
+                                level: OrganizationType.OFFICE,
                                 children: [],
                                 permissions: [],
                             },
                             {
-                                id: 13,
-                                level: OrganizationUnitLevel.OFFICE,
+                                id: '13',
+                                level: OrganizationType.OFFICE,
                                 children: [],
                                 permissions: [],
                             },
@@ -172,40 +172,40 @@ const customerGroupUser: UserDetails = {
                 ],
                 permissions: [
                     {
-                        permission: PermissionType.PRO_PROPERTY,
+                        permission: 'PRO_PROPERTY',
                         inheritanceType: InheritanceType.NONE,
                     },
                     {
-                        permission: PermissionType.PRO_EXTRA_VISIBILITY_PURCHASES,
+                        permission: 'PRO_EXTRA_VISIBILITY_PURCHASES',
                         inheritanceType: InheritanceType.INHERIT,
                     },
                     {
-                        permission: PermissionType.PRO_VIEWER,
+                        permission: 'PRO_VIEWER',
                         inheritanceType: InheritanceType.INHERIT,
                     },
                     {
-                        permission: PermissionType.PRO_SHOWING_EDIT,
+                        permission: 'PRO_SHOWING_EDIT',
                         inheritanceType: InheritanceType.INHERIT,
                     },
                 ],
             },
             {
-                id: 2,
-                level: OrganizationUnitLevel.CUSTOMER_GROUP,
+                id: '2',
+                level: OrganizationType.CUSTOMER_GROUP,
                 children: [
                     {
-                        id: 4,
-                        level: OrganizationUnitLevel.CUSTOMER,
+                        id: '4',
+                        level: OrganizationType.CUSTOMER,
                         children: [
                             {
-                                id: 15,
-                                level: OrganizationUnitLevel.OFFICE,
+                                id: '15',
+                                level: OrganizationType.OFFICE,
                                 children: [],
                                 permissions: [],
                             },
                             {
-                                id: 16,
-                                level: OrganizationUnitLevel.OFFICE,
+                                id: '16',
+                                level: OrganizationType.OFFICE,
                                 children: [],
                                 permissions: [],
                             },
@@ -215,19 +215,19 @@ const customerGroupUser: UserDetails = {
                 ],
                 permissions: [
                     {
-                        permission: PermissionType.PRO_PROPERTY,
+                        permission: 'PRO_PROPERTY',
                         inheritanceType: InheritanceType.NONE,
                     },
                     {
-                        permission: PermissionType.PRO_EXTRA_VISIBILITY_PURCHASES,
+                        permission: 'PRO_EXTRA_VISIBILITY_PURCHASES',
                         inheritanceType: InheritanceType.INHERIT,
                     },
                     {
-                        permission: PermissionType.PRO_VIEWER,
+                        permission: 'PRO_VIEWER',
                         inheritanceType: InheritanceType.INHERIT,
                     },
                     {
-                        permission: PermissionType.PRO_SHOWING_EDIT,
+                        permission: 'PRO_SHOWING_EDIT',
                         inheritanceType: InheritanceType.INHERIT,
                     },
                 ],
@@ -243,9 +243,9 @@ describe(`hasPermission`, () => {
             expect(
                 hasPermission(
                     {
-                        organizationId: 1,
-                        permission: PermissionType.PRO_VIEWER,
-                        level: OrganizationUnitLevel.CUSTOMER_GROUP,
+                        organizationId: '1',
+                        permission: 'PRO_VIEWER',
+                        level: OrganizationType.CUSTOMER_GROUP,
                     },
                     customerGroupUser,
                 ),
@@ -253,9 +253,9 @@ describe(`hasPermission`, () => {
             expect(
                 hasPermission(
                     {
-                        organizationId: 2,
-                        permission: PermissionType.PRO_VIEWER,
-                        level: OrganizationUnitLevel.CUSTOMER_GROUP,
+                        organizationId: '2',
+                        permission: 'PRO_VIEWER',
+                        level: OrganizationType.CUSTOMER_GROUP,
                     },
                     customerGroupUser,
                 ),
@@ -265,9 +265,9 @@ describe(`hasPermission`, () => {
             expect(
                 hasPermission(
                     {
-                        organizationId: 3,
-                        permission: PermissionType.PRO_VIEWER,
-                        level: OrganizationUnitLevel.CUSTOMER_GROUP,
+                        organizationId: '3',
+                        permission: 'PRO_VIEWER',
+                        level: OrganizationType.CUSTOMER_GROUP,
                     },
                     customerGroupUser,
                 ),
@@ -277,9 +277,9 @@ describe(`hasPermission`, () => {
             expect(
                 hasPermission(
                     {
-                        organizationId: 1,
-                        permission: PermissionType.PRO_PURCHASE,
-                        level: OrganizationUnitLevel.CUSTOMER_GROUP,
+                        organizationId: '1',
+                        permission: 'PRO_PURCHASE',
+                        level: OrganizationType.CUSTOMER_GROUP,
                     },
                     customerGroupUser,
                 ),
@@ -289,9 +289,9 @@ describe(`hasPermission`, () => {
             expect(
                 hasPermission(
                     {
-                        organizationId: 1,
-                        permission: PermissionType.PRO_VIEWER,
-                        level: OrganizationUnitLevel.CUSTOMER_GROUP,
+                        organizationId: '1',
+                        permission: 'PRO_VIEWER',
+                        level: OrganizationType.CUSTOMER_GROUP,
                     },
                     customerUser,
                 ),
@@ -301,9 +301,9 @@ describe(`hasPermission`, () => {
             expect(
                 hasPermission(
                     {
-                        organizationId: 14,
-                        permission: PermissionType.PRO_VIEWER,
-                        level: OrganizationUnitLevel.CUSTOMER_GROUP,
+                        organizationId: '14',
+                        permission: 'PRO_VIEWER',
+                        level: OrganizationType.CUSTOMER_GROUP,
                     },
                     officeUser,
                 ),
@@ -313,9 +313,9 @@ describe(`hasPermission`, () => {
             expect(
                 hasPermission(
                     {
-                        organizationId: 14,
-                        permission: PermissionType.PRO_VIEWER,
-                        level: OrganizationUnitLevel.CUSTOMER_GROUP,
+                        organizationId: '14',
+                        permission: 'PRO_VIEWER',
+                        level: OrganizationType.CUSTOMER_GROUP,
                     },
                     emptyUser,
                 ),
@@ -327,9 +327,9 @@ describe(`hasPermission`, () => {
             expect(
                 hasPermission(
                     {
-                        organizationId: 3,
-                        permission: PermissionType.PRO_PROPERTY,
-                        level: OrganizationUnitLevel.CUSTOMER,
+                        organizationId: '3',
+                        permission: 'PRO_PROPERTY',
+                        level: OrganizationType.CUSTOMER,
                     },
                     customerUser,
                 ),
@@ -337,9 +337,9 @@ describe(`hasPermission`, () => {
             expect(
                 hasPermission(
                     {
-                        organizationId: 5,
-                        permission: PermissionType.PRO_SHOWING_EDIT,
-                        level: OrganizationUnitLevel.CUSTOMER,
+                        organizationId: '5',
+                        permission: 'PRO_SHOWING_EDIT',
+                        level: OrganizationType.CUSTOMER,
                     },
                     customerUser,
                 ),
@@ -349,9 +349,9 @@ describe(`hasPermission`, () => {
             expect(
                 hasPermission(
                     {
-                        organizationId: 2,
-                        permission: PermissionType.PRO_VIEWER,
-                        level: OrganizationUnitLevel.CUSTOMER,
+                        organizationId: '2',
+                        permission: 'PRO_VIEWER',
+                        level: OrganizationType.CUSTOMER,
                     },
                     customerUser,
                 ),
@@ -361,9 +361,9 @@ describe(`hasPermission`, () => {
             expect(
                 hasPermission(
                     {
-                        organizationId: 5,
-                        permission: PermissionType.PRO_VIEWER,
-                        level: OrganizationUnitLevel.CUSTOMER,
+                        organizationId: '5',
+                        permission: 'PRO_VIEWER',
+                        level: OrganizationType.CUSTOMER,
                     },
                     customerUser,
                 ),
@@ -373,9 +373,9 @@ describe(`hasPermission`, () => {
             expect(
                 hasPermission(
                     {
-                        organizationId: 3,
-                        permission: PermissionType.PRO_VIEWER,
-                        level: OrganizationUnitLevel.CUSTOMER,
+                        organizationId: '3',
+                        permission: 'PRO_VIEWER',
+                        level: OrganizationType.CUSTOMER,
                     },
                     customerGroupUser,
                 ),
@@ -385,9 +385,9 @@ describe(`hasPermission`, () => {
             expect(
                 hasPermission(
                     {
-                        organizationId: 3,
-                        permission: PermissionType.PRO_PROPERTY,
-                        level: OrganizationUnitLevel.CUSTOMER,
+                        organizationId: '3',
+                        permission: 'PRO_PROPERTY',
+                        level: OrganizationType.CUSTOMER,
                     },
                     customerGroupUser,
                 ),
@@ -397,9 +397,9 @@ describe(`hasPermission`, () => {
             expect(
                 hasPermission(
                     {
-                        organizationId: 3,
-                        permission: PermissionType.PRO_VIEWER,
-                        level: OrganizationUnitLevel.CUSTOMER,
+                        organizationId: '3',
+                        permission: 'PRO_VIEWER',
+                        level: OrganizationType.CUSTOMER,
                     },
                     officeUser,
                 ),
@@ -409,9 +409,9 @@ describe(`hasPermission`, () => {
             expect(
                 hasPermission(
                     {
-                        organizationId: 3,
-                        permission: PermissionType.PRO_VIEWER,
-                        level: OrganizationUnitLevel.CUSTOMER,
+                        organizationId: '3',
+                        permission: 'PRO_VIEWER',
+                        level: OrganizationType.CUSTOMER,
                     },
                     emptyUser,
                 ),
@@ -423,9 +423,9 @@ describe(`hasPermission`, () => {
             expect(
                 hasPermission(
                     {
-                        organizationId: 14,
-                        permission: PermissionType.PRO_PROPERTY,
-                        level: OrganizationUnitLevel.OFFICE,
+                        organizationId: '14',
+                        permission: 'PRO_PROPERTY',
+                        level: OrganizationType.OFFICE,
                     },
                     officeUser,
                 ),
@@ -433,9 +433,9 @@ describe(`hasPermission`, () => {
             expect(
                 hasPermission(
                     {
-                        organizationId: 13,
-                        permission: PermissionType.PRO_SHOWING_EDIT,
-                        level: OrganizationUnitLevel.OFFICE,
+                        organizationId: '13',
+                        permission: 'PRO_SHOWING_EDIT',
+                        level: OrganizationType.OFFICE,
                     },
                     officeUser,
                 ),
@@ -445,9 +445,9 @@ describe(`hasPermission`, () => {
             expect(
                 hasPermission(
                     {
-                        organizationId: 2,
-                        permission: PermissionType.PRO_PROPERTY,
-                        level: OrganizationUnitLevel.OFFICE,
+                        organizationId: '2',
+                        permission: 'PRO_PROPERTY',
+                        level: OrganizationType.OFFICE,
                     },
                     officeUser,
                 ),
@@ -457,9 +457,9 @@ describe(`hasPermission`, () => {
             expect(
                 hasPermission(
                     {
-                        organizationId: 14,
-                        permission: PermissionType.PRO_SHOWING_EDIT,
-                        level: OrganizationUnitLevel.OFFICE,
+                        organizationId: '14',
+                        permission: 'PRO_SHOWING_EDIT',
+                        level: OrganizationType.OFFICE,
                     },
                     officeUser,
                 ),
@@ -469,9 +469,9 @@ describe(`hasPermission`, () => {
             expect(
                 hasPermission(
                     {
-                        organizationId: 13,
-                        permission: PermissionType.PRO_VIEWER,
-                        level: OrganizationUnitLevel.OFFICE,
+                        organizationId: '13',
+                        permission: 'PRO_VIEWER',
+                        level: OrganizationType.OFFICE,
                     },
                     customerGroupUser,
                 ),
@@ -479,9 +479,9 @@ describe(`hasPermission`, () => {
             expect(
                 hasPermission(
                     {
-                        organizationId: 14,
-                        permission: PermissionType.PRO_VIEWER,
-                        level: OrganizationUnitLevel.OFFICE,
+                        organizationId: '14',
+                        permission: 'PRO_VIEWER',
+                        level: OrganizationType.OFFICE,
                     },
                     customerUser,
                 ),
@@ -491,9 +491,9 @@ describe(`hasPermission`, () => {
             expect(
                 hasPermission(
                     {
-                        organizationId: 3,
-                        permission: PermissionType.PRO_PROPERTY,
-                        level: OrganizationUnitLevel.OFFICE,
+                        organizationId: '3',
+                        permission: 'PRO_PROPERTY',
+                        level: OrganizationType.OFFICE,
                     },
                     customerGroupUser,
                 ),
@@ -501,9 +501,9 @@ describe(`hasPermission`, () => {
             expect(
                 hasPermission(
                     {
-                        organizationId: 24,
-                        permission: PermissionType.PRO_PROPERTY,
-                        level: OrganizationUnitLevel.OFFICE,
+                        organizationId: '24',
+                        permission: 'PRO_PROPERTY',
+                        level: OrganizationType.OFFICE,
                     },
                     customerUser,
                 ),
@@ -513,9 +513,9 @@ describe(`hasPermission`, () => {
             expect(
                 hasPermission(
                     {
-                        organizationId: 3,
-                        permission: PermissionType.PRO_VIEWER,
-                        level: OrganizationUnitLevel.OFFICE,
+                        organizationId: '3',
+                        permission: 'PRO_VIEWER',
+                        level: OrganizationType.OFFICE,
                     },
                     emptyUser,
                 ),

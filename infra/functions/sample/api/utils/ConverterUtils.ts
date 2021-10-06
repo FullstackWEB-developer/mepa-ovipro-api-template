@@ -1,4 +1,4 @@
-import { log } from './logging';
+import { standardLog } from './logging';
 
 export const ConverterUtils = {
     /**
@@ -11,7 +11,7 @@ export const ConverterUtils = {
     convertEnum<E extends { [name: string]: any }, Target>(value: any, e: E): Target {
         const match = Object.values(e).find((item) => item === value);
         if (!match) {
-            log.error(`Non-matching enums: ${Object.values(e)} vs. ${value}`);
+            standardLog.error(`Non-matching enums: ${Object.values(e)} vs. ${value}`);
         }
         return match;
     },

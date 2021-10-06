@@ -104,7 +104,7 @@ export const factory = LFService.createNamedLoggerFactory('LoggerFactory', optio
 /**
  * A generic logger for the lazy one.
  */
-export const log = factory.getLogger('standard');
+export const standardLog = factory.getLogger('standard');
 
 /**
  * This function proxies the Middy http error handler logger calls to log to the given
@@ -146,4 +146,28 @@ export function provideLogContext<
         const logContextData: RequestContextData = getRequestContextData(localArgs[0]);
         return asyncLocalStorage.run(logContextData, fn, ...localArgs);
     };
+}
+
+export type LoggableRequest = {
+    context: Context;
+    event: APIGatewayProxyEvent;
+    description: string;
+    log: Logger;
+};
+
+/**
+ * A utility method to log typical GET request params. This should usually be called for all Lambda handler invokes.
+ */
+export function logRequest({ description, event, context, log }: LoggableRequest): void {
+    log.debug(
+        `${description}: ${JSON.stringify({
+            query: event.queryStringParameters,
+            path: event.path,
+            pathParameters: event.pathParameters,
+            method: event.httpMethod,
+            functionName: context.functionName,
+            functionVersion: context.functionVersion,
+            invokedFunctionArn: context.invokedFunctionArn,
+        })}`,
+    );
 }

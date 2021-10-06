@@ -1,9 +1,9 @@
-import { InheritanceType, CustomerGroup, OrganizationUnitLevel, PermissionType } from './userdetails';
+import { InheritanceType, OrganizationPermission, OrganizationType } from './userdetails';
 import { hasPermissionAnywhere } from './index';
 
-const baseOrganizationPermission: CustomerGroup = {
-    id: 1,
-    level: OrganizationUnitLevel.CUSTOMER,
+const baseOrganizationPermission: OrganizationPermission = {
+    id: '1',
+    level: OrganizationType.CUSTOMER,
     permissions: [],
     children: [],
 };
@@ -14,9 +14,9 @@ describe(`hasPermissionAnywhere`, () => {
             hasPermissionAnywhere([
                 {
                     ...baseOrganizationPermission,
-                    permissions: [{ permission: PermissionType.PRO_PROPERTY, inheritanceType: InheritanceType.NONE }],
+                    permissions: [{ permission: 'PRO_PROPERTY', inheritanceType: InheritanceType.NONE }],
                 },
-            ])(PermissionType.PRO_PROPERTY),
+            ])('PRO_PROPERTY'),
         ).toEqual(true);
     });
 
@@ -31,14 +31,14 @@ describe(`hasPermissionAnywhere`, () => {
                             ...baseOrganizationPermission,
                             permissions: [
                                 {
-                                    permission: PermissionType.PRO_PROPERTY,
+                                    permission: 'PRO_PROPERTY',
                                     inheritanceType: InheritanceType.NONE,
                                 },
                             ],
                         },
                     ],
                 },
-            ])(PermissionType.PRO_PROPERTY),
+            ])('PRO_PROPERTY'),
         ).toEqual(true);
     });
 
@@ -56,7 +56,7 @@ describe(`hasPermissionAnywhere`, () => {
                                     ...baseOrganizationPermission,
                                     permissions: [
                                         {
-                                            permission: PermissionType.PRO_PROPERTY,
+                                            permission: 'PRO_PROPERTY',
                                             inheritanceType: InheritanceType.NONE,
                                         },
                                     ],
@@ -65,7 +65,7 @@ describe(`hasPermissionAnywhere`, () => {
                         },
                     ],
                 },
-            ])(PermissionType.PRO_PROPERTY),
+            ])('PRO_PROPERTY'),
         ).toEqual(true);
     });
 
@@ -80,7 +80,7 @@ describe(`hasPermissionAnywhere`, () => {
                             ...baseOrganizationPermission,
                             permissions: [
                                 {
-                                    permission: PermissionType.PRO_PROPERTY_PRESENTATIONS, // This permission is not checked
+                                    permission: 'PRO_PROPERTY_PRESENTATIONS', // This permission is not checked
                                     inheritanceType: InheritanceType.NONE,
                                 },
                             ],
@@ -89,7 +89,7 @@ describe(`hasPermissionAnywhere`, () => {
                                     ...baseOrganizationPermission,
                                     permissions: [
                                         {
-                                            permission: PermissionType.PRO_PROPERTY_PRESENTATIONS, // This permission is not checked
+                                            permission: 'PRO_PROPERTY_PRESENTATIONS', // This permission is not checked
                                             inheritanceType: InheritanceType.NONE,
                                         },
                                     ],
@@ -98,7 +98,7 @@ describe(`hasPermissionAnywhere`, () => {
                         },
                     ],
                 },
-            ])(PermissionType.PRO_PROPERTY),
+            ])('PRO_PROPERTY'),
         ).toEqual(false);
     });
 });

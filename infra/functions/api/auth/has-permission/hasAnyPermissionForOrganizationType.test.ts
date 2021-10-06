@@ -1,9 +1,9 @@
-import { CustomerGroup, InheritanceType, OrganizationUnitLevel, PermissionType } from './userdetails';
+import { InheritanceType, OrganizationPermission, OrganizationType } from './userdetails';
 import { hasAnyPermissionForOrganizationType } from './index';
 
-const baseOrganizationPermission: CustomerGroup = {
-    id: 1,
-    level: OrganizationUnitLevel.CUSTOMER_GROUP,
+const baseOrganizationPermission: OrganizationPermission = {
+    id: '1',
+    level: OrganizationType.CUSTOMER_GROUP,
     permissions: [],
     children: [],
 };
@@ -14,9 +14,9 @@ describe(`hasAnyPermissionForOrganizationType`, () => {
             hasAnyPermissionForOrganizationType([
                 {
                     ...baseOrganizationPermission,
-                    permissions: [{ permission: PermissionType.PRO_PROPERTY, inheritanceType: InheritanceType.NONE }],
+                    permissions: [{ permission: 'PRO_PROPERTY', inheritanceType: InheritanceType.NONE }],
                 },
-            ])(OrganizationUnitLevel.CUSTOMER_GROUP),
+            ])(OrganizationType.CUSTOMER_GROUP),
         ).toEqual(true);
     });
 
@@ -29,17 +29,17 @@ describe(`hasAnyPermissionForOrganizationType`, () => {
                         baseOrganizationPermission,
                         {
                             ...baseOrganizationPermission,
-                            level: OrganizationUnitLevel.CUSTOMER,
+                            level: OrganizationType.CUSTOMER,
                             permissions: [
                                 {
-                                    permission: PermissionType.PRO_PROPERTY,
+                                    permission: 'PRO_PROPERTY',
                                     inheritanceType: InheritanceType.NONE,
                                 },
                             ],
                         },
                     ],
                 },
-            ])(OrganizationUnitLevel.CUSTOMER),
+            ])(OrganizationType.CUSTOMER),
         ).toEqual(true);
     });
 
@@ -50,7 +50,7 @@ describe(`hasAnyPermissionForOrganizationType`, () => {
                     ...baseOrganizationPermission,
                     permissions: [
                         {
-                            permission: PermissionType.PRO_PROPERTY,
+                            permission: 'PRO_PROPERTY',
                             inheritanceType: InheritanceType.INHERIT,
                         },
                     ],
@@ -58,11 +58,11 @@ describe(`hasAnyPermissionForOrganizationType`, () => {
                         baseOrganizationPermission,
                         {
                             ...baseOrganizationPermission,
-                            level: OrganizationUnitLevel.CUSTOMER,
+                            level: OrganizationType.CUSTOMER,
                         },
                     ],
                 },
-            ])(OrganizationUnitLevel.CUSTOMER),
+            ])(OrganizationType.CUSTOMER),
         ).toEqual(true);
     });
 
@@ -75,14 +75,14 @@ describe(`hasAnyPermissionForOrganizationType`, () => {
                         baseOrganizationPermission,
                         {
                             ...baseOrganizationPermission,
-                            level: OrganizationUnitLevel.CUSTOMER,
+                            level: OrganizationType.CUSTOMER,
                             children: [
                                 {
                                     ...baseOrganizationPermission,
-                                    level: OrganizationUnitLevel.OFFICE,
+                                    level: OrganizationType.OFFICE,
                                     permissions: [
                                         {
-                                            permission: PermissionType.PRO_PROPERTY,
+                                            permission: 'PRO_PROPERTY',
                                             inheritanceType: InheritanceType.NONE,
                                         },
                                     ],
@@ -91,7 +91,7 @@ describe(`hasAnyPermissionForOrganizationType`, () => {
                         },
                     ],
                 },
-            ])(OrganizationUnitLevel.OFFICE),
+            ])(OrganizationType.OFFICE),
         ).toEqual(true);
     });
 
@@ -104,23 +104,23 @@ describe(`hasAnyPermissionForOrganizationType`, () => {
                         baseOrganizationPermission,
                         {
                             ...baseOrganizationPermission,
-                            level: OrganizationUnitLevel.CUSTOMER,
+                            level: OrganizationType.CUSTOMER,
                             permissions: [
                                 {
-                                    permission: PermissionType.PRO_PROPERTY,
+                                    permission: 'PRO_PROPERTY',
                                     inheritanceType: InheritanceType.INHERIT,
                                 },
                             ],
                             children: [
                                 {
                                     ...baseOrganizationPermission,
-                                    level: OrganizationUnitLevel.OFFICE,
+                                    level: OrganizationType.OFFICE,
                                 },
                             ],
                         },
                     ],
                 },
-            ])(OrganizationUnitLevel.OFFICE),
+            ])(OrganizationType.OFFICE),
         ).toEqual(true);
     });
 
@@ -131,7 +131,7 @@ describe(`hasAnyPermissionForOrganizationType`, () => {
                     ...baseOrganizationPermission,
                     permissions: [
                         {
-                            permission: PermissionType.PRO_PROPERTY,
+                            permission: 'PRO_PROPERTY',
                             inheritanceType: InheritanceType.INHERIT,
                         },
                     ],
@@ -139,17 +139,17 @@ describe(`hasAnyPermissionForOrganizationType`, () => {
                         baseOrganizationPermission,
                         {
                             ...baseOrganizationPermission,
-                            level: OrganizationUnitLevel.CUSTOMER,
+                            level: OrganizationType.CUSTOMER,
                             children: [
                                 {
                                     ...baseOrganizationPermission,
-                                    level: OrganizationUnitLevel.OFFICE,
+                                    level: OrganizationType.OFFICE,
                                 },
                             ],
                         },
                     ],
                 },
-            ])(OrganizationUnitLevel.OFFICE),
+            ])(OrganizationType.OFFICE),
         ).toEqual(true);
     });
 
@@ -160,7 +160,7 @@ describe(`hasAnyPermissionForOrganizationType`, () => {
                     ...baseOrganizationPermission,
                     permissions: [
                         {
-                            permission: PermissionType.PRO_PROPERTY_PRESENTATIONS,
+                            permission: 'PRO_PROPERTY_PRESENTATIONS',
                             inheritanceType: InheritanceType.NONE,
                         },
                     ],
@@ -168,23 +168,23 @@ describe(`hasAnyPermissionForOrganizationType`, () => {
                         baseOrganizationPermission,
                         {
                             ...baseOrganizationPermission,
-                            level: OrganizationUnitLevel.CUSTOMER,
+                            level: OrganizationType.CUSTOMER,
                             permissions: [
                                 {
-                                    permission: PermissionType.PRO_PROPERTY_PRESENTATIONS, // This permission is not checked
+                                    permission: 'PRO_PROPERTY_PRESENTATIONS', // This permission is not checked
                                     inheritanceType: InheritanceType.NONE,
                                 },
                             ],
                             children: [
                                 {
                                     ...baseOrganizationPermission,
-                                    level: OrganizationUnitLevel.OFFICE,
+                                    level: OrganizationType.OFFICE,
                                 },
                             ],
                         },
                     ],
                 },
-            ])(OrganizationUnitLevel.OFFICE),
+            ])(OrganizationType.OFFICE),
         ).toEqual(false);
     });
 });

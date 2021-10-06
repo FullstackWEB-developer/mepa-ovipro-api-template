@@ -17,6 +17,7 @@
         "test": "npx tsc && jest --runInBand",
         "test:update": "jest --runInBand -u",
         "test:watch": "jest --watch",
+        "integration-test": "jest -c jest.config.it.js --runInBand",
         "clean": "npx rimraf '+(bin|lib|functions|__test__|utils)/**/+(*.d.ts|*.js)'",
         "build:application": "concurrently 'npm:build:lambda'",
         "build:lambda": "npm run build:lambda:api-model && concurrently 'npm:build:lambda:java'",
@@ -90,7 +91,7 @@
         "prettier": "^2.3.0",
         "source-map-support": "^0.5.19",
         "test-console": "^2.0.0",
-        "testcontainers": "^7.19.1",
+        "testcontainers": "^7.21.0",
         "ts-jest": "^26.5.5",
         "ts-node": "^9.0.0",
         "typescript": "^4.4.3"

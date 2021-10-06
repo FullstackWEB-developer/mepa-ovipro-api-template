@@ -1,12 +1,9 @@
 import { BaseDAO, Options } from './BaseDAO';
 import { factory } from '../../utils/logging';
-import { Office } from '../../model/entities/Office';
+import { SimpleOffice } from '../../model/entities/SimpleOffice';
 
-export class OfficeDAO extends BaseDAO {
-    static async findPublicIdByOfficeId(
-        officeId: number,
-        options?: Options,
-    ): Promise<{ publicId: string } | undefined> {
+export class OfficeDAO extends BaseDAO<SimpleOffice> {
+    async findPublicIdByOfficeId(officeId: number, options?: Options): Promise<{ publicId: string } | undefined> {
         log.debug(`Find office uuid by id ${officeId}`);
         const { transactionalEntityManager } = options || {};
 
@@ -16,25 +13,25 @@ export class OfficeDAO extends BaseDAO {
         return result.length === 1 ? { publicId: result[0].public_id } : undefined;
     }
 
-    static async findOfficeIdByUuid(uuid: string, options?: Options): Promise<{ id: number } | undefined> {
-        log.debug(`Find office id by uuid ${uuid}`);
+    async findOneByPublicId(publicId: string, options?: Options): Promise<SimpleOffice | undefined> {
+        log.debug(`Find realty by uuid ${publicId}`);
         const { transactionalEntityManager } = options || {};
-
-        const query = `select id from office where public_id = $1::uuid;`;
-        const manager = transactionalEntityManager || (await BaseDAO.getConnection()).manager;
-        const result = await manager.query(query, [uuid]);
-        return result.length === 1 ? { id: result[0].office_id } : undefined;
+        const where = BaseDAO.uuidToWhereCondition('publicId', publicId);
+        const repository = await super.getRepository(undefined, transactionalEntityManager);
+        return repository.findOne({ where });
     }
 
     /**
-     * Persist office. Return id.
+     * Persist office. Return id as string.
      */
-    static async insert(office: Office, options?: Options): Promise<string> {
+    async insert(office: SimpleOffice, options?: Options): Promise<string> {
         log.debug(`Create office ${JSON.stringify(office)}`);
         const { transactionalEntityManager } = options || {};
-        const repository = await BaseDAO.getRepository(Office, transactionalEntityManager);
+        const repository = await super.getRepository(SimpleOffice, transactionalEntityManager);
         return (await repository.insert(office)).identifiers[0].id;
     }
 }
+
+export const officeDAO = new OfficeDAO(SimpleOffice);
 
 const log = factory.getLogger(OfficeDAO.name);

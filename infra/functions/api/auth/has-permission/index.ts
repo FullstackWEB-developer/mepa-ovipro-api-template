@@ -1,15 +1,15 @@
 import {
+    InheritanceType,
+    OrganizationPermission,
+    OrganizationType,
     Permission,
     PermissionType,
-    OrganizationUnitLevel,
-    CustomerGroup,
     UserDetails,
-    InheritanceType,
 } from './userdetails';
 
 export type PermissionToCheck = {
-    level: OrganizationUnitLevel;
-    organizationId: number;
+    level: OrganizationType;
+    organizationId: string;
     permission: PermissionType;
 };
 
@@ -27,20 +27,17 @@ const checkInheritedPermission = (permissions: ReadonlyArray<Permission>, permis
  * Recursive function for finding a specific permission
  * in user's permission tree.
  *
- * TODO: Currently does not check for user specific permissions (eg. user's property)
- *
  * @param {PermissionToCheck} permissionToCheck - permission to find
  * @param {$ReadOnly<OrganizationPermission>} current - current object in the tree
  * @param {boolean} permissionInParent - inherited permission already exists in parent permission object
  */
 export const checkForPermission = (
     permissionToCheck: PermissionToCheck,
-    current: CustomerGroup,
+    current: OrganizationPermission,
     permissionInParent = false,
 ): boolean => {
     const orgInCurrentLevel =
         current.level === permissionToCheck.level && current.id === permissionToCheck.organizationId;
-
     if (orgInCurrentLevel) {
         return permissionInParent || checkPermission(current.permissions, permissionToCheck.permission);
     } else if (current.children) {
@@ -58,12 +55,10 @@ export const checkForPermission = (
 /**
  * Checks for permission in user object
  *
- * TODO: Currently does not check for user specific permissions (eg. user's property)
- *
  * @param {PermissionToCheck} permissionToCheck - permission to find
- * @param {UserDetails} userDetails - user object
+ * @param {User} user - user object
  */
-export const hasPermission = (permission: PermissionToCheck, user: UserDetails | null | undefined) => {
+export const hasPermission = (permission: PermissionToCheck, user: UserDetails | null | undefined): boolean => {
     if (!user) {
         return false;
     }
@@ -79,34 +74,32 @@ export const hasPermission = (permission: PermissionToCheck, user: UserDetails |
  * @param {PermissionType} permission - type of permission to be checked
  * @returns {boolean}
  */
-export const hasPermissionAnywhere = (organizationPermission: ReadonlyArray<CustomerGroup>) => (
-    permission: PermissionType,
-): boolean =>
-    organizationPermission.some(
-        (permissionTree) =>
-            permissionTree.permissions.some((it) => it.permission === permission) ||
-            hasPermissionAnywhere(permissionTree.children)(permission),
-    );
+/* eslint-disable prettier/prettier */
+export const hasPermissionAnywhere =
+    (organizationPermission: ReadonlyArray<OrganizationPermission>) =>
+    (permission: PermissionType): boolean =>
+        organizationPermission.some(
+            (permissionTree) =>
+                permissionTree.permissions.some((it) => it.permission === permission) ||
+                hasPermissionAnywhere(permissionTree.children)(permission),
+        );
+/* eslint-enable prettier/prettier */
 
-/**
- * Check if users array of customer group has any permission in organisation type
- * @param {ReadonlyArray<CustomerGroup>} organizationPermission - Array of CustomersGroups
- * @param {OrganizationUnitLevel} organizationType - organisation type
- * @returns {boolean}
- */
-export const hasAnyPermissionForOrganizationType = (organizationPermission: ReadonlyArray<CustomerGroup>) => (
-    organizationType: OrganizationUnitLevel,
-): boolean => {
-    return organizationPermission.some(
-        (permissionTree) =>
-            (permissionTree.level === organizationType &&
-                // Check if have any INHERITED permissions on parent organization level
-                !!permissionTree.permissions.length) ||
-            (permissionTree.level !== organizationType &&
-                permissionTree.permissions.some(
-                    (permission) => permission.inheritanceType === InheritanceType.INHERIT,
-                )) || // No need to check childrens of wanted organization level
-            (permissionTree.level !== organizationType &&
-                hasAnyPermissionForOrganizationType(permissionTree.children)(organizationType)),
-    );
-};
+/* eslint-disable prettier/prettier */
+export const hasAnyPermissionForOrganizationType =
+    (organizationPermission: ReadonlyArray<OrganizationPermission>) =>
+    (organizationType: OrganizationType): boolean => {
+        return organizationPermission.some(
+            (permissionTree) =>
+                (permissionTree.level === organizationType &&
+                    // Check if have any INHERITED permissions on parent organization level
+                    !!permissionTree.permissions.length) ||
+                (permissionTree.level !== organizationType &&
+                    permissionTree.permissions.some(
+                        (permission) => permission.inheritanceType === InheritanceType.INHERIT,
+                    )) || // No need to check childrens of wanted organization level
+                (permissionTree.level !== organizationType &&
+                    hasAnyPermissionForOrganizationType(permissionTree.children)(organizationType)),
+        );
+    };
+/* eslint-enable prettier/prettier */

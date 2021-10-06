@@ -1,5 +1,6 @@
 *.js
 !jest.config.js
+!jest.config.it.js
 *.d.ts
 node_modules
 

@@ -24,6 +24,8 @@ TBD
 -   Eslint, Typescript and Prettier
 -   If you are using vsc, it is highly recommended to use our shared settings `.vscode/settings.json`.
     By default VSC autoimports them, but if you have a manual setup consider copying them to your workspace settings.
+-   Typescript Lambda conventions are inspired by the [Airbnb styleguide](https://github.com/airbnb/javascript).
+-   Infra coding conventions are inspired by [various Alma project](https://github.com/almamedia/alma-cdk-jsii-accounts-and-environments) and AWS [best practice guides](https://aws.amazon.com/blogs/devops/best-practices-for-developing-cloud-applications-with-aws-cdk/).
 
 ## Infrastructure
 
@@ -53,12 +55,11 @@ We are also using [Ari Palo's](https://github.com/aripalo) useful custom CDK hel
 -   [Accounts and Environments](https://github.com/almamedia/alma-cdk-jsii-accounts-and-environments)
 -   [OpenAPI](https://github.com/almamedia/alma-cdk-jsii-open-api)
 
-## Features
-
-This template repository includes helpers-constructs, which import all the shared resources defined in [OviPRO infrastructure](https://github.com/almamedia/mepa-ovipro-infra).
-Use them when needed.
-
 ## Installation
+
+### CDK
+
+Follow [AWS-docs](https://docs.aws.amazon.com/cdk/latest/guide/getting_started.html) for the latest guide. Includes installing CDK and generating AWS-profiles.
 
 ### Node & NPM
 
@@ -67,19 +68,13 @@ Consider using [n](https://github.com/tj/n) for version management.
 
 -   run `n lts` to install latest LTS
 
-NOTE (23.3.2021): npm 7.x is currently bugged with authenticating private NPM-registries.
+NOTE (23.3.2021): npm 7.x is currently bugged with authenticating private NPM registries.
 
 -   run `npm i -g npm@6` to downgrade
 
-### CDK
-
-Follow [AWS-docs](https://docs.aws.amazon.com/cdk/latest/guide/getting_started.html) for latest guide. Includes installing CDK and generating AWS-profiles.
-
-3. Node dependencies
-
 ### Almamedia's private NPM packages
 
-Some of the packages are in a different NPM-registry (Github Packages), and developers needs to be authenticated before installing:
+Some of the packages are in a different NPM registry (Github Packages), and developers needs to be authenticated before installing:
 
 1. Create a new "personal access token" in Github
     1. Settings -> Developer Settings -> Personal Access Tokens
@@ -97,7 +92,7 @@ If any problems occur regarding permissions, ask for help.
 
 ### Java dependencies
 
-Add at least the following server with your personal Github username and token:
+The repository may contain optional Java code with dependencies. Add or update an existing ~/.m2/settings.xml file with at least the following server with your personal Github username and token required by the Maven Java build tool:
 
 ```xml
 <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" xmlns:xsi="http://www.w3.org/ 2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 https://maven.apache.org/xsd/settings-1.0.0.xsd">
@@ -144,46 +139,70 @@ Temporary credentials / MFA
 -   [Assumed credentials-package](https://github.com/almamedia/alma-cdk-jsii-assumed-credentials-provider) is in use to cache MFA!
 -   If you wish to opt-out, just use normal `--profile`-flag in your commands instead
 
-### Lambdas
-
-TBD, current quick guide
-
-1. Develop your lambda, refer to `functions/sample` for sample
-2. Add the new lambda to package.json
-3. Run `npm run build:your_lambda`
-4. Your lambda is now generated to `dist/functions/{your_lambda}`
-5. Deploy stack
-
 ## Development
 
-TBD, current model
-
-1. Develop your new features or changes in a Jira-ticket named branch (eg. JIRA-NNNN)
+1. Develop your new features or changes in a Jira-ticket named branch (eg. feature/JIRA-NNNN)
 2. If you want, you can deploy preview-versions of your resources using a preview-type environment, named as `preview/JIRANNNN` (more info about environments in [Accounts & environments](https://github.com/almamedia/alma-cdk-jsii-accounts-and-environments)) **Note:** Dont use dashes (-) in branch name!. If you have dependencies on resources in other repositories, you need to deploy them to same environment (Jira-ticket named branch and environment).
-3. You also have the "lazy" option of deploying your changes and resources to development-environment by using development branch. Remember, that this environment is **not** stable and can be used by anyone.
-4. When your changes in a PR are ready and reviewed, merge them to _main_-branch. Changes in main-branch are automatically deployed to staging-environment. **Never** deploy anything to staging-environment manually, it is not meant to be used as a development environment
-5. Changes in _staging_-branch will be deployed to preprod-account nightly, if tests are showing green. **Never** deploy anything manually to preprod!
-6. Manual deployments to production-account
+3. When your changes in a PR are ready and reviewed, merge them to _main_-branch. Changes in main-branch are automatically deployed to staging-environment. **Never** deploy anything to staging-environment manually, it is not meant to be used as a development environment
+4. Changes in _staging_-branch will be deployed to preprod-account nightly, if tests are showing green. **Never** deploy anything manually to preprod!
+5. Manual deployments to production-account
 
-## API Reference
+### Lambdas
 
-Not yet implemented
+(For a new repo, note that the template repo doesn't include the API stack in the CDK main file environment.ts)
+
+1. Develop your lambda, refer to `functions/sample`
+2. Add the new lambda to package.json
+3. Map this new Lambda to an OpenAPI spec endpoint updating the spec as needed, see infra/api/index.ts
+
+```typescript
+new VersionedOpenApi(this, 'SampleApiV1', {
+    openApiDefinitionFileName: 'realty-api-v1-bundle.yaml',
+    apigatewayIntegrations: {
+        '/plotProperties': {
+            get: { fn: sample.getFunction },
+            post: { fn: sample.getFunction },
+        },
+        ...
+    },
+    ...
+});
+```
+
+4. Deploy the stack
+
+Make sure to include:
+
+-   Good quality documentation.
+-   Handler unit tests for different use cases to make refactoring more secure.
+-   Data access layer tests, narrow integration tests to catch regressions when libraries are updated.
 
 ## Tests
 
-TBD
+### Unit tests
 
-### Unit testing
+All CDK stacks should be tested with snapshot tests. These safeguard against unwanted changes like AWS CDK version regressions.
 
-Keep unit tests in the same folder as their source file.
+-   Keep unit tests in the same folder as their source file.
+-   Keep snapshots always updated, and remember to commit their changes
 
-### Snapshot testing
+```typescript
+./infra/npm test:update
+```
 
-Keep snapshots always updated, and remember to commit their changes
+Lambda development is test-driven. Lambda unit tests reside in separate \_\_tests\_\_ folders next to implementations. There are two types of Lambda unit tests:
 
-### E2E testing
+1. Handler tests with _testLambdaHandler_ enable testing with static inputs, outputs and mock data or constructs.
 
-E2e-tests should be placed in e2e-folder.
+```typescript
+./infra/npm test
+```
+
+2. Data access layer tests may rely on Docker containers, which slow down test runs, so they are run and enabled separately. These are known as narrow integration tests:
+
+```typescript
+./infra/npm integration-test
+```
 
 ## Important
 
