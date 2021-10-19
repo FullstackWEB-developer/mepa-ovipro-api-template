@@ -2,7 +2,7 @@
 
 make_page() {
     echo "<html><body><ul>"
-    echo "<h1>OviPRO API Docs</h1>"
+    echo "<h1>Ovi PRO API Docs</h1>"
     got=
     while read -r -u 3 line
     do
