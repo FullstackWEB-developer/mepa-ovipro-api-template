@@ -4,7 +4,7 @@ make_page() {
     echo "<html><body><ul>"
     echo "<h1>OviPRO API Docs</h1>"
     got=
-    while read -r line
+    while read -r -u 3 line
     do
         printf "<li><a href="\"\/%s\"">%s</a></li>\n" "$line" "$line";
         got=1;
