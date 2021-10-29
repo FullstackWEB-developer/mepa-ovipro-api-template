@@ -44,6 +44,7 @@ Main folders and their descriptions:
 | --------------- | -------------------------------------------------------------------- |
 | api-specs       | OpenAPI schemas for code generation, source of truth for development |
 | api-docs        | Generated HTML documentation from OpenAPI schemas                    |
+| api-tests       | Integration tests for the API endpoints and infrastructure           |
 | design          | Misc technical design, e.g. data modeling                            |
 | infra           | AWS project root                                                     |
 | infra/lib       | AWS infrastructure                                                   |
