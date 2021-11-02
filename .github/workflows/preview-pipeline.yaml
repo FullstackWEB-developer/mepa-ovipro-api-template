@@ -31,7 +31,6 @@ jobs:
           channel: 'ovi_pro_pipeline_development_deployments'
           status: STARTED
           color: warning
-      - uses: actions/checkout@v2
       - name: Set account to dev & environment to preview
         if: startsWith(github.ref, 'refs/heads/preview/')
         run: |
