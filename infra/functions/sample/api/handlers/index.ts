@@ -12,6 +12,8 @@ import { SampleAuthorizer } from '../../../api/auth/authorizer/SampleAuthorizer'
 import { SimpleOffice } from '../model/entities/SimpleOffice';
 import { getUserFromRequest } from '../../../api/auth/has-permission/userdetails';
 
+// This is a template sample API Lambda implementation that can be used as a basis.
+
 const log = factory.getLogger('Office:get');
 
 interface Event {
@@ -21,6 +23,8 @@ interface Event {
 export async function processRequest(event: APIGatewayEvent & Event, context: Context): Promise<APIGatewayProxyResult> {
     try {
         const uuid = event.queryStringParameters?.id;
+
+        // Each request should be logged as soon as possible in the handler processRequest method:
         logRequest({
             description: `Get office by uuid ${uuid}`,
             context,
@@ -28,6 +32,7 @@ export async function processRequest(event: APIGatewayEvent & Event, context: Co
             log,
         });
 
+        // User token validation:
         const user = getUserFromRequest(event);
         if (!user) {
             log.debug('User not authenticated. Access denied returning 404.');
@@ -38,10 +43,12 @@ export async function processRequest(event: APIGatewayEvent & Event, context: Co
             validate(uuid || '') &&
             officeDAO.findOneByPublicId(uuid));
 
+        // Exception handling should rely on common error handling utilities. This is a naive example.
         if (!office) {
             throw new createError.NotFound('Entity not found');
         }
 
+        // Endpoints may contain advanced authorization requirements:
         if (!SampleAuthorizer.INSTANCE.canView(user, office)) {
             throw new createError.NotFound('Entity not found');
         }
