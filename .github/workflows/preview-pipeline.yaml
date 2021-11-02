@@ -60,7 +60,7 @@ jobs:
         with:
           aws-region: eu-west-1
           role-to-assume: FIND_ME_AND_REPLACE_WITH_REPO_OIDC_ROLE_ARN
-          role-session-name: preview-pipeline-${{ env.ENVIRONMENT }}
+          role-session-name: preview-pipeline
       - name: deploy all stacks
         working-directory: ./infra
         run: |

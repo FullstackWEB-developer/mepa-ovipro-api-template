@@ -20,7 +20,7 @@ jobs:
       with:
         aws-region: eu-west-1
         role-to-assume: FIND_ME_AND_REPLACE_WITH_REPO_OIDC_ROLE_ARN
-        role-session-name: upload-docs-to-s3-pipeline-${{ env.ENVIRONMENT }}
+        role-session-name: upload-docs-to-s3-pipeline
     ## Create index page from html files in s3 bucket
     - name: Create index page & upload
       run: |

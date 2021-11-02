@@ -42,7 +42,7 @@ jobs:
         with:
           aws-region: eu-west-1
           role-to-assume: FIND_ME_AND_REPLACE_WITH_REPO_OIDC_ROLE_ARN
-          role-session-name: destroy-preview-infra-pipeline-${{ env.ENVIRONMENT }}
+          role-session-name: destroy-preview-infra-pipeline
       - name: destroy all stacks
         working-directory: ./infra
         env:
