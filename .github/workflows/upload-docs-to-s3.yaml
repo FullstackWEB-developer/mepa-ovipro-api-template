@@ -8,23 +8,29 @@ on:
 jobs:
   upload-docs-to-s3:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write # needed to interact with GitHub's OIDC Token endpoint.
+      contents: read
     ## run only on main branch
     if: github.ref == 'refs/heads/main'
     steps:
     - uses: actions/checkout@v2
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@master
+      with:
+        aws-region: eu-west-1
+        role-to-assume: FIND_ME_AND_REPLACE_WITH_REPO_OIDC_ROLE_ARN
+        role-session-name: upload-docs-to-s3-pipeline-${{ env.ENVIRONMENT }}
     ## Create index page from html files in s3 bucket
     - name: Create index page & upload
       run: |
         chmod +x .github/workflows/scripts/create_docs_index_page.sh
-        aws configure set aws_access_key_id ${{ secrets.MEPA_ASUMINEN_OVIPRO_DOCUMENTATION_DEPLOYMENT_ACCESS_KEY }} --profile deploy_profile
-        aws configure set aws_secret_access_key ${{ secrets.MEPA_ASUMINEN_OVIPRO_DOCUMENTATION_DEPLOYMENT_SECRET_ACCESS_KEY }} --profile deploy_profile
-        aws configure set region eu-west-1 --profile deploy_profile
 
-        aws s3 cp api-docs s3://apidocs.dev-ovipro.net/ --region eu-west-1 --recursive --exclude "*" --include "*.html" --profile deploy_profile
+        aws s3 cp api-docs s3://apidocs.dev-ovipro.net/ --region eu-west-1 --recursive --exclude "*" --include "*.html"
 
-        aws s3 ls apidocs.dev-ovipro.net --recursive --profile deploy_profile | awk '{if($4~/\.html$/){print $4}}' > files.txt
+        aws s3 ls apidocs.dev-ovipro.net --recursive | awk '{if($4~/\.html$/){print $4}}' > files.txt
 
         .github/workflows/scripts/create_docs_index_page.sh files.txt > api-docs/index.html
 
-        aws s3 cp api-docs s3://apidocs.dev-ovipro.net/ --region eu-west-1 --recursive --exclude "*" --include "index.html" --profile deploy_profile
+        aws s3 cp api-docs s3://apidocs.dev-ovipro.net/ --region eu-west-1 --recursive --exclude "*" --include "index.html"
 

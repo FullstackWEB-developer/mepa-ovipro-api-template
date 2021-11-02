@@ -1,4 +1,4 @@
-name: Preview pipeline
+name: Deploy preview environment
 on:
   push:
     branches:
@@ -7,7 +7,10 @@ concurrency:
   group: ${{ github.ref }}
 jobs:
   build:
-    name: Build
+    name: Deploy preview environment
+    permissions:
+      id-token: write # needed to interact with GitHub's OIDC Token endpoint.
+      contents: read
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -53,16 +56,16 @@ jobs:
       - name: Run tests
         working-directory: ./infra
         run: npm run test
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@master
+        with:
+          aws-region: eu-west-1
+          role-to-assume: FIND_ME_AND_REPLACE_WITH_REPO_OIDC_ROLE_ARN
+          role-session-name: preview-pipeline-${{ env.ENVIRONMENT }}
       - name: deploy all stacks
         working-directory: ./infra
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.CDK_USER_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.CDK_USER_SECRET_ACCESS_KEY }}
         run: |
-          aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID --profile deploy_profile
-          aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY --profile deploy_profile
-          aws configure set region eu-west-1 --profile deploy_profile
-          npx cdk deploy --context account=${{ env.ACCOUNT }} --context environment=${{ env.ENVIRONMENT }} --profile deploy_profile --require-approval never --all
+          npx cdk deploy --context account=${{ env.ACCOUNT }} --context environment=${{ env.ENVIRONMENT }} --require-approval never --all
       - name: Notify slack success
         if: success()
         env:
