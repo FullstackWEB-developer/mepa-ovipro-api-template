@@ -187,7 +187,7 @@ All CDK stacks should be tested with snapshot tests. These safeguard against unw
 -   Keep snapshots always updated, and remember to commit their changes
 
 ```typescript
-./infra/npm test:update
+npm test:update
 ```
 
 Lambda development is test-driven. Lambda unit tests reside in separate \_\_tests\_\_ folders next to implementations. There are two types of Lambda unit tests:
@@ -195,13 +195,13 @@ Lambda development is test-driven. Lambda unit tests reside in separate \_\_test
 1. Handler tests with _testLambdaHandler_ enable testing with static inputs, outputs and mock data or constructs.
 
 ```typescript
-./infra/npm test
+npm test
 ```
 
 2. Data access layer tests may rely on Docker containers, which slow down test runs, so they are run and enabled separately. These are known as narrow integration tests:
 
 ```typescript
-./infra/npm integration-test
+npm integration-test
 ```
 
 ## Important
