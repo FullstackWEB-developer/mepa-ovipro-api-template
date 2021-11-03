@@ -12,7 +12,7 @@ import { SampleAuthorizer } from '../../../api/auth/authorizer/SampleAuthorizer'
 import { SimpleOffice } from '../model/entities/SimpleOffice';
 import { getUserFromRequest } from '../../../api/auth/has-permission/userdetails';
 
-// This is a template sample API Lambda implementation that can be used as a basis.
+// This is a template sample API Lambda implementation.
 
 const log = factory.getLogger('Office:get');
 
