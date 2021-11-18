@@ -36,3 +36,18 @@ Let’s assume a subset of our API is the /users endpoint, which includes the fo
 ##Common files
 - Parameters via variables etc for different setup, environments and settings etc
 - Resource files: Needed libraries, Python files, Message files(error codes etc) 
+- requirements.txt
+
+##Installation example of requirements.txt
+wheel
+robotframework
+robotframework-jsonlibrary
+robotframework-requests
+robotframework-zoomba
+requests
+jsonpath-rw
+jsonpath-rw-ext
+playwright
+
+These are libraries which we have used at starting point. If you find some better libraries or addons, please inform team
+
