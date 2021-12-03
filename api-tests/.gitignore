@@ -1,0 +1,14 @@
+# python deps
+.env
+
+# python cache
+**/__pycache__/
+
+# auth token
+user-api/Resources/Textfiles/token.txt
+
+# tests generated files
+reports
+log.html
+output.xml
+report.html

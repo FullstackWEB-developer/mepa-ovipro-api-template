@@ -1,0 +1,23 @@
+{
+  "id": "b292d495-665f-4b71-852d-0a306a55b806",
+  "emailAddress": "robottest.frameworktest@testing.net",
+  "agencyPermissions": [],
+  "agencyOfficePermissions": [
+        {
+            "inheritanceType": "NONE",
+            "organizationUnitId": "9fa140fb-b90c-4607-9374-fb7ff7c51167",
+            "permission": "PRO_VIEWER"
+        }
+    ],
+  "agencyOrganizationGroupPermissions": [],
+  "businessUserProfile": {
+    "firstName": "RobotUpdate",
+    "lastName": "FrameworkUpdate",
+    "phoneNumber": "+358501234567",
+    "state": "UNVERIFIED",
+    "title": "Laillistettu kiinteistönvälittäjä LKV",
+    "description": "Toimialueena koko Suomi",
+    "profilePictureUrl": "//d9zbdvy28211i.cloudfront.net/{imageParameters}/eomqa1media/ovi/business_user_profile/76/e0e4c4eb-f1de-44ce-9714-5c9a7cdba7aa.png",
+    "defaultAgencyOfficeId": "9fa140fb-b90c-4607-9374-fb7ff7c51167"
+  }
+}

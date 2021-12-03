@@ -1,0 +1,21 @@
+{
+  "businessUsers": [
+    {
+      "id": "e0e4c4eb-f1de-44ce-9714-5c9a7cdba7aa",
+      "emailAddress": "ville.valittaja@kiinteistoykkonen.fi",
+      "firstName": "Ville",
+      "lastName": "Välittäjä",
+      "phoneNumber": "0408644133",
+      "profilePictureUrl": "//d9zbdvy28211i.cloudfront.net/{imageParameters}/eomqa1media/ovi/business_user_profile/76/e0e4c4eb-f1de-44ce-9714-5c9a7cdba7aa.png",
+      "state": "ACTIVE",
+      "creationTime": "2020-06-08T08:04:44+00:00",
+      "defaultAgencyOfficeId": "edf9fb6b-00d6-4769-812e-d0c93a584c7b",
+      "agencyOffices": [
+        {
+          "id": "edf9fb6b-00d6-4769-812e-d0c93a584c7b",
+          "name": "Kiinteistöykkönen Pirkanmaa"
+        }
+      ]
+    }
+  ]
+}

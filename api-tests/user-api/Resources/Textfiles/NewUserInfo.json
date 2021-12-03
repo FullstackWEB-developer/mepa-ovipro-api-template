@@ -1,0 +1,15 @@
+{
+    "firstName": "Robottest",
+    "lastName": "Frameworktest",
+    "emailAddress": "robottest.frameworktest@testing.net",
+    "defaultAgencyOfficeId": "9fa140fb-b90c-4607-9374-fb7ff7c51167",
+    "agencyOfficePermissions": [
+        {
+            "permission": "PRO_VIEWER",
+            "organizationUnitId": "9fa140fb-b90c-4607-9374-fb7ff7c51167",
+            "inheritanceType": "NONE"
+        }
+    ],
+    "customerPermissions": [],
+    "customerGroupPermissions": []
+}
