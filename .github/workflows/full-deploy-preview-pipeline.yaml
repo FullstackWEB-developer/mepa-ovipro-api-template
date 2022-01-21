@@ -25,7 +25,7 @@ jobs:
         if: success()
         id: slack # IMPORTANT: reference this step ID value in future Slack steps
         env:
-          SLACK_BOT_TOKEN: xoxb-3073861353-2098191165254-8JZsPjt7XYNwSHTFjMIrDhvo
+          SLACK_BOT_TOKEN: ${{ secrets.MEPA_ASUMINEN_OVIPRO_SLACK_NOTIFICATIONS_BOT_TOKEN }}
         uses: voxmedia/github-action-slack-notify-build@v1.1.2
         with:
           channel: 'ovi_pro_pipeline_development_deployments'
@@ -105,7 +105,7 @@ jobs:
       - name: Notify slack success
         if: success()
         env:
-          SLACK_BOT_TOKEN: xoxb-3073861353-2098191165254-8JZsPjt7XYNwSHTFjMIrDhvo
+          SLACK_BOT_TOKEN: ${{ secrets.MEPA_ASUMINEN_OVIPRO_SLACK_NOTIFICATIONS_BOT_TOKEN }}
         uses: voxmedia/github-action-slack-notify-build@v1.1.2
         with:
           # Updates existing message from the first step
@@ -116,7 +116,7 @@ jobs:
       - name: Notify slack failure
         if: failure()
         env:
-          SLACK_BOT_TOKEN: xoxb-3073861353-2098191165254-8JZsPjt7XYNwSHTFjMIrDhvo
+          SLACK_BOT_TOKEN: ${{ secrets.MEPA_ASUMINEN_OVIPRO_SLACK_NOTIFICATIONS_BOT_TOKEN }}
         uses: voxmedia/github-action-slack-notify-build@v1.1.2
         with:
           # Updates existing message from the first step
