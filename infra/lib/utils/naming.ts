@@ -6,8 +6,8 @@ import { Ec } from '@almamedia/cdk-accounts-and-environments';
  * Eg. api-preview-123.example.net
  */
 export const createApiDomainName = (scope: cdk.Construct, hostedZoneName: string): string => {
-    const environmentWwwSuffix = Ec.isStable(scope) ? '' : `-${Ec.getName(scope).replace('/', '-')}`;
-    return `api${environmentWwwSuffix}.${hostedZoneName}`.toLowerCase();
+    const environmentSuffix = Ec.isStable(scope) ? '' : `-${Ec.getName(scope).replace('/', '-')}`;
+    return `api${environmentSuffix}.${hostedZoneName}`.toLowerCase();
 };
 
 /**
