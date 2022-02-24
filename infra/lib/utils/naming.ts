@@ -11,12 +11,12 @@ export const createApiDomainName = (scope: cdk.Construct, hostedZoneName: string
 };
 
 /**
- * Create domain name for api
- * Eg. www-preview-123.example.net
+ * Create domain name for frontend application
+ * Eg. app-preview-123.example.net
  */
 export const createFrontEndDomainName = (scope: cdk.Construct, hostedZoneName: string): string => {
-    const environmentWwwSuffix = Ec.isStable(scope) ? '' : `-${Ec.getName(scope).replace('/', '-')}`;
-    return `www${environmentWwwSuffix}.${hostedZoneName}`.toLowerCase();
+    const environmentSuffix = Ec.isStable(scope) ? '' : `-${Ec.getName(scope).replace('/', '-')}`;
+    return `app${environmentSuffix}.${hostedZoneName}`.toLowerCase();
 };
 
 /**
