@@ -22,6 +22,6 @@ export const createFrontEndDomainName = (scope: cdk.Construct, hostedZoneName: s
 /**
  * Create a wildcard domain for given hosted zone
  */
-export const createWildcardDomainName = (scope: cdk.Construct, hostedZoneName: string): string => {
+export const createWildcardDomainName = (hostedZoneName: string): string => {
     return `*.${hostedZoneName}`.toLowerCase();
 };
