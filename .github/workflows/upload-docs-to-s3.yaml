@@ -27,7 +27,8 @@ jobs:
         chmod +x .github/workflows/scripts/create_docs_index_page.sh
 
         aws s3 cp api-docs s3://apidocs.dev-ovipro.net/ --region eu-west-1 --recursive --exclude "*" --include "*.html"
-
+        aws s3 cp api-docs/images s3://apidocs.dev-ovipro.net/images/ --region eu-west-1 --recursive --exclude "*" --include "*.png" --include "*.jpg"
+        
         aws s3 ls apidocs.dev-ovipro.net --recursive | awk '{if($4~/\.html$/){print $4}}' > files.txt
 
         .github/workflows/scripts/create_docs_index_page.sh files.txt > api-docs/index.html
