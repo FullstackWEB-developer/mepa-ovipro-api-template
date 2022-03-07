@@ -24,8 +24,8 @@ test('ResourceRemovalPolicyTesterAspect:destroyPolicyRejected', () => {
     });
     new ResourceRemovalPolicyTesterAspect().visit(bucket);
 
-    expect(bucket.node.metadata).toHaveLength(1);
-    expect(bucket.node.metadata[0].data).toBe(
+    expect(bucket.node.metadataEntry).toHaveLength(1);
+    expect(bucket.node.metadataEntry[0].data).toBe(
         `Resource 'bucketId' (S3/Dynamodb) removal policy should be RETAIN or SNAPSHOT in stable envs.`,
     );
 });

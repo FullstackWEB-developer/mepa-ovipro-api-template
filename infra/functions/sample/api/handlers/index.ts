@@ -11,6 +11,7 @@ import { components } from '../generated/api-schema';
 import { SampleAuthorizer } from '../../../api/auth/authorizer/SampleAuthorizer';
 import { SimpleOffice } from '../model/entities/SimpleOffice';
 import { getUserFromRequest } from '../../../api/auth/has-permission/userdetails';
+import { requestIdHeaderAppender } from '../utils/middleware/request-id-header-appender';
 
 // This is a template sample API Lambda implementation.
 
@@ -69,5 +70,6 @@ export async function processRequest(event: APIGatewayEvent & Event, context: Co
 export const handler = provideLogContext(
     middy(processRequest)
         .use(jsonBodyParser())
+        .use(requestIdHeaderAppender())
         .use(httpErrorHandler({ logger: middyLogProxy(log) })),
 );
