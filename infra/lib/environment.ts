@@ -10,8 +10,9 @@ export class Environment extends EnvironmentConstruct {
     constructor(scope: cdk.Construct) {
         super(scope);
 
-        new AuroraMigratorStack(this, 'AuroraMigratorStack', {
-            stackName: Name.stack(this, 'AuroraMigratorStack'),
+        new AuroraMigratorStack(this, 'TemplateAuroraMigratorStack', {
+            // Rename this:
+            stackName: Name.stack(this, 'TemplateAuroraMigrator'),
             ...Sc.defineProps(this, 'Aurora migrator Lambda'),
         });
 

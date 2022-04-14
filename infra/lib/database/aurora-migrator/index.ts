@@ -1,6 +1,7 @@
 import * as cdk from '@aws-cdk/core';
 import * as lambda from '@aws-cdk/aws-lambda';
 import * as sm from '@aws-cdk/aws-secretsmanager';
+import * as nodejslambda from '@aws-cdk/aws-lambda-nodejs';
 import * as cr from '@aws-cdk/custom-resources';
 import * as ec2 from '@aws-cdk/aws-ec2';
 import * as logs from '@aws-cdk/aws-logs';
@@ -45,7 +46,7 @@ export class AuroraMigratorStack extends cdk.Stack {
 
         const migrator = this.createHandler(
             props,
-            'Migrator',
+            'TemplateMigrator',
             lambda.Code.fromAsset('functions/database/aurora/migrator/target/ovi-pro-migrator-lambda-package.zip'),
             'fi.almamedia.ovipro.commonenvironment.migrator.App::handleFileMigrationRequest',
             lambdaSecurityGroup,
@@ -53,16 +54,19 @@ export class AuroraMigratorStack extends cdk.Stack {
             secret,
         );
 
-        const invoker = new lambda.SingletonFunction(this, 'ResourceEventMigratorInvoker', {
-            uuid: 'd62d28ce-086e-47fa-b648-d8b02c9f0864',
-            handler: 'index.handler',
-            code: lambda.Code.fromAsset('dist/functions/resource-event-callback-invoker'),
+        const invoker = new nodejslambda.NodejsFunction(this, 'TemplateMigratorInvoker', {
+            handler: 'handler',
+            entry: 'functions/resource-event-callback-invoker/index.ts',
             runtime: lambda.Runtime.NODEJS_14_X,
             memorySize: 512,
             description: 'Custom resource ResourceEventMigratorInvoker that invokes Migrator on resource events',
-            functionName: Name.withProject(this, 'ResourceEventMigratorInvoker'),
+            functionName: Name.withProject(this, 'TemplateMigratorInvoker'),
             timeout: cdk.Duration.seconds(10),
             logRetention: logs.RetentionDays.ONE_MONTH,
+            depsLockFilePath: 'package-lock.json',
+            bundling: {
+                externalModules: ['aws-sdk', 'pg-native'],
+            },
             environment: {
                 INIT_CHAIN: migrator.functionArn,
             },

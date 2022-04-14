@@ -1,5 +1,9 @@
 #!/bin/bash
 set -e
+if [ "$SKIP_JAVA" ] ; then
+  echo "Chose to skip the Migrator build by the env variable SKIP_JAVA: $SKIP_JAVA"
+  exit 0
+fi
 if [ "$CI" != true ] ; then
 clear
 fi
@@ -31,5 +35,5 @@ docker run \
 	-w /var/task \
 	-v $PWD:/var/task \
   lambci/lambda:build-java11 \
-  echo $HOME && mvn clean package --no-transfer-progress
+  echo $HOME && ./mvnw clean package --no-transfer-progress
 exit 0
