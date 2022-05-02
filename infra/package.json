@@ -29,7 +29,7 @@
     },
     "devDependencies": {
         "@almamedia-open-source/cdk-cross-region-parameter": "./demo-packages/cdk-cross-region-parameter@0.0.0.jsii.tgz",
-        "@almamedia-open-source/cdk-openapix": "./demo-packages/cdk-openapix@0.0.18.jsii.tgz",
+        "@almamedia-open-source/cdk-openapix": "./demo-packages/cdk-openapix@0.0.20.jsii.tgz",
         "@almamedia-open-source/cdk-project-context": "0.0.19",
         "@almamedia-open-source/cdk-project-names": "0.0.8",
         "@almamedia-open-source/cdk-project-stack": "0.0.5",
