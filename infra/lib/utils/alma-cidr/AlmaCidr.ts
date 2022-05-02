@@ -1,5 +1,6 @@
-import * as cdk from '@aws-cdk/core';
-import { Ac } from '@almamedia/cdk-accounts-and-environments';
+import { AC } from '@almamedia-open-source/cdk-project-target';
+import * as cdk from 'aws-cdk-lib';
+import { Construct } from 'constructs';
 import { AlmaCidrType } from './types';
 
 /**
@@ -10,8 +11,8 @@ import { AlmaCidrType } from './types';
  *
  * This function just maps them correctly...
  */
-const getAccountType = (scope: cdk.Construct) => {
-    const accountType = Ac.getType(scope);
+const getAccountType = (scope: Construct) => {
+    const accountType = AC.getAccountType(scope);
 
     switch (accountType) {
         case 'dev':
@@ -25,14 +26,14 @@ const getAccountType = (scope: cdk.Construct) => {
     }
 };
 
-const createParameterName = (scope: cdk.Construct, resourceType: AlmaCidrType) =>
-    `cidr-${Ac.getConfig(scope, 'service')}-${getAccountType(scope)}-${resourceType}`;
+const createParameterName = (scope: Construct, resourceType: AlmaCidrType) =>
+    `cidr-${AC.getAccountConfig(scope, 'service')}-${getAccountType(scope)}-${resourceType}`;
 
 /**
  * Custom helper construct for importing Alma CIDR-values
  */
-export class AlmaCidr extends cdk.Construct {
-    constructor(scope: cdk.Construct, id: string) {
+export class AlmaCidr extends Construct {
+    constructor(scope: Construct, id: string) {
         super(scope, id);
     }
 

@@ -1,7 +1,7 @@
-import * as cdk from '@aws-cdk/core';
-import * as s3 from '@aws-cdk/aws-s3';
+import * as cdk from 'aws-cdk-lib';
+import * as s3 from 'aws-cdk-lib/aws-s3';
+import { Stack } from 'aws-cdk-lib/core';
 import { ResourceRemovalPolicyTesterAspect } from './ResourceRemovalPolicyTesterAspect';
-import { Stack } from '@aws-cdk/core';
 
 test('ResourceRemovalPolicyTesterAspect:destroyPolicyExpected', () => {
     const stack = new Stack();
@@ -24,8 +24,8 @@ test('ResourceRemovalPolicyTesterAspect:destroyPolicyRejected', () => {
     });
     new ResourceRemovalPolicyTesterAspect().visit(bucket);
 
-    expect(bucket.node.metadataEntry).toHaveLength(1);
-    expect(bucket.node.metadataEntry[0].data).toBe(
-        `Resource 'bucketId' (S3/Dynamodb) removal policy should be RETAIN or SNAPSHOT in stable envs.`,
+    expect(bucket.node.metadata).toHaveLength(1);
+    expect(bucket.node.metadata[0].data).toBe(
+        'Resource \'bucketId\' (S3/Dynamodb) removal policy should be RETAIN or SNAPSHOT in stable envs.',
     );
 });

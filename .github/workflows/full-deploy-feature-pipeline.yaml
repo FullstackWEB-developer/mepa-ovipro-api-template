@@ -2,7 +2,7 @@ name: Deploy full environment
 on:
   create:
     branches:
-      - "preview/**"
+      - "feature/**"
 concurrency:
   group: refs/heads/${{ github.event.ref }}
   cancel-in-progress: true
@@ -12,7 +12,7 @@ jobs:
     permissions:
       id-token: write # needed to interact with GitHub's OIDC Token endpoint.
       contents: read
-    if: startsWith(github.event.ref, 'preview/')
+    if: startsWith(github.event.ref, 'feature/')
     steps:
       - uses: actions/checkout@v2
       - name: Setup Node.js
@@ -31,8 +31,8 @@ jobs:
           channel: 'ovi_pro_pipeline_development_deployments'
           status: STARTED
           color: warning
-      - name: Set account to dev & environment to preview (from branch)
-        if: startsWith(github.event.ref, 'preview/')
+      - name: Set account to dev & environment to feature (from branch)
+        if: startsWith(github.event.ref, 'feature/')
         run: |
           echo "ENVIRONMENT=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
           echo "ACCOUNT=dev" >> $GITHUB_ENV
@@ -58,14 +58,14 @@ jobs:
       #############################
       # Deploy common environment #
       #############################
-      - name: Check if preview branch exists in common-environment
+      - name: Check if feature branch exists in common-environment
         run: |
           branch_status_code=$(curl -I https://api.github.com/repos/almamedia/mepa-ovipro-common-environment/branches/${{ github.event.ref }} -H "Authorization: Bearer ${{ secrets.MEPA_GH_ACTIONS_BOT_TOKEN }}" | grep HTTP/ | awk {'print $2'})
           branch_exists=$(echo $(if [ "${branch_status_code}" = "200" ] ; then echo true; else echo false; fi))
           echo "common-env branch exists: ${branch_exists}, status code: ${branch_status_code}"
-          echo "COMMON_ENVIRONMENT_PREVIEW_BRANCH_ALREADY_EXISTS=${branch_exists}" >> $GITHUB_ENV
+          echo "COMMON_ENVIRONMENT_FEATURE_BRANCH_ALREADY_EXISTS=${branch_exists}" >> $GITHUB_ENV
       - uses: convictional/trigger-workflow-and-wait@v1.3.0
-        if: env.COMMON_ENVIRONMENT_PREVIEW_BRANCH_ALREADY_EXISTS == 'false'
+        if: env.COMMON_ENVIRONMENT_FEATURE_BRANCH_ALREADY_EXISTS == 'false'
         name: Deploy common-environment
         with:
           owner: almamedia
@@ -77,14 +77,14 @@ jobs:
       #######################
       # Deploy core backend #
       #######################
-      - name: Check if preview branch in core-backend
+      - name: Check if feature branch in core-backend
         run: |
           branch_status_code=$(curl -I https://api.github.com/repos/almamedia/mepa-ovipro-core-backend/branches/${{ github.event.ref }} -H "Authorization: Bearer ${{ secrets.MEPA_GH_ACTIONS_BOT_TOKEN }}" | grep HTTP/ | awk {'print $2'})
           branch_exists=$(echo $(if [ "${branch_status_code}" = "200" ] ; then echo true; else echo false; fi))
           echo "core-backend branch exists: ${branch_exists}, status code: ${branch_status_code}"
-          echo "CORE_BACKEND_DEPLOY_PREVIEW_BRANCH_ALREADY_EXISTS=${branch_exists}" >> $GITHUB_ENV
+          echo "CORE_BACKEND_DEPLOY_FEATURE_BRANCH_ALREADY_EXISTS=${branch_exists}" >> $GITHUB_ENV
       - uses: convictional/trigger-workflow-and-wait@v1.3.0
-        if: env.CORE_BACKEND_DEPLOY_PREVIEW_BRANCH_ALREADY_EXISTS == 'false'
+        if: env.CORE_BACKEND_DEPLOY_FEATURE_BRANCH_ALREADY_EXISTS == 'false'
         name: Deploy core-backend
         with:
           owner: almamedia
@@ -97,7 +97,7 @@ jobs:
         with:
           aws-region: eu-west-1
           role-to-assume: FIND_ME_AND_REPLACE_WITH_REPO_OIDC_ROLE_ARN
-          role-session-name: full-deploy-preview-pipeline
+          role-session-name: full-deploy-feature-pipeline
       - name: deploy all stacks
         working-directory: ./infra
         run: |

@@ -1,11 +1,12 @@
-import * as cdk from '@aws-cdk/core';
+import { AC, EC } from '@almamedia-open-source/cdk-project-target';
+import * as cdk from 'aws-cdk-lib';
+import * as ssm from 'aws-cdk-lib/aws-ssm';
 import { pascalCase } from 'change-case';
-import * as ssm from '@aws-cdk/aws-ssm';
-import { Ac, Ec } from '@almamedia/cdk-accounts-and-environments';
+import { Construct } from 'constructs';
 import { SharedResourceType } from './types';
 
-const createParameterName = (scope: cdk.Construct, resourceType: SharedResourceType) =>
-    `/${pascalCase(Ec.getName(scope))}/${Ac.getConfig(scope, 'service')}/shared-resources/${resourceType}`;
+const createParameterName = (scope: Construct, resourceType: SharedResourceType) =>
+    `/${pascalCase(EC.getName(scope))}/${AC.getAccountConfig(scope, 'service')}/shared-resources/${resourceType}`;
 
 /**
  * Custom construct for exporting and importing shared asset and resource data to/from
@@ -13,8 +14,8 @@ const createParameterName = (scope: cdk.Construct, resourceType: SharedResourceT
  *
  * Use these when importing or exporting existing resources for cross-stack referencing
  */
-export class OviproEnvironmentSharedResource extends cdk.Construct {
-    constructor(scope: cdk.Construct, id: string) {
+export class OviproEnvironmentSharedResource extends Construct {
+    constructor(scope: Construct, id: string) {
         super(scope, id);
     }
 

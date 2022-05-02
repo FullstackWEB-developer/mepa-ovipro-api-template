@@ -1,18 +1,18 @@
 import path from 'path';
-import * as cdk from '@aws-cdk/core';
-import * as apigw from '@aws-cdk/aws-apigateway';
-import * as lambda from '@aws-cdk/aws-lambda';
-import * as apigwv2 from '@aws-cdk/aws-apigatewayv2';
-import * as logs from '@aws-cdk/aws-logs';
-import { OpenApi, IApigatewayIntegrations } from '@almamedia/cdk-open-api';
-import { createApiDomainName, createFrontEndDomainName, createWildcardDomainName } from '../utils/naming';
+import { OpenApiX, OpenApiXDefinition, OpenApiXDefinitionProps } from '@almamedia-open-source/cdk-openapix';
+import { Name } from '@almamedia-open-source/cdk-project-names';
+import { AC, EC } from '@almamedia-open-source/cdk-project-target';
+import * as apigw from 'aws-cdk-lib/aws-apigateway';
+import * as apigwv2 from 'aws-cdk-lib/aws-apigatewayv2';
+import * as lambda from 'aws-cdk-lib/aws-lambda';
+import * as logs from 'aws-cdk-lib/aws-logs';
+import { Construct } from 'constructs';
+import { createApiDomainName, createFrontEndDomainName } from '../utils/naming';
 import { OviproAccountSharedResource } from '../utils/shared-resources/OviproAccountSharedResource';
-import { SharedResourceType } from '../utils/shared-resources/types';
-import { Name } from '@almamedia/cdk-tag-and-name';
-import { Ac, Ec } from '@almamedia/cdk-accounts-and-environments';
 import { OviproEnvironmentSharedResource } from '../utils/shared-resources/OviproEnvironmentSharedResource';
+import { SharedResourceType } from '../utils/shared-resources/types';
 
-interface Props extends cdk.StackProps {
+interface Props {
     /**
      * Normally apigateway integrations are defined in OpenAPI-specs,
      * but in our case we don't want to do that.
@@ -20,24 +20,16 @@ interface Props extends cdk.StackProps {
      * and they must match the path and method definitions in the imported
      * OpenApi-spec file.
      *
-     * NOTE: Make sure functionParameter-string are the same as in functionParameters-property.
-     *
      * Example:
      * ```
         '/plotProperties/{realtyId}': {
-            get: {
-                functionParameter: 'PlotPropertiesRealtyIdGet',
-                },
-            post: {
-                functionParameter: 'PlotPropertiesRealtyIdGet',
-            },
-            put: {
-                functionParameter: 'PlotPropertiesRealtyIdGet',
-            },
+            'GET': new OpenApiXLambda(this, getFn),
+            'POST': new OpenApiXLambda(this, postFn),
+            'PUT': new OpenApiXLambda(this, putFn),
         },
      * ```
      */
-    apigatewayIntegrations: IApigatewayIntegrations;
+    apigatewayIntegrations: OpenApiXDefinitionProps['integrations'];
     /**
      * In our current repository structure definition-files live in "api-specs"-folder,
      * which is not the best solution infra-wise.
@@ -63,8 +55,10 @@ interface Props extends cdk.StackProps {
     apiName: string;
 }
 
-export class VersionedOpenApi extends cdk.Construct {
-    constructor(scope: cdk.Construct, id: string, props: Props) {
+export class VersionedOpenApi extends Construct {
+    public readonly api: apigw.SpecRestApi;
+
+    constructor(scope: Construct, id: string, props: Props) {
         super(scope, id);
 
         const { apigatewayIntegrations, version, apiName, openApiDefinitionFileName } = props;
@@ -85,13 +79,14 @@ export class VersionedOpenApi extends cdk.Construct {
             'EnvironmentLogGroup',
             logGroupArn.includes('dummy-value-for-') ? 'arn:aws:logs:us-east-1:123456789012:loggroup' : logGroupArn,
         );
+
         /**
          * We use wildcard in dev account's staging environment
          */
-        const frontendDomainName =
-            Ac.isDev(this) && Ec.isStable(this)
-                ? createWildcardDomainName(this, topLevelHzZoneName)
-                : createFrontEndDomainName(this, topLevelHzZoneName);
+        const frontendDomainName = createFrontEndDomainName(this, topLevelHzZoneName);
+        // AC.isDev(this) && EC.isStable(this)
+        //     ? createWildcardDomainName(this, topLevelHzZoneName)
+        // : createFrontEndDomainName(this, topLevelHzZoneName);
 
         const authorizer = lambda.Function.fromFunctionAttributes(this, 'AuthorizerLambda', {
             functionArn: sharedEnvResource.import(SharedResourceType.LAMBDA_AUTHORIZER_ARN),
@@ -101,11 +96,22 @@ export class VersionedOpenApi extends cdk.Construct {
             sameEnvironment: true,
         });
 
-        // Shorthand flag for API logging. Disabled by default.
-        const enableLogging = false;
+        // Shorthand flag for API logging.
+        const enableLogging = AC.isDev(this) || EC.isMock(this);
 
-        const api = new OpenApi(this, `${restApiName}OpenApi`, {
-            openApiDefinitionPath: path.join(__dirname, `../../../api-specs/${openApiDefinitionFileName}`),
+        const openApiX = new OpenApiX(this, `${restApiName}OpenApiX`, {
+            source: path.join(__dirname, `../../../api-specs/${openApiDefinitionFileName}`),
+            integrations: apigatewayIntegrations,
+            injectPaths: {
+                'x-amazon-apigateway-request-validator': 'all',
+                'x-amazon-apigateway-request-validators': {
+                    all: {
+                        validateRequestBody: true,
+                        validateRequestParameters: true,
+                    },
+                },
+            },
+            rejectDeepPaths: ['example'],
             restApiProps: {
                 restApiName,
                 deployOptions: {
@@ -115,21 +121,17 @@ export class VersionedOpenApi extends cdk.Construct {
                     accessLogDestination: enableLogging ? new apigw.LogGroupLogDestination(logGroup) : undefined,
                     // WARN: do not enable data tracing for sensitive environments.
                 },
+                // disableExecuteApiEndpoint: true,
             },
-            gatewayResponses: true,
-            gatewayResponseConfig: {
-                hide403: true,
-            },
-            apigatewayIntegrations,
-            generateApigatewayRequestValidator: true,
-            generateApigatewayRequestValidators: true,
             customAuthorizer: authorizer,
         });
+
+        const api = openApiX.api as apigw.SpecRestApi;
 
         /**
          * Add custom gateway response to bad request body
          */
-        api.api.addGatewayResponse('BadRequestBody', {
+        api.addGatewayResponse('BadRequestBody', {
             type: apigw.ResponseType.BAD_REQUEST_BODY,
             templates: {
                 'application/json': JSON.stringify({
@@ -140,25 +142,146 @@ export class VersionedOpenApi extends cdk.Construct {
             },
         });
 
+        api.addGatewayResponse('BadRequestParameters', {
+            type: apigw.ResponseType.BAD_REQUEST_PARAMETERS,
+            templates: {
+                'application/json': JSON.stringify({
+                    errorCode: '$context.error.responseType',
+                    message: '$context.error.message',
+                    details: [
+                        {
+                            target: '$context.error.validationErrorString',
+                            errorCode: '$context.error.responseType',
+                            message: '$context.error.message',
+                        },
+                    ],
+                }),
+            },
+        });
+
+        api.addGatewayResponse('InvalidApiKey', {
+            type: apigw.ResponseType.INVALID_API_KEY,
+            statusCode: '403', // TODO is this valid?
+            templates: {
+                'application/json': JSON.stringify({
+                    errorCode: '$context.error.responseType',
+                    message: '$context.error.message',
+                }),
+            },
+        });
+
+        api.addGatewayResponse('InvalidSignature', {
+            type: apigw.ResponseType.INVALID_SIGNATURE,
+            statusCode: '403',
+            templates: {
+                'application/json': JSON.stringify({
+                    errorCode: '$context.error.responseType',
+                    message: '$context.error.message',
+                }),
+            },
+        });
+
+        api.addGatewayResponse('ExpiredToken', {
+            type: apigw.ResponseType.EXPIRED_TOKEN,
+            templates: {
+                'application/json': JSON.stringify({
+                    errorCode: '$context.error.responseType',
+                    message: '$context.error.message',
+                }),
+            },
+        });
+
+        api.addGatewayResponse('MissingAuthenticationToken', {
+            type: apigw.ResponseType.MISSING_AUTHENTICATION_TOKEN,
+            statusCode: '403',
+            templates: {
+                'application/json': JSON.stringify({
+                    errorCode: '$context.error.responseType',
+                    message: '$context.error.message',
+                }),
+            },
+        });
+
+        api.addGatewayResponse('ResourceNotFound', {
+            type: apigw.ResponseType.RESOURCE_NOT_FOUND,
+            templates: {
+                'application/json': JSON.stringify({
+                    errorCode: '$context.error.responseType',
+                    message: '$context.error.message',
+                }),
+            },
+        });
+
+        api.addGatewayResponse('AccessDenied', {
+            type: apigw.ResponseType.ACCESS_DENIED,
+            statusCode: '403',
+            templates: {
+                'application/json': JSON.stringify({
+                    errorCode: '$context.error.responseType',
+                    message: '$context.error.message',
+                }),
+            },
+        });
+
+        api.addGatewayResponse('Throttled', {
+            type: apigw.ResponseType.THROTTLED,
+            templates: {
+                'application/json': JSON.stringify({
+                    errorCode: '$context.error.responseType',
+                    message: '$context.error.message',
+                }),
+            },
+        });
+
+        api.addGatewayResponse('Unauthorized', {
+            type: apigw.ResponseType.UNAUTHORIZED,
+            templates: {
+                'application/json': JSON.stringify({
+                    errorCode: '$context.error.responseType',
+                    message: '$context.error.message',
+                }),
+            },
+        });
+
+        api.addGatewayResponse('Default4XX', {
+            type: apigw.ResponseType.DEFAULT_4XX,
+            templates: {
+                'application/json': JSON.stringify({
+                    errorCode: '$context.error.responseType',
+                    message: '$context.error.message',
+                }),
+            },
+        });
+
+        api.addGatewayResponse('Default5XX', {
+            type: apigw.ResponseType.DEFAULT_5XX,
+            templates: {
+                'application/json': JSON.stringify({
+                    errorCode: '$context.error.responseType',
+                    message: '$context.error.message',
+                }),
+            },
+        });
+
         /**
          * Support for this flag has been recently added in cloudformation
          */
-        (api.api.node.children[0] as apigw.CfnRestApi).addPropertyOverride('DisableExecuteApiEndpoint', 'true');
+        // (api.api.node.children[0] as apigw.CfnRestApi).addPropertyOverride('DisableExecuteApiEndpoint', 'true');
 
         /**
          * Map domain path dev/example/get -> foo/v1/example/get
          */
         new apigwv2.CfnApiMapping(this, `${restApiName}${version}ApiApigwMapping`, {
             apiMappingKey: `${apiName}/v${version}`,
-            apiId: api.api.restApiId,
-            stage: api.api.deploymentStage.stageName,
+            apiId: api.restApiId,
+            stage: api.deploymentStage.stageName,
             domainName: apiDomainName,
         });
 
         const frontendMapping = new apigwv2.CfnApiMapping(this, `${restApiName}${version}FrontendApigwMapping`, {
             apiMappingKey: `${apiName}/v${version}`,
-            apiId: api.api.restApiId,
-            stage: api.api.deploymentStage.stageName,
+            apiId: api.restApiId,
+            stage: api.deploymentStage.stageName,
             domainName: frontendDomainName,
         });
 
@@ -166,5 +289,7 @@ export class VersionedOpenApi extends cdk.Construct {
          * Fixes stuck cloudformation update events
          */
         frontendMapping.node.addDependency(api);
+
+        this.api = api;
     }
 }

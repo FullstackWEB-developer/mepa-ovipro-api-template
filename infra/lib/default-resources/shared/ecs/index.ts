@@ -1,15 +1,15 @@
-import * as cdk from '@aws-cdk/core';
-import * as ecs from '@aws-cdk/aws-ecs';
-import * as ec2 from '@aws-cdk/aws-ec2';
-import { DefaultVpc } from '../vpc';
+import * as ec2 from 'aws-cdk-lib/aws-ec2';
+import * as ecs from 'aws-cdk-lib/aws-ecs';
+import { Construct } from 'constructs';
 import { OviproEnvironmentSharedResource } from '../../../utils/shared-resources/OviproEnvironmentSharedResource';
 import { SharedResourceType } from '../../../utils/shared-resources/types';
+import { DefaultVpc } from '../vpc';
 
-export class DefaultEcsCluster extends cdk.Construct {
+export class DefaultEcsCluster extends Construct {
     public readonly cluster: ecs.ICluster;
 
     /** Creates an ECS Cluster inside given VPC */
-    constructor(scope: cdk.Construct, id: string) {
+    constructor(scope: Construct, id: string) {
         super(scope, id);
 
         const { vpc } = new DefaultVpc(this, 'DefaultVpc');

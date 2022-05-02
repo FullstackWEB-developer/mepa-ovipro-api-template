@@ -1,28 +1,25 @@
-import * as cdk from '@aws-cdk/core';
-import { EnvironmentConstruct, Sc } from '@almamedia/cdk-accounts-and-environments';
-import { Tag, Name } from '@almamedia/cdk-tag-and-name';
-import { addMepaTags } from './utils/tags';
+import { ProjectStack } from '@almamedia-open-source/cdk-project-stack';
+import { EnvironmentConstruct } from '@almamedia-open-source/cdk-project-target';
+import * as cdk from 'aws-cdk-lib';
+import { Construct } from 'constructs';
 import { AuroraMigratorStack } from './database/aurora-migrator';
 import { ResourceRemovalPolicyTesterAspect } from './utils/policy-aspect/ResourceRemovalPolicyTesterAspect';
+import { addMepaTags } from './utils/tags';
 
 export class Environment extends EnvironmentConstruct {
     /**Defines environmental CDK Stacks. */
-    constructor(scope: cdk.Construct) {
+    constructor(scope: Construct) {
         super(scope);
 
         new AuroraMigratorStack(this, 'TemplateAuroraMigratorStack', {
-            // Rename this:
-            stackName: Name.stack(this, 'TemplateAuroraMigrator'),
-            ...Sc.defineProps(this, 'Aurora migrator Lambda'),
+            summary: 'Aurora migrator Lambda',
         });
 
-        // Tag all stacks with default tags
-        Tag.defaults(this.node.children as cdk.Construct[]);
         // Tag all stacks with Mepa-tags
-        addMepaTags(this.node.children as cdk.Construct[]);
+        addMepaTags(this.node.children as Construct[]);
 
         this.node.children
-            .filter((construct) => construct instanceof cdk.Stack)
+            .filter((construct) => construct instanceof ProjectStack)
             .forEach((construct) => {
                 cdk.Aspects.of(construct).add(new ResourceRemovalPolicyTesterAspect());
             });

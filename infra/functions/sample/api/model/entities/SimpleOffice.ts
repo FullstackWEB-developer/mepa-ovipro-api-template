@@ -7,8 +7,8 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 @oviproEntity
 export class SimpleOffice {
     @PrimaryGeneratedColumn({ name: 'id' })
-    id: number;
+        id: number;
 
     @Column('uuid', { name: 'public_id', nullable: false })
-    publicId: string;
+        publicId: string;
 }

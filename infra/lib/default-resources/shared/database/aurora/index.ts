@@ -1,13 +1,13 @@
-import * as cdk from '@aws-cdk/core';
-import * as rds from '@aws-cdk/aws-rds';
+import * as rds from 'aws-cdk-lib/aws-rds';
+import { Construct } from 'constructs';
 import { OviproEnvironmentSharedResource } from '../../../../utils/shared-resources/OviproEnvironmentSharedResource';
 import { SharedResourceType } from '../../../../utils/shared-resources/types';
 
-export class DefaultAuroraCluster extends cdk.Construct {
+export class DefaultAuroraCluster extends Construct {
     public readonly database: rds.IServerlessCluster;
 
     /** Creates a Serverless Aurora database */
-    constructor(scope: cdk.Construct, id: string) {
+    constructor(scope: Construct, id: string) {
         super(scope, id);
 
         /**

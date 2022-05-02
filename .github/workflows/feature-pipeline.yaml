@@ -1,13 +1,13 @@
-name: Deploy preview environment
+name: Deploy feature environment
 on:
   push:
     branches:
-      - 'preview/**'
+      - 'feature/**'
 concurrency:
   group: ${{ github.ref }}
 jobs:
   build:
-    name: Deploy preview environment
+    name: Deploy feature environment
     permissions:
       id-token: write # needed to interact with GitHub's OIDC Token endpoint.
       contents: read
@@ -31,8 +31,8 @@ jobs:
           channel: 'ovi_pro_pipeline_development_deployments'
           status: STARTED
           color: warning
-      - name: Set account to dev & environment to preview
-        if: startsWith(github.ref, 'refs/heads/preview/')
+      - name: Set account to dev & environment to feature
+        if: startsWith(github.ref, 'refs/heads/feature/')
         run: |
           echo "ENVIRONMENT=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
           echo "ACCOUNT=dev" >> $GITHUB_ENV
@@ -60,7 +60,7 @@ jobs:
         with:
           aws-region: eu-west-1
           role-to-assume: FIND_ME_AND_REPLACE_WITH_REPO_OIDC_ROLE_ARN
-          role-session-name: preview-pipeline
+          role-session-name: feature-pipeline
       - name: deploy all stacks
         working-directory: ./infra
         run: |

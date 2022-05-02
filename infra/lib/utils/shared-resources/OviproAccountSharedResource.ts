@@ -1,17 +1,18 @@
-import * as cdk from '@aws-cdk/core';
-import { CrossRegionParameter } from '@almamedia/cdk-cross-region-parameter';
+import { CrossRegionParameter } from '@almamedia-open-source/cdk-cross-region-parameter';
+import { AC } from '@almamedia-open-source/cdk-project-target';
+import * as cdk from 'aws-cdk-lib';
+import * as ssm from 'aws-cdk-lib/aws-ssm';
 import { pascalCase } from 'change-case';
-import * as ssm from '@aws-cdk/aws-ssm';
-import { Ac } from '@almamedia/cdk-accounts-and-environments';
+import { Construct } from 'constructs';
 import { SharedResourceType } from './types';
 
-const createParameterName = (scope: cdk.Construct, resourceType: SharedResourceType) =>
-    `/${Ac.getConfig(scope, 'service')}/${resourceType}`;
+const createParameterName = (scope: Construct, resourceType: SharedResourceType) =>
+    `/${AC.getAccountConfig(scope, 'service')}/${resourceType}`;
 
-const createCrossRegionParameterName = (scope: cdk.Construct, resourceType: SharedResourceType) => {
+const createCrossRegionParameterName = (scope: Construct, resourceType: SharedResourceType) => {
     // CROSS_REGION/us-east-1/EXAMPLE -> [, 'us-east-1', 'EXAMPLE']
     const [, region, name] = resourceType.toString().split('/');
-    return `/${Ac.getConfig(scope, 'service')}/${region}/${name}`;
+    return `/${AC.getAccountConfig(scope, 'service')}/${region}/${name}`;
 };
 
 /**
@@ -20,8 +21,8 @@ const createCrossRegionParameterName = (scope: cdk.Construct, resourceType: Shar
  *
  * Use these when importing or exporting existing resources for cross-stack referencing
  */
-export class OviproAccountSharedResource extends cdk.Construct {
-    constructor(scope: cdk.Construct, id: string) {
+export class OviproAccountSharedResource extends Construct {
+    constructor(scope: Construct, id: string) {
         super(scope, id);
     }
 

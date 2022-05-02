@@ -1,10 +1,11 @@
-import cdk = require('@aws-cdk/core');
-import { Ac } from '@almamedia/cdk-accounts-and-environments';
+import { AC } from '@almamedia-open-source/cdk-project-target';
+import * as cdk from 'aws-cdk-lib';
+import { Construct } from 'constructs';
 
-export const addAdditionalTagsToResource = (resource: cdk.Construct): void => {
-    cdk.Tags.of(resource).add('Service', Ac.getConfig(resource, 'service'));
+export const addAdditionalTagsToResource = (resource: Construct): void => {
+    cdk.Tags.of(resource).add('Service', AC.getAccountConfig(resource, 'service'));
     // Type can only be prod or test
-    const type = Ac.isProd(resource) ? 'prod' : 'test';
+    const type = AC.isProd(resource) ? 'prod' : 'test';
     cdk.Tags.of(resource).add('Type', type);
 };
 
@@ -16,7 +17,7 @@ export const addAdditionalTagsToResource = (resource: cdk.Construct): void => {
 
     @param resources CDK constructs
 */
-export const addMepaTags = (resources: cdk.Construct[]): void => {
+export const addMepaTags = (resources: Construct[]): void => {
     resources.forEach((resource) => {
         addAdditionalTagsToResource(resource);
     });

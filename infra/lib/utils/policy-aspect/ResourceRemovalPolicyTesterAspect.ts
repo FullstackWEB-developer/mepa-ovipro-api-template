@@ -1,18 +1,19 @@
-import * as cdk from '@aws-cdk/core';
-import * as s3 from '@aws-cdk/aws-s3';
-import * as dynamodb from '@aws-cdk/aws-dynamodb';
-import { Ec } from '@almamedia/cdk-accounts-and-environments';
-import { Annotations } from '@aws-cdk/core';
+import { EC } from '@almamedia-open-source/cdk-project-target';
+import * as cdk from 'aws-cdk-lib';
+import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
+import * as s3 from 'aws-cdk-lib/aws-s3';
+import { Annotations } from 'aws-cdk-lib/core';
+import { Construct, IConstruct } from 'constructs';
 
 /**
  * Bucket removal policy verifier/tester checks that stable environments have
  * RETAIN policies on buckets.
  */
 export class ResourceRemovalPolicyTesterAspect implements cdk.IAspect {
-    public visit(node: cdk.IConstruct): void {
+    public visit(node: IConstruct): void {
         if (node instanceof s3.Bucket || node instanceof dynamodb.Table) {
             const cfn = node.node.defaultChild as cdk.CfnResource;
-            if (node instanceof cdk.Construct && Ec.isStable(node)) {
+            if (node instanceof Construct && EC.isStable(node)) {
                 if (
                     !cfn.cfnOptions.deletionPolicy ||
                     ![cdk.CfnDeletionPolicy.SNAPSHOT, cdk.CfnDeletionPolicy.RETAIN].includes(

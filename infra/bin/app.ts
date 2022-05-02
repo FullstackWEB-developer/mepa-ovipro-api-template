@@ -1,8 +1,10 @@
 #!/usr/bin/env node
 import 'source-map-support/register';
-import * as cdk from '@aws-cdk/core';
+import { Project } from '@almamedia-open-source/cdk-project-context';
 import { Environment } from '../lib/environment';
+import projectProps from './config';
 
-const app = new cdk.App();
+// new Project instead of new App
+const project = new Project(projectProps);
 
-new Environment(app);
+new Environment(project);

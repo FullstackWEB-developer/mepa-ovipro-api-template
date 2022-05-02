@@ -1,9 +1,8 @@
-import { Connection, ConnectionOptions, createConnection } from 'typeorm';
-import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
-import { factory } from '../../utils/logging';
-import { Logger as TypeormLogger } from 'typeorm';
-import { Logger } from 'typescript-logging';
 import { entities } from '@almamedia/ovipro-common-entities';
+import { Connection, ConnectionOptions, createConnection, Logger as TypeormLogger } from 'typeorm';
+import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
+import { Logger } from 'typescript-logging';
+import { factory } from '../../utils/logging';
 
 const serviceName = process.env.SERVICE_NAME || 'UNDEFINED';
 const moduleName = process.env.MODULE_NAME || 'UNDEFINED';

@@ -1,15 +1,15 @@
-import * as cdk from '@aws-cdk/core';
-import * as ec2 from '@aws-cdk/aws-ec2';
-import * as ssm from '@aws-cdk/aws-ssm';
-import { Ac } from '@almamedia/cdk-accounts-and-environments';
+import { AC } from '@almamedia-open-source/cdk-project-target';
+import * as ec2 from 'aws-cdk-lib/aws-ec2';
+import * as ssm from 'aws-cdk-lib/aws-ssm';
+import { Construct } from 'constructs';
 
-const createParameterName = (scope: cdk.Construct) => `/${Ac.getConfig(scope, 'service')}/VPC_ID`;
+const createParameterName = (scope: Construct) => `/${AC.getAccountConfig(scope, 'service')}/VPC_ID`;
 
-export class DefaultVpc extends cdk.Construct {
+export class DefaultVpc extends Construct {
     public readonly vpc: ec2.IVpc;
 
     /** Creates VPC with private and public subnets, and a VPN gateway */
-    constructor(scope: cdk.Construct, id: string) {
+    constructor(scope: Construct, id: string) {
         super(scope, id);
 
         /**

@@ -1,12 +1,14 @@
-import * as cdk from '@aws-cdk/core';
-import * as lambda from '@aws-cdk/aws-lambda';
-import * as sm from '@aws-cdk/aws-secretsmanager';
-import * as nodejslambda from '@aws-cdk/aws-lambda-nodejs';
-import * as cr from '@aws-cdk/custom-resources';
-import * as ec2 from '@aws-cdk/aws-ec2';
-import * as logs from '@aws-cdk/aws-logs';
-import { Name } from '@almamedia/cdk-tag-and-name';
-import { Duration } from '@aws-cdk/core';
+import { Name } from '@almamedia-open-source/cdk-project-names';
+import { ProjectStack, ProjectStackProps } from '@almamedia-open-source/cdk-project-stack';
+import * as cdk from 'aws-cdk-lib';
+import * as ec2 from 'aws-cdk-lib/aws-ec2';
+import * as lambda from 'aws-cdk-lib/aws-lambda';
+import * as nodejslambda from 'aws-cdk-lib/aws-lambda-nodejs';
+import * as logs from 'aws-cdk-lib/aws-logs';
+import * as sm from 'aws-cdk-lib/aws-secretsmanager';
+import { Duration } from 'aws-cdk-lib/core';
+import * as cr from 'aws-cdk-lib/custom-resources';
+import { Construct } from 'constructs';
 import { DefaultVpc } from '../../default-resources/shared/vpc';
 import { OviproEnvironmentSharedResource } from '../../utils/shared-resources/OviproEnvironmentSharedResource';
 import { SharedResourceType } from '../../utils/shared-resources/types';
@@ -17,10 +19,10 @@ const MIGRATION_SCRIPTS_PATH = '../db/java/src/main/resources';
  * This stack deploys Lambda DB tools for schema migration for the given Serverless cluster.
  * Required parameters: vpc, cluster and specific cluster user credentials via a Secret manager secret.
  */
-export class AuroraMigratorStack extends cdk.Stack {
+export class AuroraMigratorStack extends ProjectStack {
     public readonly handlers: lambda.IFunction[];
 
-    constructor(scope: cdk.Construct, id: string, props: cdk.StackProps) {
+    constructor(scope: Construct, id: string, props: ProjectStackProps) {
         super(scope, id, props);
 
         const sharedResource = new OviproEnvironmentSharedResource(this, 'SharedResource');
@@ -28,8 +30,7 @@ export class AuroraMigratorStack extends cdk.Stack {
 
         const auroraSecurityGroup = ec2.SecurityGroup.fromSecurityGroupId(this, 'SG', rdsClusterSGId);
         let secretArn = sharedResource.import(SharedResourceType.DATABASE_MIGRATOR_SECRET_ARN);
-        if (secretArn.includes('dummy-value-for-'))
-            secretArn = 'arn:aws:service:eu-central-1:123456789012:secret:entity-123456';
+        if (secretArn.includes('dummy-value-for-')) {secretArn = 'arn:aws:service:eu-central-1:123456789012:secret:entity-123456';}
         const secret = sm.Secret.fromSecretCompleteArn(this, 'SharedDatabaseSecret', secretArn);
 
         const { vpc } = new DefaultVpc(this, 'DefaultVpc');
@@ -100,7 +101,7 @@ export class AuroraMigratorStack extends cdk.Stack {
      * @param lambdaSecurityGroup Security group for all lambdas in this stack.
      */
     private createHandler(
-        props: cdk.StackProps,
+        props: ProjectStackProps,
         id: string,
         asset: lambda.Code,
         handler: string,

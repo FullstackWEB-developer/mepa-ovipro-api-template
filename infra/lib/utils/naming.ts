@@ -1,12 +1,12 @@
-import * as cdk from '@aws-cdk/core';
-import { Ec } from '@almamedia/cdk-accounts-and-environments';
+import { EC } from '@almamedia-open-source/cdk-project-target';
+import { Construct } from 'constructs';
 
 /**
  * Create domain name for api
  * Eg. api-preview-123.example.net
  */
-export const createApiDomainName = (scope: cdk.Construct, hostedZoneName: string): string => {
-    const environmentSuffix = Ec.isStable(scope) ? '' : `-${Ec.getName(scope).replace('/', '-')}`;
+export const createApiDomainName = (scope: Construct, hostedZoneName: string): string => {
+    const environmentSuffix = EC.isStable(scope) ? '' : `-${EC.getName(scope).replace('/', '-')}`;
     return `api${environmentSuffix}.${hostedZoneName}`.toLowerCase();
 };
 
@@ -14,8 +14,8 @@ export const createApiDomainName = (scope: cdk.Construct, hostedZoneName: string
  * Create domain name for frontend application
  * Eg. app-preview-123.example.net
  */
-export const createFrontEndDomainName = (scope: cdk.Construct, hostedZoneName: string): string => {
-    const environmentSuffix = Ec.isStable(scope) ? '' : `-${Ec.getName(scope).replace('/', '-')}`;
+export const createFrontEndDomainName = (scope: Construct, hostedZoneName: string): string => {
+    const environmentSuffix = EC.isStable(scope) ? '' : `-${EC.getName(scope).replace('/', '-')}`;
     return `app${environmentSuffix}.${hostedZoneName}`.toLowerCase();
 };
 

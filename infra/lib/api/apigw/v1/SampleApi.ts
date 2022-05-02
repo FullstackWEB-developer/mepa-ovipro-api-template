@@ -1,28 +1,45 @@
-import * as cdk from '@aws-cdk/core';
-import * as lambda from '@aws-cdk/aws-lambda';
+import { OpenApiXLambda } from '@almamedia-open-source/cdk-openapix';
+import * as cdk from 'aws-cdk-lib';
+import * as lambda from 'aws-cdk-lib/aws-lambda';
+import { Construct } from 'constructs';
 import { VersionedOpenApi } from '../../../constructs/VersionedOpenApi';
+import { OviproEnvironmentSharedResource } from '../../../utils/shared-resources/OviproEnvironmentSharedResource';
+import { SharedResourceType } from '../../../utils/shared-resources/types';
 
-interface SampleApiGwStackProps extends cdk.StackProps {
-    sample: { getFunction: lambda.IFunction };
+interface SampleApiGwStackProps {
+    sample: {
+        getFunction: lambda.IFunction;
+    };
 }
 
-export class SampleApi extends cdk.Construct {
-    constructor(scope: cdk.Construct, id: string, props: SampleApiGwStackProps) {
+export class SampleApi extends Construct {
+    constructor(scope: Construct, id: string, props: SampleApiGwStackProps) {
         super(scope, id);
 
         const { sample } = props;
 
-        new VersionedOpenApi(this, 'SampleApiV1', {
-            openApiDefinitionFileName: 'realty-api-v1.yaml',
+        const sharedEnvResource = new OviproEnvironmentSharedResource(this, 'SampleApiEnvSharedResource');
+
+        const { api } = new VersionedOpenApi(this, 'MarketingApiV1', {
+            openApiDefinitionFileName: 'marketing-api-v1-bundle.yaml',
             apigatewayIntegrations: {
-                '/plotProperties/{realtyId}': {
-                    get: { fn: sample.getFunction },
-                    post: { fn: sample.getFunction },
-                    put: { fn: sample.getFunction },
+                '/sample': {
+                    GET: new OpenApiXLambda(this, sample.getFunction),
                 },
             },
             apiName: 'sample',
             version: 1,
         });
+
+        /**
+         * TEMPORARILY EXPORT API EXECUTE ENDPOINT TO BE USED IN FRONTEND
+         * TODO: remove this when wildcard custom domain is supported
+         */
+        // const apiExecuteEndpointWithoutProtocol = cdk.Fn.select(
+        //     1,
+        //     cdk.Fn.split('://', api.deploymentStage.urlForPath()),
+        // );
+        // const apiExecuteEndpoint = cdk.Fn.select(0, cdk.Fn.split('/', apiExecuteEndpointWithoutProtocol));
+        // sharedEnvResource.export(SharedResourceType.SAMPLE_API_ENDPOINT_EXECUTE_URL, apiExecuteEndpoint);
     }
 }

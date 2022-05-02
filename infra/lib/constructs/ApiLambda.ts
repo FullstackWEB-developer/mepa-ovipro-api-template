@@ -1,22 +1,23 @@
-import * as cdk from '@aws-cdk/core';
-import * as lambda from '@aws-cdk/aws-lambda';
-import * as iam from '@aws-cdk/aws-iam';
-import * as rds from '@aws-cdk/aws-rds';
-import * as sm from '@aws-cdk/aws-secretsmanager';
-import * as logs from '@aws-cdk/aws-logs';
-import { Name } from '@almamedia/cdk-tag-and-name';
-import { Duration } from '@aws-cdk/core';
-import { DefaultVpc } from '../default-resources/shared/vpc';
+import { EC } from '@almamedia-open-source/cdk-project-target';
+import * as cdk from 'aws-cdk-lib';
+import { Duration } from 'aws-cdk-lib';
+import * as ec2 from 'aws-cdk-lib/aws-ec2';
+import * as iam from 'aws-cdk-lib/aws-iam';
+import * as lambda from 'aws-cdk-lib/aws-lambda';
+import * as nodejslambda from 'aws-cdk-lib/aws-lambda-nodejs';
+import * as logs from 'aws-cdk-lib/aws-logs';
+import * as rds from 'aws-cdk-lib/aws-rds';
+import * as sm from 'aws-cdk-lib/aws-secretsmanager';
 import { pascalCase } from 'change-case';
-import { Ec } from '@almamedia/cdk-accounts-and-environments';
+import { Construct } from 'constructs';
 
-export interface Props extends cdk.StackProps {
+export interface Props {
     /** Lambda Aurora data source. Lambda is given data access to this. */
     relationalDataSource?: rds.IServerlessCluster;
     /** Lambda Aurora data source secret. Lambda is given read access to this. */
     relationalDataSourceReadWriteCredentialsSecret?: sm.ISecret;
-    /** Lambda code asset location. */
-    code: lambda.Code;
+    /** Lambda code asset location as string. */
+    entry: string;
     /** Lambda description */
     description: string;
     /**
@@ -36,6 +37,12 @@ export interface Props extends cdk.StackProps {
     logRetention?: logs.RetentionDays;
     /** Lambda environment properties */
     environment: EnvironmentProps;
+    /**
+     * Securitygroup for the function
+     *
+     * Same for every other function in an API
+     */
+    securityGroup: ec2.ISecurityGroup;
 }
 
 /**
@@ -53,46 +60,49 @@ interface EnvironmentProps {
 /**
  * Basic API Lambda construct. Has read-write DB access and default parameterization.
  */
-export class ApiLambda extends cdk.Construct {
+export class ApiLambda extends Construct {
     public readonly handler: lambda.IFunction;
 
     /** Creates a sample lambda */
-    constructor(scope: cdk.Construct, id: string, props: Props) {
+    constructor(scope: Construct, id: string, props: Props) {
         super(scope, id);
 
         const {
             relationalDataSourceReadWriteCredentialsSecret: auroraReadWriteCredentialsSecret,
             relationalDataSource: auroraCluster,
             environment,
-            code,
+            entry,
             description,
             timeout,
             memorySize,
             logRetention,
+            securityGroup,
         } = props;
 
-        const { vpc } = new DefaultVpc(this, 'DefaultVpc');
+        const environmentName = pascalCase(EC.getName(this));
 
-        const environmentName = pascalCase(Ec.getName(this));
-
-        const handler = new lambda.Function(this, id, {
-            functionName: Name.withProject(this, id),
-            handler: 'index.handler',
-            code,
+        const handler = new nodejslambda.NodejsFunction(this, id, {
+            functionName: `${environmentName}${pascalCase(environment.SERVICE_NAME)}${pascalCase(environment.METHOD)}`,
+            handler: 'handler',
+            entry,
+            architecture: lambda.Architecture.ARM_64,
             runtime: lambda.Runtime.NODEJS_14_X,
             timeout: timeout || Duration.seconds(10),
-            vpc,
             description,
             memorySize: memorySize || 1024,
             logRetention: logRetention || logs.RetentionDays.ONE_MONTH,
             environment: {
-                NODE_OPTIONS: '--enable-source-maps', // Required to use sourcemaps!
                 DB_CLUSTER_ARN: auroraCluster?.clusterArn || '',
                 READ_WRITE_SECRET_ARN: auroraReadWriteCredentialsSecret?.secretArn || '',
                 ENVIRONMENT: environmentName,
                 ...environment,
             },
+            depsLockFilePath: 'package-lock.json',
+            bundling: {
+                externalModules: ['aws-sdk', 'pg-native'],
+            },
             tracing: lambda.Tracing.ACTIVE,
+            securityGroups: [securityGroup],
         });
         this.handler = handler;
 

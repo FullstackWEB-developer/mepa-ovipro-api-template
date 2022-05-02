@@ -1,22 +1,22 @@
-import * as cdk from '@aws-cdk/core';
-import * as elb from '@aws-cdk/aws-elasticloadbalancingv2';
-import * as ec2 from '@aws-cdk/aws-ec2';
-import * as ssm from '@aws-cdk/aws-ssm';
-import { Ac } from '@almamedia/cdk-accounts-and-environments';
+import { AC } from '@almamedia-open-source/cdk-project-target';
+import * as ec2 from 'aws-cdk-lib/aws-ec2';
+import * as elb from 'aws-cdk-lib/aws-elasticloadbalancingv2';
+import * as ssm from 'aws-cdk-lib/aws-ssm';
+import { Construct } from 'constructs';
 
-const createParameterName = (scope: cdk.Construct, suffix: string) =>
-    `/${Ac.getConfig(scope, 'service')}/ALB_${suffix}`;
+const createParameterName = (scope: Construct, suffix: string) =>
+    `/${AC.getAccountConfig(scope, 'service')}/ALB_${suffix}`;
 
 /**
  * ALB stack
  */
-export class DefaultAlb extends cdk.Construct {
+export class DefaultAlb extends Construct {
     public readonly alb: elb.IApplicationLoadBalancer;
     public readonly albSecurityGroup: ec2.ISecurityGroup;
     public readonly albDefaultListener: elb.IApplicationListener;
 
     /** Creates Alb and an internal security group for the alb */
-    constructor(scope: cdk.Construct, id: string) {
+    constructor(scope: Construct, id: string) {
         super(scope, id);
 
         /**
@@ -36,7 +36,7 @@ export class DefaultAlb extends cdk.Construct {
             createParameterName(this, 'LOAD_BALANCER_SECURITY_GROUP_ID'),
         );
 
-        const albSecurityGroup = ec2.SecurityGroup.fromLookup(
+        const albSecurityGroup = ec2.SecurityGroup.fromLookupById(
             this,
             'ApplicationLoadBalancerSecurityGroup',
             albSecurityGroupId,
@@ -49,7 +49,7 @@ export class DefaultAlb extends cdk.Construct {
 
         const albDefaultListener = elb.ApplicationListener.fromApplicationListenerAttributes(this, 'DefaultListener', {
             listenerArn: albDefaultListenerArn,
-            securityGroupId: albSecurityGroupId,
+            securityGroup: albSecurityGroup,
             defaultPort: 80,
         });
 

@@ -1,32 +1,32 @@
-import { ApiStack } from '../api';
+import { Template } from 'aws-cdk-lib/assertions';
 import { createCdkTestContext } from '../../__test__/context';
-import { Name } from '@almamedia/cdk-tag-and-name';
-import { Sc } from '@almamedia/cdk-accounts-and-environments';
-import { SynthUtils } from '@aws-cdk/assert';
+import { SampleApiStack } from '../api';
+import { SampleEndpointStacks } from '../endpoints/sample';
+import { SampleApiResourcesStack } from './resources/SampleApiResourcesStack';
 
-test('api-stack', () => {
+test('sample-api-stack', () => {
     // GIVEN
     const scope = createCdkTestContext();
 
-    const stack = new ApiStack(scope, 'SampleApiStack', {
-        stackName: Name.stack(scope, 'SampleApi'),
-        ...Sc.defineProps(scope, 'API lambdas for the sample API'),
+    const { apiEndpointLambdaSecurityGroup } = new SampleApiResourcesStack(scope, 'SampleApiResourcesStack', {
+        summary: 'Sample API resources stack',
+    });
+
+    const { getHandler } = new SampleEndpointStacks(scope, 'SampleApiStack', {
+        apiEndpointLambdaSecurityGroup,
+    });
+
+    const stack = new SampleApiStack(scope, 'SampleApiStack', {
+        summary: 'API lambdas for the sample API',
+        sampleGet: getHandler,
     });
 
     expect.addSnapshotSerializer({
-        test: (val: string) => typeof val === 'string' && !!val.match(/AssetParameters([A-Fa-f0-9]{64})(\w+)/),
-        print: () => '"AssetParameters-[HASH REMOVED]"',
+        test: (val: string) => typeof val === 'string' && !!val.match(/([A-Fa-f0-9]{64})\.(jar|zip)/),
+        print: (val) => (typeof val === 'string' ? '"[HASH REMOVED]"' : ''),
     });
 
-    expect.addSnapshotSerializer({
-        test: (val: string) =>
-            typeof val === 'string' && !!val.match(/(\w+) for asset\s?(version)?\s?"([A-Fa-f0-9]{64})"/),
-        print: (val) =>
-            typeof val === 'string'
-                ? '"' + val.replace(/(\w+ for asset)\s?(version)?\s?"([A-Fa-f0-9]{64})"/, '$1 [HASH REMOVED]') + '"'
-                : '',
-    });
-
+    const template = Template.fromStack(stack);
     // THEN
-    expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
+    expect(template).toMatchSnapshot();
 });
