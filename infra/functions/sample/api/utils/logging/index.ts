@@ -139,7 +139,7 @@ export const appendToLogContext = (context: LogContextData): void => {
 export function provideLogContext<
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     Handler extends (...args: [APIGatewayProxyEvent & any, Context]) => Promise<APIGatewayProxyResult>,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any, prettier/prettier
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
 >(fn: Handler): (...args: [APIGatewayProxyEvent & any, Context]) => Promise<APIGatewayProxyResult> {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return (...localArgs: [APIGatewayProxyEvent & any, Context]) => {

@@ -74,7 +74,6 @@ export const hasPermission = (permission: PermissionToCheck, user: UserDetails |
  * @param {PermissionType} permission - type of permission to be checked
  * @returns {boolean}
  */
-/* eslint-disable prettier/prettier */
 export const hasPermissionAnywhere =
     (organizationPermission: ReadonlyArray<OrganizationPermission>) =>
     (permission: PermissionType): boolean =>
@@ -83,9 +82,7 @@ export const hasPermissionAnywhere =
                 permissionTree.permissions.some((it) => it.permission === permission) ||
                 hasPermissionAnywhere(permissionTree.children)(permission),
         );
-/* eslint-enable prettier/prettier */
 
-/* eslint-disable prettier/prettier */
 export const hasAnyPermissionForOrganizationType =
     (organizationPermission: ReadonlyArray<OrganizationPermission>) =>
     (organizationType: OrganizationType): boolean => {
@@ -102,4 +99,3 @@ export const hasAnyPermissionForOrganizationType =
                     hasAnyPermissionForOrganizationType(permissionTree.children)(organizationType)),
         );
     };
-/* eslint-enable prettier/prettier */

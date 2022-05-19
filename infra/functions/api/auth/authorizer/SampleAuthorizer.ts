@@ -1,9 +1,9 @@
 import createHttpError from 'http-errors';
+import { SimpleOffice } from '../../../sample/api/model/entities/SimpleOffice';
 import { checkForPermission } from '../has-permission';
+import { OrganizationType, PermissionType, UserDetails } from '../has-permission/userdetails';
 import { Authorizer } from './Authorizer';
 import { Relation, RelationType } from './Relation';
-import { OrganizationType, PermissionType, UserDetails } from '../has-permission/userdetails';
-import { SimpleOffice } from '../../../sample/api/model/entities/SimpleOffice';
 
 export class SampleAuthorizer implements Authorizer<SimpleOffice> {
     public static readonly INSTANCE = new SampleAuthorizer();

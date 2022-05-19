@@ -1,4 +1,3 @@
-import AWS from 'aws-sdk';
 import {
     CloudFormationCustomResourceEvent,
     CloudFormationCustomResourceDeleteEvent,
@@ -6,6 +5,7 @@ import {
     CloudFormationCustomResourceUpdateEvent,
     CloudFormationCustomResourceResponse,
 } from 'aws-lambda';
+import AWS from 'aws-sdk';
 
 const lambda = new AWS.Lambda();
 

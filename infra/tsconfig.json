@@ -27,8 +27,7 @@
         "typeRoots": ["./node_modules/@types"],
     },
     "include": [
-    "./**/*.ts",
-    "./**/*.ts"
+        "./**/*.ts"
     ],
     "exclude": ["./cdk.out", "./node_modules"]
 }

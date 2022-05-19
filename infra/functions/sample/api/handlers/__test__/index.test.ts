@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import * as path from 'path';
-import { mocked } from 'ts-jest/utils';
-import { testLambdaHandler, TestLambdaInputOutputOptions } from '../../utils/__tests__/lambda';
-import { ConnectionFactory } from '../../dao/typeorm/ConnectionFactory';
-import { Connection } from 'typeorm';
-import { officeDAO } from '../../dao/typeorm/OfficeDAO';
 import { HttpError } from 'http-errors';
+import { mocked } from 'ts-jest/utils';
+import { Connection } from 'typeorm';
 import { SampleAuthorizer } from '../../../../api/auth/authorizer/SampleAuthorizer';
+import { ConnectionFactory } from '../../dao/typeorm/ConnectionFactory';
+import { officeDAO } from '../../dao/typeorm/OfficeDAO';
+import { testLambdaHandler, TestLambdaInputOutputOptions } from '../../utils/__tests__/lambda';
 
 jest.mock('../../../../api/auth/has-permission/userdetails', () => {
     const originalModule = jest.requireActual('../../../../api/auth/has-permission/userdetails');

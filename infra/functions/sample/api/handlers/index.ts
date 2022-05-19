@@ -1,16 +1,16 @@
 import middy from '@middy/core';
+import httpErrorHandler from '@middy/http-error-handler';
 import jsonBodyParser from '@middy/http-json-body-parser';
 import { APIGatewayEvent, APIGatewayProxyResult, Context } from 'aws-lambda';
 import 'reflect-metadata';
-import { validate } from 'uuid';
 import createError, { HttpError } from 'http-errors';
-import httpErrorHandler from '@middy/http-error-handler';
-import { factory, middyLogProxy, provideLogContext, logRequest } from '../utils/logging';
+import { validate } from 'uuid';
+import { SampleAuthorizer } from '../../../api/auth/authorizer/SampleAuthorizer';
+import { getUserFromRequest } from '../../../api/auth/has-permission/userdetails';
 import { officeDAO } from '../dao/typeorm/OfficeDAO';
 import { components } from '../generated/api-schema';
-import { SampleAuthorizer } from '../../../api/auth/authorizer/SampleAuthorizer';
 import { SimpleOffice } from '../model/entities/SimpleOffice';
-import { getUserFromRequest } from '../../../api/auth/has-permission/userdetails';
+import { factory, middyLogProxy, provideLogContext, logRequest } from '../utils/logging';
 import { requestIdHeaderAppender } from '../utils/middleware/request-id-header-appender';
 
 // This is a template sample API Lambda implementation.

@@ -1,6 +1,6 @@
-import { BaseDAO, Options } from './BaseDAO';
-import { factory } from '../../utils/logging';
 import { SimpleOffice } from '../../model/entities/SimpleOffice';
+import { factory } from '../../utils/logging';
+import { BaseDAO, Options } from './BaseDAO';
 
 export class OfficeDAO extends BaseDAO<SimpleOffice> {
     async findPublicIdByOfficeId(officeId: number, options?: Options): Promise<{ publicId: string } | undefined> {

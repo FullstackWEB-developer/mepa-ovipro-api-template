@@ -1,5 +1,5 @@
-import { InheritanceType, OrganizationPermission, OrganizationType } from './userdetails';
 import { hasAnyPermissionForOrganizationType } from './index';
+import { InheritanceType, OrganizationPermission, OrganizationType } from './userdetails';
 
 const baseOrganizationPermission: OrganizationPermission = {
     id: '1',

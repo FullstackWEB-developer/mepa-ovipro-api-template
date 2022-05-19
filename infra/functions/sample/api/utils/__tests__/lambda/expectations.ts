@@ -1,7 +1,7 @@
 import { IExpectations } from './interfaces';
 
 export function loadExpectation(id: string, type: 'input' | 'output' | 'mocks', expectationsPath: string): any {
-    // eslint-disable-line
+    // eslint-disable-next-line
     return require(`${expectationsPath}/${id}.${type}.json`);
 }
 

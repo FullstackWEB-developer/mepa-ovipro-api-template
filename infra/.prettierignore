@@ -1,0 +1,13 @@
+# Ignore everything recursively
+*
+
+# But not the .ts files
+!*.ts
+
+# Check subdirectories too
+!*/
+
+# Ignore node modules
+
+node_modules/**
+cdk.out/**

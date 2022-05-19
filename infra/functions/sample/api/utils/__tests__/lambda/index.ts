@@ -1,7 +1,10 @@
-import { get, set } from 'lodash';
+import { dirname } from 'path';
+import chalk from 'chalk';
 import { paramCase } from 'change-case';
 import colorize from 'json-colorizer';
-import chalk from 'chalk';
+import { get, set } from 'lodash';
+import { createMockContext } from './context';
+import { loadExpectation, loadExpectations } from './expectations';
 import {
     BeforeOrAfterHandler,
     CatchHandler,
@@ -10,9 +13,6 @@ import {
     TestLambdaInputOutputHooks,
     TestLambdaInputOutputOptions,
 } from './interfaces';
-import { loadExpectation, loadExpectations } from './expectations';
-import { createMockContext } from './context';
-import { dirname } from 'path';
 
 export * from './interfaces';
 
