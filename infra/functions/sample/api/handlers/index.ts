@@ -8,6 +8,7 @@ import { validate } from 'uuid';
 import { SampleAuthorizer } from '../../../api/auth/authorizer/SampleAuthorizer';
 import { getUserFromRequest } from '../../../api/auth/has-permission/userdetails';
 import { officeDAO } from '../dao/typeorm/OfficeDAO';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { components } from '../generated/api-schema';
 import { SimpleOffice } from '../model/entities/SimpleOffice';
 import { factory, middyLogProxy, provideLogContext, logRequest } from '../utils/logging';

@@ -2,7 +2,7 @@ name: Deploy feature environment
 on:
   push:
     branches:
-      - 'feature/**'
+      - "feature/**"
 concurrency:
   group: ${{ github.ref }}
 jobs:
@@ -16,11 +16,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Setup Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
-            node-version: '14'
-            cache: 'npm'
-            cache-dependency-path: './infra/package-lock.json'
+          node-version: "16"
+          cache: "npm"
+          cache-dependency-path: "./infra/package-lock.json"
       - name: Notify slack success
         if: success()
         id: slack # IMPORTANT: reference this step ID value in future Slack steps
@@ -28,7 +28,7 @@ jobs:
           SLACK_BOT_TOKEN: ${{ secrets.MEPA_ASUMINEN_OVIPRO_SLACK_NOTIFICATIONS_BOT_TOKEN }}
         uses: voxmedia/github-action-slack-notify-build@v1.1.2
         with:
-          channel: 'ovi_pro_pipeline_development_deployments'
+          channel: "ovi_pro_pipeline_development_deployments"
           status: STARTED
           color: warning
       - name: Set account to dev & environment to feature
@@ -73,7 +73,7 @@ jobs:
         with:
           # Updates existing message from the first step
           message_id: ${{ steps.slack.outputs.message_id }}
-          channel: 'ovi_pro_pipeline_development_deployments'
+          channel: "ovi_pro_pipeline_development_deployments"
           status: STARTED
           color: good
       - name: Notify slack failure
@@ -84,6 +84,6 @@ jobs:
         with:
           # Updates existing message from the first step
           message_id: ${{ steps.slack.outputs.message_id }}
-          channel: 'ovi_pro_pipeline_development_deployments'
+          channel: "ovi_pro_pipeline_development_deployments"
           status: FAILED
           color: danger

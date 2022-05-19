@@ -1,6 +1,5 @@
 name: Destroy environment infra
-on:
-  delete
+on: delete
 jobs:
   delete:
     runs-on: ubuntu-latest
@@ -11,11 +10,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Setup Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
-          node-version: '14'
-          cache: 'npm'
-          cache-dependency-path: './infra/package-lock.json'
+          node-version: "16"
+          cache: "npm"
+          cache-dependency-path: "./infra/package-lock.json"
       - name: Set account to dev & environment to feature
         if: startsWith(github.event.ref, 'feature/')
         run: |
@@ -86,4 +85,3 @@ jobs:
           github_token: ${{ secrets.MEPA_GH_ACTIONS_BOT_TOKEN }}
           workflow_file_name: destroy-infra.yaml
           inputs: '{ "environment_name": "${{ github.event.ref }}" }'
-
