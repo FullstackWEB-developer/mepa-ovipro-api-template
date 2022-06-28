@@ -26,6 +26,6 @@ test('ResourceRemovalPolicyTesterAspect:destroyPolicyRejected', () => {
 
     expect(bucket.node.metadata).toHaveLength(1);
     expect(bucket.node.metadata[0].data).toBe(
-        'Resource \'bucketId\' (S3/Dynamodb) removal policy should be RETAIN or SNAPSHOT in stable envs.',
+        "Resource 'bucketId' (S3/Dynamodb) removal policy should be RETAIN or SNAPSHOT in stable envs.",
     );
 });

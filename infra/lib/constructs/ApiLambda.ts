@@ -1,4 +1,4 @@
-import { EC } from '@almamedia-open-source/cdk-project-target';
+import { AC, EC } from '@almamedia-open-source/cdk-project-target';
 import * as cdk from 'aws-cdk-lib';
 import { Duration } from 'aws-cdk-lib';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
@@ -43,6 +43,10 @@ export interface Props {
      * Same for every other function in an API
      */
     securityGroup: ec2.ISecurityGroup;
+    /**
+     * Log retention role
+     */
+    logRetentionRole?: iam.IRole;
 }
 
 /**
@@ -76,13 +80,17 @@ export class ApiLambda extends Construct {
             timeout,
             memorySize,
             logRetention,
+            logRetentionRole,
             securityGroup,
         } = props;
 
         const environmentName = pascalCase(EC.getName(this));
+        const functionName = `${environmentName}${pascalCase(environment.SERVICE_NAME)}${pascalCase(
+            environment.METHOD,
+        )}`;
 
         const handler = new nodejslambda.NodejsFunction(this, id, {
-            functionName: `${environmentName}${pascalCase(environment.SERVICE_NAME)}${pascalCase(environment.METHOD)}`,
+            functionName,
             handler: 'handler',
             entry,
             architecture: lambda.Architecture.ARM_64,
@@ -91,6 +99,7 @@ export class ApiLambda extends Construct {
             description,
             memorySize: memorySize || 1024,
             logRetention: logRetention || logs.RetentionDays.ONE_MONTH,
+            logRetentionRole,
             environment: {
                 DB_CLUSTER_ARN: auroraCluster?.clusterArn || '',
                 READ_WRITE_SECRET_ARN: auroraReadWriteCredentialsSecret?.secretArn || '',
@@ -100,6 +109,7 @@ export class ApiLambda extends Construct {
             depsLockFilePath: 'package-lock.json',
             bundling: {
                 externalModules: ['aws-sdk', 'pg-native'],
+                minify: true,
             },
             tracing: lambda.Tracing.ACTIVE,
             securityGroups: [securityGroup],
@@ -133,23 +143,25 @@ export class ApiLambda extends Construct {
                 }),
             );
         }
+        // For cost optimization, create alarms only in stable envs
+        if (EC.isStable(this) || AC.isMock(this)) {
+            /**
+             * Added error metric for future use in Dashboard
+             */
+            handler.metricErrors({
+                statistic: 'avg',
+                period: Duration.minutes(1),
+                label: 'Lambda failure rate',
+            });
 
-        /**
-         * Added error metric for future use in Dashboard
-         */
-        handler.metricErrors({
-            statistic: 'avg',
-            period: Duration.minutes(1),
-            label: 'Lambda failure rate',
-        });
-
-        /**
-         * Added alarm to Function if
-         */
-        handler.metricErrors().createAlarm(this, 'Alarm', {
-            threshold: 100,
-            evaluationPeriods: 2,
-        });
+            /**
+             * Added alarm to Function if
+             */
+            handler.metricErrors().createAlarm(this, 'Alarm', {
+                threshold: 100,
+                evaluationPeriods: 2,
+            });
+        }
 
         this.handler = handler;
     }

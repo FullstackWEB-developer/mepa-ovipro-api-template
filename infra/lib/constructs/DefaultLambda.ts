@@ -1,11 +1,16 @@
-import { EC } from '@almamedia-open-source/cdk-project-target';
+import { AC, EC } from '@almamedia-open-source/cdk-project-target';
 import * as cdk from 'aws-cdk-lib';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
+import * as iam from 'aws-cdk-lib/aws-iam';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as nodejslambda from 'aws-cdk-lib/aws-lambda-nodejs';
 import * as logs from 'aws-cdk-lib/aws-logs';
+import * as rds from 'aws-cdk-lib/aws-rds';
+import * as sm from 'aws-cdk-lib/aws-secretsmanager';
 import { pascalCase } from 'change-case';
 import { Construct } from 'constructs';
+import { OviproEnvironmentSharedResource } from '../utils/shared-resources/OviproEnvironmentSharedResource';
+import { SharedResourceType } from '../utils/shared-resources/types';
 
 export interface Props {
     /** Lambda code asset location as string. */
@@ -45,6 +50,17 @@ export interface Props {
      * Limits amount of concurrent lambda executions
      */
     reservedConcurrencyLimit?: number;
+    /**
+     * Allow lambda to access to RDS. Gives readWrite permissions to ovipro db and set required environment variables
+     */
+    allowAccessToRds?: boolean;
+
+    dbLoggingEnabled?: 'true' | 'false';
+
+    /**
+     * Log retention role
+     */
+    logRetentionRole: iam.IRole;
 }
 
 /**
@@ -76,9 +92,38 @@ export class DefaultLambda extends Construct {
             securityGroup,
             tracingType,
             reservedConcurrencyLimit,
+            allowAccessToRds,
+            dbLoggingEnabled,
+            logRetentionRole,
         } = props;
 
         const environmentName = pascalCase(EC.getName(this));
+        const environmentSharedResource = new OviproEnvironmentSharedResource(this, 'SharedResource');
+
+        const environmentForRDSAccess = {
+            DB_NAME: 'ovipro',
+            READ_WRITE_SECRET_ARN: '',
+            DB_CLUSTER_ARN: '',
+            DB_LOGGING_ENABLED: dbLoggingEnabled ? dbLoggingEnabled : 'false',
+        };
+
+        if (allowAccessToRds) {
+            const clusterIdentifier = environmentSharedResource.import(SharedResourceType.DATABASE_CLUSTER_IDENTIFIER);
+
+            const database = rds.ServerlessCluster.fromServerlessClusterAttributes(this, 'DefaultServerlessCluster', {
+                clusterIdentifier,
+            });
+
+            let databaseSecretArn = environmentSharedResource.import(SharedResourceType.DATABASE_READ_WRITE_SECRET_ARN);
+            if (databaseSecretArn.includes('dummy-value-for-')) {
+                databaseSecretArn = 'arn:aws:service:eu-central-1:123456789012:secret:entity-123456';
+            }
+
+            const secret = sm.Secret.fromSecretCompleteArn(this, 'SharedDatabaseSecret', databaseSecretArn);
+
+            environmentForRDSAccess.DB_CLUSTER_ARN = database.clusterArn;
+            environmentForRDSAccess.READ_WRITE_SECRET_ARN = secret.secretArn;
+        }
 
         const handler = new nodejslambda.NodejsFunction(this, id, {
             handler: 'handler',
@@ -88,37 +133,71 @@ export class DefaultLambda extends Construct {
             description,
             memorySize: memorySize || 1024,
             logRetention: logRetention || logs.RetentionDays.ONE_MONTH,
+            logRetentionRole,
             environment: {
                 ENVIRONMENT: environmentName,
                 SERVICE_NAME: pascalCase(id),
+                ...(allowAccessToRds && environmentForRDSAccess),
                 ...environment,
             },
             reservedConcurrentExecutions: reservedConcurrencyLimit ? reservedConcurrencyLimit : undefined,
             depsLockFilePath: 'package-lock.json',
             bundling: {
                 externalModules: ['aws-sdk', 'pg-native'],
+                minify: true,
             },
             tracing: tracingType ? tracingType : lambda.Tracing.ACTIVE,
             securityGroups: securityGroup ? [securityGroup] : undefined,
         });
         this.handler = handler;
 
-        /**
-         * Added error metric for future use in Dashboard
-         */
-        handler.metricErrors({
-            statistic: 'avg',
-            period: cdk.Duration.minutes(1),
-            label: 'Lambda failure rate',
-        });
+        if (allowAccessToRds) {
+            /**
+             * Allows reading secret value
+             */
+            handler.addToRolePolicy(
+                new iam.PolicyStatement({
+                    resources: [environmentForRDSAccess.READ_WRITE_SECRET_ARN],
+                    actions: ['secretsmanager:GetSecretValue'],
+                }),
+            );
 
-        /**
-         * Added alarm to Function if
-         */
-        handler.metricErrors().createAlarm(this, 'Alarm', {
-            threshold: 100,
-            evaluationPeriods: 2,
-        });
+            /**
+             * Allows querying the database data-api
+             */
+            handler.addToRolePolicy(
+                new iam.PolicyStatement({
+                    resources: [environmentForRDSAccess.DB_CLUSTER_ARN],
+                    actions: [
+                        'rds-data:BatchExecuteStatement',
+                        'rds-data:BeginTransaction',
+                        'rds-data:CommitTransaction',
+                        'rds-data:ExecuteStatement',
+                        'rds-data:RollbackTransaction',
+                    ],
+                }),
+            );
+        }
+
+        // For cost optimization, create alarms only in stable envs
+        if (EC.isStable(this) || AC.isMock(this)) {
+            /**
+             * Added error metric for future use in Dashboard
+             */
+            handler.metricErrors({
+                statistic: 'avg',
+                period: cdk.Duration.minutes(1),
+                label: 'Lambda failure rate',
+            });
+
+            /**
+             * Added alarm to Function if
+             */
+            handler.metricErrors().createAlarm(this, 'Alarm', {
+                threshold: 100,
+                evaluationPeriods: 2,
+            });
+        }
 
         this.handler = handler;
     }

@@ -30,7 +30,9 @@ export class AuroraMigratorStack extends ProjectStack {
 
         const auroraSecurityGroup = ec2.SecurityGroup.fromSecurityGroupId(this, 'SG', rdsClusterSGId);
         let secretArn = sharedResource.import(SharedResourceType.DATABASE_MIGRATOR_SECRET_ARN);
-        if (secretArn.includes('dummy-value-for-')) {secretArn = 'arn:aws:service:eu-central-1:123456789012:secret:entity-123456';}
+        if (secretArn.includes('dummy-value-for-')) {
+            secretArn = 'arn:aws:service:eu-central-1:123456789012:secret:entity-123456';
+        }
         const secret = sm.Secret.fromSecretCompleteArn(this, 'SharedDatabaseSecret', secretArn);
 
         const { vpc } = new DefaultVpc(this, 'DefaultVpc');

@@ -14,9 +14,7 @@ export class SampleApiStack extends ProjectStack {
     constructor(scope: Construct, id: string, props: Props) {
         super(scope, id, props);
 
-        const {
-            sampleGet,
-        } = props;
+        const { sampleGet } = props;
 
         new SampleApi(this, 'SampleApi', {
             sample: {
