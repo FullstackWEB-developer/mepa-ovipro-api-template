@@ -145,6 +145,12 @@ export class DefaultLambda extends Construct {
             bundling: {
                 externalModules: ['aws-sdk', 'pg-native'],
                 minify: true,
+                /*
+                    There was issues with TypeORM without this
+                    https://almamedia.atlassian.net/browse/OVIPROAPI-1727
+                    https://almamedia.atlassian.net/browse/OVIPROAPI-1678
+                 */
+                keepNames: true,
             },
             tracing: tracingType ? tracingType : lambda.Tracing.ACTIVE,
             securityGroups: securityGroup ? [securityGroup] : undefined,
