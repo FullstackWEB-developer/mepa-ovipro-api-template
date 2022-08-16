@@ -63,14 +63,13 @@ Follow [AWS-docs](https://docs.aws.amazon.com/cdk/latest/guide/getting_started.h
 
 ### Node & NPM
 
-Make sure you use latest LTS version for Node.
-Consider using [n](https://github.com/tj/n) for version management.
+Check package.json for engine versions. Projects aim to support lts versions. Consider using n for version management.
 
 -   run `n lts` to install latest LTS
 
-NOTE (23.3.2021): npm 7.x is currently bugged with authenticating private NPM registries.
+### Docker
 
--   run `npm i -g npm@6` to downgrade
+Docker is required for some activities like containerized test execution or containerized (Java) builds.
 
 ### Almamedia's private NPM packages
 
@@ -107,6 +106,8 @@ The repository may contain optional Java code with dependencies. Add or update a
 ```
 
 ## Running
+
+- build and install pre-requirements (some installations require npm i --legacy-peer-deps) `npm i && npm run build:all`
 
 ### CDK stacks
 
