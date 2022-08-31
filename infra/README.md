@@ -45,7 +45,6 @@ npx cdk-dia
 -   [Typescript](https://www.typescriptlang.org/)
 -   [AWS CDK](https://github.com/aws/aws-cdk)
 -   [Jest](https://jestjs.io/)
--   [NCC](https://github.com/vercel/ncc)
 -   [Github Actions](https://github.com/features/actions)
 
 We are also using [Ari Palo's](https://github.com/aripalo) useful custom CDK helper libraries:
