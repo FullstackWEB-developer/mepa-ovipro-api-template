@@ -115,19 +115,19 @@ Automatic compilation
 
 -   `npm run watch`
 
-#### Manual deployments to preview-environments
+#### Manual deployments to feature-environments
 
 Synthesize cdk stacks
 
--   `npx cdk synth --context account=dev --context environment=preview/EXAMPLEJIRA123 --profile ovipro-dev`
+-   `npx cdk synth --context account=dev --context environment=feature/EXAMPLEJIRA123 --profile ovipro-dev`
 
 Compare deployed cdk stack to current state
 
--   `npx cdk diff --context account=dev --context environment=preview/EXAMPLEJIRA123 --profile ovipro-dev STACK_TO_DIFF`
+-   `npx cdk diff --context account=dev --context environment=feature/EXAMPLEJIRA123 --profile ovipro-dev STACK_TO_DIFF`
 
 Deploy stack to aws
 
--   `npx cdk deploy --context account=dev --context environment=preview/EXAMPLEJIRA123 --profile ovipro-dev STACK_TO_DEPLOY`
+-   `npx cdk deploy --context account=dev --context environment=feature/EXAMPLEJIRA123 --profile ovipro-dev STACK_TO_DEPLOY`
 
 ### CDK stacks
 
@@ -137,13 +137,12 @@ Automatic compilation
 
 Temporary credentials / MFA
 
--   [Assumed credentials-package](https://github.com/almamedia/alma-cdk-jsii-assumed-credentials-provider) is in use to cache MFA!
--   If you wish to opt-out, just use normal `--profile`-flag in your commands instead
+-   [Credential utility from the company AWS guru](https://github.com/aripalo/vegas-credentials)
 
 ## Development
 
 1. Develop your new features or changes in a Jira-ticket named branch (eg. feature/JIRA-NNNN)
-2. If you want, you can deploy preview-versions of your resources using a preview-type environment, named as `preview/JIRANNNN` (more info about environments in [Accounts & environments](https://github.com/almamedia/alma-cdk-jsii-accounts-and-environments)) **Note:** Dont use dashes (-) in branch name!. If you have dependencies on resources in other repositories, you need to deploy them to same environment (Jira-ticket named branch and environment).
+2. If you want, you can deploy feature-versions of your resources using a feature-type environment, named as `feature/JIRANNNN` (more info about environments in [Accounts & environments](https://github.com/almamedia/alma-cdk-jsii-accounts-and-environments)) **Note:** Dont use dashes (-) in branch name!. If you have dependencies on resources in other repositories, you need to deploy them to same environment (Jira-ticket named branch and environment).
 3. When your changes in a PR are ready and reviewed, merge them to _main_-branch. Changes in main-branch are automatically deployed to staging-environment. **Never** deploy anything to staging-environment manually, it is not meant to be used as a development environment
 4. Changes in _staging_-branch will be deployed to preprod-account nightly, if tests are showing green. **Never** deploy anything manually to preprod!
 5. Manual deployments to production-account
