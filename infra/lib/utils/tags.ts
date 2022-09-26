@@ -1,4 +1,4 @@
-import { AC } from '@almamedia-open-source/cdk-project-target';
+import { AC } from '@alma-cdk/project';
 import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 

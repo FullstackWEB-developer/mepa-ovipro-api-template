@@ -1,6 +1,6 @@
 import { entities } from '@almamedia/ovipro-common-entities';
 import { Connection, createConnection } from 'typeorm';
-import { ConnectionFactory } from '../../../dao/typeorm/ConnectionFactory';
+import { ConnectionFactory } from '../../dao/typeorm/ConnectionFactory';
 
 /**
  * This file contains DB test utilities for Typeorm connection testing.

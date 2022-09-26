@@ -1,4 +1,4 @@
-import { EC } from '@almamedia-open-source/cdk-project-target';
+import { EC } from '@alma-cdk/project';
 import * as cdk from 'aws-cdk-lib';
 import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
 import * as s3 from 'aws-cdk-lib/aws-s3';

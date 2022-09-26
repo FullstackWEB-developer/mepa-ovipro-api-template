@@ -1,4 +1,4 @@
-import { AC, EC } from '@almamedia-open-source/cdk-project-target';
+import { AC, EC } from '@alma-cdk/project';
 import * as cdk from 'aws-cdk-lib';
 import * as ssm from 'aws-cdk-lib/aws-ssm';
 import { pascalCase } from 'change-case';

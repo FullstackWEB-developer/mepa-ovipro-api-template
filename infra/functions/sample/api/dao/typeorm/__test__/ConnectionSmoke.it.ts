@@ -1,10 +1,10 @@
 import { StartedTestContainer } from 'testcontainers';
-import { mocked } from 'ts-jest/utils';
 import { Connection } from 'typeorm';
+import { createConnectionForTests, Props } from '../../../../../utils/__tests__/db/test-connection';
+import { executeSchemaSetup, setUpTestContainer } from '../../../../../utils/__tests__/db/test-container';
+import { ConnectionFactory } from '../../../../../utils/dao/typeorm/ConnectionFactory';
 import { SimpleOffice } from '../../../model/entities/SimpleOffice';
-import { createConnectionForTests, Props } from '../../../utils/__tests__/db/test-connection';
-import { executeSchemaSetup, setUpTestContainer } from '../../../utils/__tests__/db/test-container';
-import { ConnectionFactory } from '../ConnectionFactory';
+
 import { officeDAO } from '../OfficeDAO';
 
 //
@@ -44,7 +44,7 @@ describe('ConnectionSmoke', () => {
     beforeEach(async () => {
         await executeSchemaSetup(container);
         const connection: Promise<Connection> = createConnectionForTests({ ...config });
-        mocked(ConnectionFactory.getConnection).mockResolvedValue(connection);
+        jest.mocked(ConnectionFactory.getConnection).mockResolvedValue(connection);
         await (
             await connection
         ).manager.query(
@@ -54,7 +54,7 @@ describe('ConnectionSmoke', () => {
 
     afterEach(async () => {
         const connection: Promise<Connection> = createConnectionForTests({ ...config });
-        mocked(ConnectionFactory.getConnection).mockResolvedValue(connection);
+        jest.mocked(ConnectionFactory.getConnection).mockResolvedValue(connection);
         await (await connection).manager.query(`drop table if exists simple_office;`);
     });
 

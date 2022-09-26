@@ -1,5 +1,4 @@
-import { ProjectProps } from '@almamedia-open-source/cdk-project-context';
-import { Accounts } from '@almamedia-open-source/cdk-project-target';
+import { AccountStrategy, ProjectProps } from '@alma-cdk/project';
 
 const projectProps: ProjectProps = {
     name: 'ovipro',
@@ -9,7 +8,7 @@ const projectProps: ProjectProps = {
         email: 'etuovi-tekniikka@almamedia.fi',
     },
     defaultRegion: 'eu-west-1',
-    accounts: Accounts.three({
+    accounts: AccountStrategy.three({
         mock: {
             id: '012312312312',
             config: {

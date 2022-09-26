@@ -1,4 +1,4 @@
-import { Project } from '@almamedia-open-source/cdk-project-context';
+import { Project } from '@alma-cdk/project';
 import { Construct } from 'constructs';
 import projectProps from '../bin/config';
 

@@ -1,5 +1,5 @@
 import middy from '@middy/core';
-import httpErrorHandler from '@middy/http-error-handler';
+import httpHeaderNormalizer from '@middy/http-header-normalizer';
 import jsonBodyParser from '@middy/http-json-body-parser';
 import { APIGatewayEvent, APIGatewayProxyResult, Context } from 'aws-lambda';
 import 'reflect-metadata';
@@ -8,11 +8,11 @@ import { validate } from 'uuid';
 import { SampleAuthorizer } from '../../../api/auth/authorizer/SampleAuthorizer';
 import { getUserFromRequest } from '../../../api/auth/has-permission/userdetails';
 import { components } from '../../../api/generated/api-schema';
+import { factory, logRequest, middyLogProxy, provideLogContext } from '../../../utils/logging';
+import { errorHandler } from '../../../utils/middleware/error-handler';
+import { requestIdHeaderAppender } from '../../../utils/middleware/request-id-header-appender';
 import { officeDAO } from '../dao/typeorm/OfficeDAO';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { SimpleOffice } from '../model/entities/SimpleOffice';
-import { factory, middyLogProxy, provideLogContext, logRequest } from '../utils/logging';
-import { requestIdHeaderAppender } from '../utils/middleware/request-id-header-appender';
 
 // This is a template sample API Lambda implementation.
 
@@ -70,7 +70,8 @@ export async function processRequest(event: APIGatewayEvent & Event, context: Co
 
 export const handler = provideLogContext(
     middy(processRequest)
+        .use(httpHeaderNormalizer())
         .use(jsonBodyParser())
         .use(requestIdHeaderAppender())
-        .use(httpErrorHandler({ logger: middyLogProxy(log) })),
+        .use(errorHandler()),
 );

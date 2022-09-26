@@ -1,6 +1,7 @@
+import { BaseDAO, Options } from '../../../../utils/dao/typeorm/BaseDAO';
+import { QueryDAO } from '../../../../utils/dao/typeorm/QueryDAO';
+import { factory } from '../../../../utils/logging';
 import { SimpleOffice } from '../../model/entities/SimpleOffice';
-import { factory } from '../../utils/logging';
-import { BaseDAO, Options } from './BaseDAO';
 
 export class OfficeDAO extends BaseDAO<SimpleOffice> {
     async findPublicIdByOfficeId(officeId: number, options?: Options): Promise<{ publicId: string } | undefined> {
@@ -13,12 +14,14 @@ export class OfficeDAO extends BaseDAO<SimpleOffice> {
         return result.length === 1 ? { publicId: result[0].public_id } : undefined;
     }
 
-    async findOneByPublicId(publicId: string, options?: Options): Promise<SimpleOffice | undefined> {
-        log.debug(`Find realty by uuid ${publicId}`);
+    async findOneByPublicId(uuid: string, options?: Options): Promise<{ id: number; publicId: string } | undefined> {
+        log.debug(`Find office id by uuid ${uuid}`);
         const { transactionalEntityManager } = options || {};
-        const where = BaseDAO.uuidToWhereCondition('publicId', publicId);
-        const repository = await super.getRepository(undefined, transactionalEntityManager);
-        return repository.findOne({ where });
+
+        const query = 'select office_id, public_id from common.office where public_id = $1::uuid;';
+        const manager = transactionalEntityManager || (await QueryDAO.getConnection()).manager;
+        const result = await manager.query(query, [uuid]);
+        return result.length === 1 ? { id: result[0].office_id, publicId: result[0].public_id } : undefined;
     }
 
     /**

@@ -1,5 +1,4 @@
-import { Name } from '@almamedia-open-source/cdk-project-names';
-import { ProjectStack, ProjectStackProps } from '@almamedia-open-source/cdk-project-stack';
+import { SmartStack, Name } from '@alma-cdk/project';
 import * as cdk from 'aws-cdk-lib';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
@@ -19,10 +18,10 @@ const MIGRATION_SCRIPTS_PATH = '../db/java/src/main/resources';
  * This stack deploys Lambda DB tools for schema migration for the given Serverless cluster.
  * Required parameters: vpc, cluster and specific cluster user credentials via a Secret manager secret.
  */
-export class AuroraMigratorStack extends ProjectStack {
+export class AuroraMigratorStack extends SmartStack {
     public readonly handlers: lambda.IFunction[];
 
-    constructor(scope: Construct, id: string, props: ProjectStackProps) {
+    constructor(scope: Construct, id: string, props: cdk.StackProps) {
         super(scope, id, props);
 
         const sharedResource = new OviproEnvironmentSharedResource(this, 'SharedResource');
@@ -103,7 +102,7 @@ export class AuroraMigratorStack extends ProjectStack {
      * @param lambdaSecurityGroup Security group for all lambdas in this stack.
      */
     private createHandler(
-        props: ProjectStackProps,
+        props: cdk.StackProps,
         id: string,
         asset: lambda.Code,
         handler: string,

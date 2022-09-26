@@ -2,7 +2,7 @@ import { entities } from '@almamedia/ovipro-common-entities';
 import { Connection, ConnectionOptions, createConnection, Logger as TypeormLogger } from 'typeorm';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { Logger } from 'typescript-logging';
-import { factory } from '../../utils/logging';
+import { factory } from '../../logging';
 
 const serviceName = process.env.SERVICE_NAME || 'UNDEFINED';
 const moduleName = process.env.MODULE_NAME || 'UNDEFINED';
@@ -82,7 +82,7 @@ const getConnection = async (): Promise<Connection> => {
     if (cachedConnection) {
         return cachedConnection;
     }
-
+    log.debug('Start get connection');
     const dbName = process.env.DB_NAME || '';
     const readWriteUserSecretArn = process.env.READ_WRITE_SECRET_ARN || '';
     const dbClusterArn = process.env.DB_CLUSTER_ARN || '';
@@ -92,13 +92,14 @@ const getConnection = async (): Promise<Connection> => {
     // See automatic casting at https://github.com/ArsenyYankovsky/typeorm-aurora-data-api-driver#automatic-casting
     const formatOptions = uuidCastingRequired ? { castParameters: true } : undefined;
 
+    log.debug(`GETConnection ${dbName} ${readWriteUserSecretArn} ${dbClusterArn} ${enableDbLogging}`);
     const options: ConnectionOptions = {
-        type: 'aurora-data-api-pg',
+        type: 'aurora-postgres',
         database: dbName,
         secretArn: readWriteUserSecretArn,
         resourceArn: dbClusterArn,
         region: process.env.AWS_REGION || 'eu-west-1',
-        extra: { applicationNane: `${serviceName}|${moduleName}|${environmentName}` },
+        extra: { applicationName: `${serviceName}|${moduleName}|${environmentName}` },
         // All queried and linked entities must be listed here.
         entities,
         // Debug logging enabled

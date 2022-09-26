@@ -1,11 +1,11 @@
-import { ProjectStack, ProjectStackProps } from '@almamedia-open-source/cdk-project-stack';
+import { SmartStack } from '@alma-cdk/project';
 import * as cdk from 'aws-cdk-lib';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import { Construct } from 'constructs';
 import { DefaultApiEndpointResources, DefaultApiEndpointResourcesProps } from './DefaultApiEndpointResources';
 
 type Props = {
-    stackProps: ProjectStackProps;
+    stackProps: cdk.StackProps;
     apiEndpointProps: DefaultApiEndpointResourcesProps;
 };
 
@@ -14,7 +14,7 @@ type Props = {
  *
  * Needs to be in an own stack to keep stack sizes below 1MB limit
  */
-export class ApiEndpointStack extends ProjectStack {
+export class ApiEndpointStack extends SmartStack {
     public readonly handler: lambda.IFunction;
 
     constructor(scope: Construct, id: string, props: Props) {

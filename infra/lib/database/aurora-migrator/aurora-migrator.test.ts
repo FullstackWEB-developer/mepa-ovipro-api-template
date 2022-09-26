@@ -7,7 +7,7 @@ test('Aurora Migrator', () => {
     const scope = createCdkTestContext();
 
     const stack = new AuroraMigratorStack(scope, 'AuroraMigratorStack', {
-        summary: 'Serverless Aurora cluster migrator for OviPRO infrastructure',
+        description: 'Serverless Aurora cluster migrator for OviPRO infrastructure',
     });
     const template = Template.fromStack(stack);
     // THEN

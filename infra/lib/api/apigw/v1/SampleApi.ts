@@ -1,4 +1,4 @@
-import { OpenApiXLambda } from '@almamedia-open-source/cdk-openapix';
+import * as openapix from '@alma-cdk/openapix';
 import * as cdk from 'aws-cdk-lib';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import { Construct } from 'constructs';
@@ -22,9 +22,9 @@ export class SampleApi extends Construct {
 
         const { api } = new VersionedOpenApi(this, 'MarketingApiV1', {
             openApiDefinitionFileName: 'marketing-api-v1-bundle.yaml',
-            apigatewayIntegrations: {
+            paths: {
                 '/sample': {
-                    GET: new OpenApiXLambda(this, sample.getFunction),
+                    get: new openapix.LambdaIntegration(this, sample.getFunction),
                 },
             },
             apiName: 'sample',

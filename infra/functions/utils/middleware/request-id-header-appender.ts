@@ -1,24 +1,11 @@
-import { MiddlewareObj } from '@middy/core';
 import { normalizeHttpResponse } from '@middy/util';
 import { factory } from '../logging';
+import { MiddlewareType } from './middlewareType';
 
 export const requestIdHeaderName = 'Request-ID';
 
 const log = factory.getLogger('request-id-header-appender');
 
-// Override undefined types from Middy types for testing convenience.
-type MiddlewareType =
-    | MiddlewareObj<unknown> & {
-          before: () => void;
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          after: (request: any) => {
-              // Nothing to see here
-          };
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          onError: (request: any) => {
-              // Nothing to see here
-          };
-      };
 /**
  * This custom middleware will append a header called Request-ID from request headers to response.
  * This middleware triggers in the after phase. It should be the first or one of the first middlewares
@@ -40,7 +27,7 @@ export const requestIdHeaderAppender = (): MiddlewareType => {
         if (!existingHeaders.includes(requestIdHeaderName) && request.event?.headers[requestIdHeaderName]) {
             const requestId = request.event?.headers[requestIdHeaderName];
             if (log.isTraceEnabled()) {
-                log.trace(`Append header ${requestId}`);
+                console.log('Append header', request.event?.headers[requestIdHeaderName]);
             }
             request.response.headers[requestIdHeaderName] = requestId;
         }

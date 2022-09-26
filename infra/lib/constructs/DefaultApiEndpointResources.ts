@@ -1,4 +1,4 @@
-import { ProjectStack } from '@almamedia-open-source/cdk-project-stack';
+import { SmartStack } from '@alma-cdk/project';
 import * as cdk from 'aws-cdk-lib';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
@@ -62,7 +62,7 @@ export interface DefaultApiEndpointResourcesProps {
 export class DefaultApiEndpointResources extends Construct {
     public readonly handler: lambda.IFunction;
 
-    constructor(scope: ProjectStack, id: string, props: DefaultApiEndpointResourcesProps) {
+    constructor(scope: SmartStack, id: string, props: DefaultApiEndpointResourcesProps) {
         super(scope, id);
 
         const {

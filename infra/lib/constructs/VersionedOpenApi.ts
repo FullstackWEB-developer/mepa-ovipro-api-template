@@ -1,7 +1,7 @@
 import path from 'path';
-import { OpenApiX, OpenApiXDefinition, OpenApiXDefinitionProps } from '@almamedia-open-source/cdk-openapix';
-import { Name } from '@almamedia-open-source/cdk-project-names';
-import { AC, EC } from '@almamedia-open-source/cdk-project-target';
+import * as openapix from '@alma-cdk/openapix';
+import { AC, EC, Name } from '@alma-cdk/project';
+import * as cdk from 'aws-cdk-lib';
 import * as apigw from 'aws-cdk-lib/aws-apigateway';
 import * as apigwv2 from 'aws-cdk-lib/aws-apigatewayv2';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
@@ -23,13 +23,13 @@ interface Props {
      * Example:
      * ```
         '/plotProperties/{realtyId}': {
-            'GET': new OpenApiXLambda(this, getFn),
-            'POST': new OpenApiXLambda(this, postFn),
-            'PUT': new OpenApiXLambda(this, putFn),
+            'get': new openapix.LambdaIntegration(this, getFn),
+            'post': new openapix.LambdaIntegration(this, postFn),
+            'oyt': new openapix.LambdaIntegration(this, putFn),
         },
      * ```
      */
-    apigatewayIntegrations: OpenApiXDefinitionProps['integrations'];
+    paths: openapix.Paths;
     /**
      * In our current repository structure definition-files live in "api-specs"-folder,
      * which is not the best solution infra-wise.
@@ -61,7 +61,7 @@ export class VersionedOpenApi extends Construct {
     constructor(scope: Construct, id: string, props: Props) {
         super(scope, id);
 
-        const { apigatewayIntegrations, version, apiName, openApiDefinitionFileName } = props;
+        const { paths, version, apiName, openApiDefinitionFileName } = props;
 
         const stageName = `v${version}`;
         const restApiName = Name.withProject(
@@ -88,7 +88,7 @@ export class VersionedOpenApi extends Construct {
         //     ? createWildcardDomainName(this, topLevelHzZoneName)
         // : createFrontEndDomainName(this, topLevelHzZoneName);
 
-        const authorizer = lambda.Function.fromFunctionAttributes(this, 'AuthorizerLambda', {
+        const authorizerLambda = lambda.Function.fromFunctionAttributes(this, 'AuthorizerLambda', {
             functionArn: sharedEnvResource.import(SharedResourceType.LAMBDA_AUTHORIZER_ARN),
             /**
              * Cant modify permissions on imported lambdas without this flag
@@ -96,13 +96,26 @@ export class VersionedOpenApi extends Construct {
             sameEnvironment: true,
         });
 
+        const authorizerName = 'bearerAuth';
+
+        const authorizer = new openapix.LambdaAuthorizer(this, authorizerName, {
+            fn: authorizerLambda,
+            identitySource: apigw.IdentitySource.header('Authorization'),
+            resultsCacheTtl: cdk.Duration.seconds(300),
+            type: 'request',
+            authType: 'custom',
+        });
+
         // Shorthand flag for API logging.
         const enableLogging = AC.isDev(this) || EC.isMock(this);
 
-        const openApiX = new OpenApiX(this, `${restApiName}OpenApiX`, {
+        const openApiX = new openapix.Api(this, `${restApiName}OpenApiX`, {
             source: path.join(__dirname, `../../../api-specs/${openApiDefinitionFileName}`),
-            integrations: apigatewayIntegrations,
-            injectPaths: {
+            paths,
+            injections: {
+                'components.securitySchemes.bearerAuth.type': 'apiKey',
+                'components.securitySchemes.bearerAuth.in': 'header',
+                'components.securitySchemes.bearerAuth.name': 'Authorization',
                 'x-amazon-apigateway-request-validator': 'all',
                 'x-amazon-apigateway-request-validators': {
                     all: {
@@ -111,7 +124,7 @@ export class VersionedOpenApi extends Construct {
                     },
                 },
             },
-            rejectDeepPaths: ['example'],
+            rejectionsDeep: ['example'],
             restApiProps: {
                 restApiName,
                 deployOptions: {
@@ -123,10 +136,10 @@ export class VersionedOpenApi extends Construct {
                 },
                 // disableExecuteApiEndpoint: true,
             },
-            customAuthorizer: authorizer,
+            authorizers: [authorizer],
         });
 
-        const api = openApiX.api as apigw.SpecRestApi;
+        const api = openApiX;
 
         /**
          * Add custom gateway response to bad request body

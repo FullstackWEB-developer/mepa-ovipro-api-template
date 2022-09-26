@@ -1,14 +1,15 @@
-import { ProjectStack, ProjectStackProps } from '@almamedia-open-source/cdk-project-stack';
+import { SmartStack } from '@alma-cdk/project';
+import * as cdk from 'aws-cdk-lib';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import { Construct } from 'constructs';
 import { OviproEnvironmentSharedResource } from '../../../../utils/shared-resources/OviproEnvironmentSharedResource';
 import { SharedResourceType } from '../../../../utils/shared-resources/types';
 
-interface Props extends ProjectStackProps {
+interface Props extends cdk.StackProps {
     vpc: ec2.Vpc;
 }
 
-export class DefaultElasticCache extends ProjectStack {
+export class DefaultElasticCache extends SmartStack {
     public readonly endpointAddress: string;
     public readonly endpointPort: string;
 

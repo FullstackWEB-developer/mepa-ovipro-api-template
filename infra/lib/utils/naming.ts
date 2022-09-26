@@ -1,4 +1,4 @@
-import { EC } from '@almamedia-open-source/cdk-project-target';
+import { EC } from '@alma-cdk/project';
 import { Construct } from 'constructs';
 
 /**

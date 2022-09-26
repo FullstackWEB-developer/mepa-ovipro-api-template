@@ -1,4 +1,4 @@
-import { AC } from '@almamedia-open-source/cdk-project-target';
+import { AC } from '@alma-cdk/project';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as elb from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import * as ssm from 'aws-cdk-lib/aws-ssm';

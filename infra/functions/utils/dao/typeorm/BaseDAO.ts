@@ -1,8 +1,9 @@
-import { DeepPartial, EntityManager, EntityTarget, FindConditions, ObjectLiteral, Repository } from 'typeorm';
+import { DeepPartial, EntityManager, EntityTarget, FindOptionsWhere, ObjectLiteral, Repository } from 'typeorm';
+import { FindOptionsRelations } from 'typeorm/find-options/FindOptionsRelations';
 import { ConnectionFactory } from './ConnectionFactory';
 import { QueryDAO } from './QueryDAO';
 
-export type CastFind = ObjectLiteral | FindConditions<EntityTarget<unknown>>;
+export type CastFind = FindOptionsWhere<EntityTarget<unknown>> | undefined;
 
 /**
  * Common parameters for base class methods.
@@ -12,6 +13,22 @@ export interface Options {
      * Entity manager. When this is given by the caller, an existing transaction context is assumed.
      */
     transactionalEntityManager?: EntityManager;
+    /**
+     * If uuid query conditions should be cast to uuid type or not.
+     * Some databases and connections require type casting with the current ORM plus driver combo.
+     */
+    castUuid?: boolean;
+
+    relations?: Array<string>;
+
+    /**
+     * Default relationLoadStrategy is join which makes left joins for all relations.
+     * relationLoadStrategy query will make separate select queries for getting relations.
+     * query type can be used when entity contains lots of x-to-many relations to keep result sizes reasonable
+     *
+     * relationLoadStrategy: "query" fixes error: "Database returned more than the allowed response size limit"
+     */
+    relationLoadStrategy?: 'join' | 'query';
 }
 
 /**
@@ -30,8 +47,8 @@ export abstract class BaseDAO<Entity extends ObjectLiteral> extends QueryDAO {
      * TODO: entityType param is unnecessary and can be dropped.
      * @param entityType Deprecated, unnecessary. Drop the param or use {@link getRepositoryFor} instead.
      */
-    protected async getRepository(
-        entityType?: EntityTarget<Entity>,
+    async getRepository(
+        entityType: EntityTarget<Entity> = this.entityType,
         transactionalEntityManager?: EntityManager,
     ): Promise<Repository<Entity>> {
         return (
@@ -52,22 +69,23 @@ export abstract class BaseDAO<Entity extends ObjectLiteral> extends QueryDAO {
             (await ConnectionFactory.getConnection()).getRepository(entityType)
         );
     }
-
     /**
      * Entity findOne by uuid type id method that tries to hide the ugly uuid handling.
      * Query condition is generated using
      */
     protected async findOneCast(
+        relations: Array<string> | FindOptionsRelations<Entity>,
         uuid: string,
         key: string,
         repository: Repository<Entity>,
-        /** @deprecated This flag is set with a global env var. See ConnectionFactory.ts. */
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        castUuid?: boolean,
-    ): Promise<Entity | undefined> {
+        relationLoadStrategy?: 'join' | 'query',
+    ): Promise<Entity | null> {
         const where = BaseDAO.uuidToWhereCondition(key, uuid);
-
-        return repository.findOne({ where });
+        return repository.findOne({
+            relations: relations,
+            where: where as FindOptionsWhere<Entity>,
+            relationLoadStrategy,
+        });
     }
 
     /**

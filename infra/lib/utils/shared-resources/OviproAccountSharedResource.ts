@@ -1,5 +1,5 @@
+import { AC } from '@alma-cdk/project';
 import { CrossRegionParameter } from '@almamedia-open-source/cdk-cross-region-parameter';
-import { AC } from '@almamedia-open-source/cdk-project-target';
 import * as cdk from 'aws-cdk-lib';
 import * as ssm from 'aws-cdk-lib/aws-ssm';
 import { pascalCase } from 'change-case';

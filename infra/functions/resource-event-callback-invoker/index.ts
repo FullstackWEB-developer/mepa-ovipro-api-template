@@ -1,3 +1,4 @@
+import { Lambda } from '@aws-sdk/client-lambda';
 import {
     CloudFormationCustomResourceEvent,
     CloudFormationCustomResourceDeleteEvent,
@@ -5,9 +6,11 @@ import {
     CloudFormationCustomResourceUpdateEvent,
     CloudFormationCustomResourceResponse,
 } from 'aws-lambda';
-import AWS from 'aws-sdk';
+import { ClientConstants } from '../utils/aws-sdk/ClientConstants';
 
-const lambda = new AWS.Lambda();
+const lambda = new Lambda({
+    region: ClientConstants.DEFAULT_REGION,
+});
 
 // See documentation at handler.
 
@@ -32,8 +35,11 @@ const invokeInitChain = async () => {
 
             console.debug('Invoke: %s with: %s', arn, payload);
 
-            const request = lambda.invoke({ FunctionName: arn, Payload: payload, InvocationType: 'Event' });
-            const response = await request.promise();
+            const response = await lambda.invoke({
+                FunctionName: arn,
+                Payload: Buffer.from(payload),
+                InvocationType: 'Event',
+            });
 
             if (response.FunctionError) {
                 console.error(`Error invoking function ${arn}: ${response.FunctionError}`);

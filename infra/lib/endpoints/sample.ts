@@ -21,7 +21,7 @@ export class SampleEndpointStacks extends Construct {
                 apiEndpointLambdaSecurityGroup: props.apiEndpointLambdaSecurityGroup,
                 description: 'Sample API with GET /estateProperties/{realtyId}',
             },
-            stackProps: { summary: 'Sample API with GET /estateProperties/{realtyId}' },
+            stackProps: { description: 'Sample API with GET /estateProperties/{realtyId}' },
         });
 
         this.getHandler = getHandler;

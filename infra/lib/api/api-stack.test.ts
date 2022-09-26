@@ -9,7 +9,7 @@ test('sample-api-stack', () => {
     const scope = createCdkTestContext();
 
     const { apiEndpointLambdaSecurityGroup } = new SampleApiResourcesStack(scope, 'SampleApiResourcesStack', {
-        summary: 'Sample API resources stack',
+        description: 'Sample API resources stack',
     });
 
     const { getHandler } = new SampleEndpointStacks(scope, 'SampleApiStack', {
@@ -17,7 +17,7 @@ test('sample-api-stack', () => {
     });
 
     const stack = new SampleApiStack(scope, 'SampleApiStack', {
-        summary: 'API lambdas for the sample API',
+        description: 'API lambdas for the sample API',
         sampleGet: getHandler,
     });
 
