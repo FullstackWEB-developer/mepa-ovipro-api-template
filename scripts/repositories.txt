@@ -1,3 +1,0 @@
-git@github.com:almamedia/mepa-ovipro-common-environment.git
-git@github.com:almamedia/mepa-ovipro-core-backend.git
-git@github.com:almamedia/mepa-valtti.git
