@@ -1,3 +1,4 @@
+import * as fs from 'fs';
 import { SmartStack, Name } from '@alma-cdk/project';
 import * as cdk from 'aws-cdk-lib';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
@@ -13,6 +14,7 @@ import { OviproEnvironmentSharedResource } from '../../utils/shared-resources/Ov
 import { SharedResourceType } from '../../utils/shared-resources/types';
 
 const MIGRATION_SCRIPTS_PATH = '../db/java/src/main/resources';
+const MIGRATION_SCRIPTS_FILES_PATH = `${MIGRATION_SCRIPTS_PATH}/db/migration`;
 
 /**
  * This stack deploys Lambda DB tools for schema migration for the given Serverless cluster.
@@ -87,7 +89,8 @@ export class AuroraMigratorStack extends SmartStack {
         new cdk.CustomResource(this, 'DatabaseMigrationInvokerResource', {
             serviceToken: provider.serviceToken,
             properties: {
-                update: 'now',
+                // Make migrations trigger based on the number of migration files.
+                update: `MIGRATION_FILE_COUNT_${fs.readdirSync(MIGRATION_SCRIPTS_FILES_PATH).length}`,
             },
         });
 
