@@ -4,26 +4,17 @@
         "node": true
     },
     "root": true,
-    "plugins": [
-        "@typescript-eslint",
-        "import"
-    ],
+    "plugins": ["@typescript-eslint", "import"],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
         "ecmaVersion": 2018,
         "sourceType": "module",
         "project": "./tsconfig.json"
     },
-    "extends": [
-        "plugin:import/typescript",
-        "prettier"
-    ],
+    "extends": ["plugin:import/typescript", "prettier"],
     "settings": {
         "import/parsers": {
-            "@typescript-eslint/parser": [
-                ".ts",
-                ".tsx"
-            ]
+            "@typescript-eslint/parser": [".ts", ".tsx"]
         },
         "import/resolver": {
             "node": {},
@@ -33,60 +24,29 @@
             }
         }
     },
-    "ignorePatterns": [
-        "*.js",
-        "*.d.ts",
-        "node_modules/",
-        "*.generated.ts",
-        "coverage"
-    ],
+    "ignorePatterns": ["*.js", "*.d.ts", "node_modules/", "*.generated.ts", "coverage"],
     "rules": {
-        "@typescript-eslint/no-require-imports": [
-            "error"
-        ],
-        "import/no-extraneous-dependencies": [
-            "off"
-        ],
-        "import/no-unresolved": [
-            "error"
-        ],
+        "@typescript-eslint/no-require-imports": ["error"],
+        "import/no-extraneous-dependencies": ["off"],
+        "import/no-unresolved": ["error"],
         "import/order": [
             "warn",
             {
-                "groups": [
-                    "builtin",
-                    "external"
-                ],
+                "groups": ["builtin", "external"],
                 "alphabetize": {
                     "order": "asc",
                     "caseInsensitive": true
                 }
             }
         ],
-        "no-duplicate-imports": [
-            "error"
-        ],
-        "no-shadow": [
-            "off"
-        ],
-        "@typescript-eslint/no-shadow": [
-            "off"
-        ],
-        "@typescript-eslint/no-floating-promises": [
-            "warn"
-        ],
-        "no-return-await": [
-            "off"
-        ],
-        "@typescript-eslint/return-await": [
-            "off"
-        ],
-        "dot-notation": [
-            "error"
-        ],
-        "no-bitwise": [
-            "error"
-        ],
+        "no-duplicate-imports": ["error"],
+        "no-shadow": ["off"],
+        "@typescript-eslint/no-shadow": ["off"],
+        "@typescript-eslint/no-floating-promises": ["warn"],
+        "no-return-await": ["off"],
+        "@typescript-eslint/return-await": ["off"],
+        "dot-notation": ["error"],
+        "no-bitwise": ["error"],
         "@typescript-eslint/member-ordering": [
             "error",
             {
@@ -102,6 +62,28 @@
                     "method"
                 ]
             }
-        ]
+        ],
+        "@typescript-eslint/naming-convention": [
+            "error",
+            { "selector": ["parameter"], "format": ["camelCase", "UPPER_CASE", "PascalCase", "snake_case"] },
+            {
+                "selector": ["objectLiteralProperty"],
+                "format": ["camelCase", "UPPER_CASE", "PascalCase", "snake_case"],
+                "leadingUnderscore": "allow",
+                "filter": {
+                    "regex": "^.*(::|-|:|\\.|x-|\\/).*$",
+                    "match": false
+                }
+            },
+            { "selector": ["variable"], "modifiers": ["public"], "format": ["camelCase", "UPPER_CASE", "PascalCase"] },
+            {
+                "selector": ["variable"],
+                "modifiers": ["const"],
+                "format": ["camelCase", "UPPER_CASE", "PascalCase"],
+                "filter": "_"
+            },
+            { "selector": ["function"], "format": ["camelCase", "PascalCase"] }
+        ],
+        "no-var": ["error"]
     }
 }

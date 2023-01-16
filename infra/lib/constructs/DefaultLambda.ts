@@ -1,16 +1,16 @@
 import { AC, EC } from '@alma-cdk/project';
 import * as cdk from 'aws-cdk-lib';
-import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as nodejslambda from 'aws-cdk-lib/aws-lambda-nodejs';
-import * as logs from 'aws-cdk-lib/aws-logs';
 import * as rds from 'aws-cdk-lib/aws-rds';
 import * as sm from 'aws-cdk-lib/aws-secretsmanager';
 import { pascalCase } from 'change-case';
 import { Construct } from 'constructs';
+import { externalModules } from '../utils/bundling';
 import { OviproEnvironmentSharedResource } from '../utils/shared-resources/OviproEnvironmentSharedResource';
 import { SharedResourceType } from '../utils/shared-resources/types';
+import { SharedLambdaResources } from './SharedLambdaResources';
 
 export interface Props {
     /** Lambda code asset location as string. */
@@ -27,19 +27,8 @@ export interface Props {
      * @defaultValue 1024
      */
     memorySize?: number;
-    /**
-     * Lambda Cloudwatch log retention period.
-     * @defaultValue 1 month
-     */
-    logRetention?: logs.RetentionDays;
     /** Lambda environment properties */
     environment: EnvironmentProps;
-    /**
-     * Securitygroup for the function
-     *
-     * Same for every other function in an API
-     */
-    securityGroup?: ec2.ISecurityGroup;
     /**
      * Type of x-ray tracing for lambda.
      * Default ACTIVE
@@ -56,11 +45,6 @@ export interface Props {
     allowAccessToRds?: boolean;
 
     dbLoggingEnabled?: 'true' | 'false';
-
-    /**
-     * Log retention role
-     */
-    logRetentionRole: iam.IRole;
 }
 
 /**
@@ -88,13 +72,10 @@ export class DefaultLambda extends Construct {
             description,
             timeout,
             memorySize,
-            logRetention,
-            securityGroup,
             tracingType,
             reservedConcurrencyLimit,
             allowAccessToRds,
             dbLoggingEnabled,
-            logRetentionRole,
         } = props;
 
         const environmentName = pascalCase(EC.getName(this));
@@ -106,6 +87,11 @@ export class DefaultLambda extends Construct {
             DB_CLUSTER_ARN: '',
             DB_LOGGING_ENABLED: dbLoggingEnabled ? dbLoggingEnabled : 'false',
         };
+
+        const { sharedDependenciesLambdaLayer, apiEndpointLambdaSecurityGroup } = new SharedLambdaResources(
+            this,
+            'SharedLambdaResources',
+        );
 
         if (allowAccessToRds) {
             const clusterIdentifier = environmentSharedResource.import(SharedResourceType.DATABASE_CLUSTER_IDENTIFIER);
@@ -128,12 +114,10 @@ export class DefaultLambda extends Construct {
         const handler = new nodejslambda.NodejsFunction(this, id, {
             handler: 'handler',
             entry,
-            runtime: lambda.Runtime.NODEJS_14_X,
+            runtime: lambda.Runtime.NODEJS_16_X,
             timeout: timeout || cdk.Duration.seconds(30),
             description,
             memorySize: memorySize || 1024,
-            logRetention: logRetention || logs.RetentionDays.ONE_MONTH,
-            logRetentionRole,
             environment: {
                 ENVIRONMENT: environmentName,
                 SERVICE_NAME: pascalCase(id),
@@ -143,7 +127,7 @@ export class DefaultLambda extends Construct {
             reservedConcurrentExecutions: reservedConcurrencyLimit ? reservedConcurrencyLimit : undefined,
             depsLockFilePath: 'package-lock.json',
             bundling: {
-                externalModules: ['aws-sdk', 'pg-native'],
+                externalModules: externalModules,
                 minify: true,
                 /*
                     There was issues with TypeORM without this
@@ -152,8 +136,9 @@ export class DefaultLambda extends Construct {
                  */
                 keepNames: true,
             },
+            layers: [sharedDependenciesLambdaLayer],
             tracing: tracingType ? tracingType : lambda.Tracing.ACTIVE,
-            securityGroups: securityGroup ? [securityGroup] : undefined,
+            securityGroups: [apiEndpointLambdaSecurityGroup],
         });
         this.handler = handler;
 

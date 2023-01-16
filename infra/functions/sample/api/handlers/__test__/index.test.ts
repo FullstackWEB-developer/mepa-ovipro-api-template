@@ -10,6 +10,7 @@ import { officeDAO } from '../../dao/typeorm/OfficeDAO';
 jest.mock('../../../../api/auth/has-permission/userdetails', () => {
     const originalModule = jest.requireActual('../../../../api/auth/has-permission/userdetails');
     return {
+        // eslint-disable-next-line @typescript-eslint/naming-convention
         __esModule: true,
         ...originalModule,
         getUserFromRequest: jest.fn(() => ({

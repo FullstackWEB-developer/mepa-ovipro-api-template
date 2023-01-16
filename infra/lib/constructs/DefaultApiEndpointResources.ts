@@ -1,6 +1,6 @@
-import { SmartStack } from '@alma-cdk/project';
 import * as cdk from 'aws-cdk-lib';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
+import * as iam from 'aws-cdk-lib/aws-iam';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as rds from 'aws-cdk-lib/aws-rds';
 import * as sm from 'aws-cdk-lib/aws-secretsmanager';
@@ -40,10 +40,6 @@ export interface DefaultApiEndpointResourcesProps {
      * @example 1
      */
     version: number;
-    /**
-     * Security group for endpoint lambdas
-     */
-    apiEndpointLambdaSecurityGroup: ec2.ISecurityGroup;
 
     /**
      * Environment param names
@@ -54,6 +50,16 @@ export interface DefaultApiEndpointResourcesProps {
      * Timeout for the lambda
      */
     timeout?: cdk.Duration;
+
+    /**
+     * Set Lambda VPC. Only define this when you need to access VPC resources otherwise inaccessible via a gateway.
+     */
+    vpc?: ec2.IVpc;
+
+    /**
+     * Lambda security groups. By default uses Realty API default SG.
+     */
+    securityGroups?: ec2.ISecurityGroup[];
 }
 
 /**
@@ -62,19 +68,11 @@ export interface DefaultApiEndpointResourcesProps {
 export class DefaultApiEndpointResources extends Construct {
     public readonly handler: lambda.IFunction;
 
-    constructor(scope: SmartStack, id: string, props: DefaultApiEndpointResourcesProps) {
+    constructor(scope: cdk.Stack, id: string, props: DefaultApiEndpointResourcesProps) {
         super(scope, id);
 
-        const {
-            description,
-            entry,
-            serviceName,
-            method,
-            version,
-            apiEndpointLambdaSecurityGroup,
-            environmentParams,
-            timeout,
-        } = props;
+        const { description, entry, serviceName, method, version, environmentParams, timeout, vpc, securityGroups } =
+            props;
 
         /*
         Requires:
@@ -82,15 +80,15 @@ export class DefaultApiEndpointResources extends Construct {
             auroraReadWriteCredentialsSecret: sm.ISecret;
         */
 
-        const sharedResource = new OviproEnvironmentSharedResource(scope, 'SharedResource');
+        const environmentSharedResource = new OviproEnvironmentSharedResource(scope, 'SharedResource');
 
-        const clusterIdentifier = sharedResource.import(SharedResourceType.DATABASE_CLUSTER_IDENTIFIER);
+        const clusterIdentifier = environmentSharedResource.import(SharedResourceType.DATABASE_CLUSTER_IDENTIFIER);
 
         const database = rds.ServerlessCluster.fromServerlessClusterAttributes(scope, 'DefaultServerlessCluster', {
             clusterIdentifier,
         });
 
-        let databaseSecretArn = sharedResource.import(SharedResourceType.DATABASE_READ_WRITE_SECRET_ARN);
+        let databaseSecretArn = environmentSharedResource.import(SharedResourceType.DATABASE_READ_WRITE_SECRET_ARN);
         if (databaseSecretArn.includes('dummy-value-for-')) {
             databaseSecretArn = 'arn:aws:service:eu-central-1:123456789012:secret:entity-123456';
         }
@@ -100,9 +98,10 @@ export class DefaultApiEndpointResources extends Construct {
         const defaultLambdaProps: Omit<LambdaProps, 'description' | 'entry'> = {
             relationalDataSource: database,
             relationalDataSourceReadWriteCredentialsSecret: secret,
-            securityGroup: apiEndpointLambdaSecurityGroup,
             memorySize: 1024,
             timeout: timeout || cdk.Duration.seconds(10),
+            vpc,
+            securityGroups,
             environment: {
                 DB_NAME: 'ovipro',
                 MODULE_NAME: 'RealtyAPI',

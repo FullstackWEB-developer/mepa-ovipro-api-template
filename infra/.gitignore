@@ -10,6 +10,8 @@ cdk.context.json
 cdk.out
 dist
 
+!.nvmrc
+
 !typings/**/*.d.ts
 !utils/**/*.js
 

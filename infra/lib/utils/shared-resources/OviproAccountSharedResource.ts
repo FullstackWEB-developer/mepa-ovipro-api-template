@@ -1,5 +1,5 @@
+import { CrossRegionParameter } from '@alma-cdk/cross-region-parameter';
 import { AC } from '@alma-cdk/project';
-import { CrossRegionParameter } from '@almamedia-open-source/cdk-cross-region-parameter';
 import * as cdk from 'aws-cdk-lib';
 import * as ssm from 'aws-cdk-lib/aws-ssm';
 import { pascalCase } from 'change-case';
@@ -65,14 +65,19 @@ export class OviproAccountSharedResource extends Construct {
      * Uses StringParameter.valueFromLookup-function, which should work during synth
      *
      * @param resource
+     * @param lookup by default lookup value during synth, set to false if value is needed during deploy
      */
-    import(resource: SharedResourceType): string {
+    import(resource: SharedResourceType, lookup: boolean = true): string {
         let stringValue;
 
+        const getParameter = !lookup
+            ? ssm.StringParameter.valueForStringParameter
+            : ssm.StringParameter.valueFromLookup;
+
         if (!resource.includes('CROSS_REGION')) {
-            stringValue = ssm.StringParameter.valueFromLookup(this, createParameterName(this, resource));
+            stringValue = getParameter(this, createParameterName(this, resource));
         } else {
-            stringValue = ssm.StringParameter.valueFromLookup(this, createCrossRegionParameterName(this, resource));
+            stringValue = getParameter(this, createCrossRegionParameterName(this, resource));
         }
 
         if (stringValue.includes('dummy-value-for-') && resource.toString().indexOf('_ARN')) {
@@ -85,5 +90,16 @@ export class OviproAccountSharedResource extends Construct {
         }
 
         return stringValue;
+    }
+
+    /**
+     * Import parameter store resource
+     */
+    importResource(resource: SharedResourceType): ssm.IStringParameter {
+        return ssm.StringParameter.fromStringParameterName(
+            this,
+            `${pascalCase(resource)}StringParameter`,
+            createParameterName(this, resource),
+        );
     }
 }

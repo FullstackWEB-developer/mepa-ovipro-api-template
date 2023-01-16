@@ -10,6 +10,9 @@ import * as rds from 'aws-cdk-lib/aws-rds';
 import * as sm from 'aws-cdk-lib/aws-secretsmanager';
 import { pascalCase } from 'change-case';
 import { Construct } from 'constructs';
+import { externalModules } from '../utils/bundling';
+import { addOptionalTag, OptionalMetaTag } from '../utils/tags';
+import { SharedLambdaResources } from './SharedLambdaResources';
 
 export interface Props {
     /** Lambda Aurora data source. Lambda is given data access to this. */
@@ -30,23 +33,16 @@ export interface Props {
      * @defaultValue 1024
      */
     memorySize?: number;
-    /**
-     * Lambda Cloudwatch log retention period.
-     * @defaultValue 1 month
-     */
-    logRetention?: logs.RetentionDays;
     /** Lambda environment properties */
     environment: EnvironmentProps;
     /**
-     * Securitygroup for the function
-     *
-     * Same for every other function in an API
+     * Additional security groups
      */
-    securityGroup: ec2.ISecurityGroup;
+    securityGroups?: ec2.ISecurityGroup[];
     /**
-     * Log retention role
+     * Lambda VPC. Only set this when you need the Lambda to access resources inaccessible via a gateway.
      */
-    logRetentionRole?: iam.IRole;
+    vpc?: ec2.IVpc;
 }
 
 /**
@@ -79,27 +75,27 @@ export class ApiLambda extends Construct {
             description,
             timeout,
             memorySize,
-            logRetention,
-            logRetentionRole,
-            securityGroup,
+            vpc,
+            securityGroups,
         } = props;
 
         const environmentName = pascalCase(EC.getName(this));
-        const functionName = `${environmentName}${pascalCase(environment.SERVICE_NAME)}${pascalCase(
-            environment.METHOD,
-        )}`;
+        const functionName = `${environmentName}${cdk.Stack.of(this).node.id}`.slice(0, 64);
+
+        const { sharedDependenciesLambdaLayer, apiEndpointLambdaSecurityGroup } = new SharedLambdaResources(
+            this,
+            'SharedLambdaResources',
+        );
 
         const handler = new nodejslambda.NodejsFunction(this, id, {
-            functionName,
             handler: 'handler',
+            functionName,
             entry,
             architecture: lambda.Architecture.ARM_64,
-            runtime: lambda.Runtime.NODEJS_14_X,
+            runtime: lambda.Runtime.NODEJS_16_X,
             timeout: timeout || Duration.seconds(10),
             description,
             memorySize: memorySize || 1024,
-            logRetention: logRetention || logs.RetentionDays.ONE_MONTH,
-            logRetentionRole,
             environment: {
                 DB_CLUSTER_ARN: auroraCluster?.clusterArn || '',
                 READ_WRITE_SECRET_ARN: auroraReadWriteCredentialsSecret?.secretArn || '',
@@ -108,7 +104,7 @@ export class ApiLambda extends Construct {
             },
             depsLockFilePath: 'package-lock.json',
             bundling: {
-                externalModules: ['aws-sdk', 'pg-native'],
+                externalModules: externalModules,
                 minify: true,
                 /*
                     There was issues with TypeORM without this
@@ -117,8 +113,10 @@ export class ApiLambda extends Construct {
                  */
                 keepNames: true,
             },
+            vpc,
+            layers: [sharedDependenciesLambdaLayer],
             tracing: lambda.Tracing.ACTIVE,
-            securityGroups: [securityGroup],
+            securityGroups: securityGroups ? securityGroups : [apiEndpointLambdaSecurityGroup],
         });
         this.handler = handler;
 
@@ -150,7 +148,7 @@ export class ApiLambda extends Construct {
             );
         }
         // For cost optimization, create alarms only in stable envs
-        if (EC.isStable(this) || AC.isMock(this)) {
+        if (EC.isStable(this) || EC.isVerification(this) || AC.isMock(this)) {
             /**
              * Added error metric for future use in Dashboard
              */
@@ -169,6 +167,7 @@ export class ApiLambda extends Construct {
             });
         }
 
+        addOptionalTag([handler], OptionalMetaTag.NAME, functionName);
         this.handler = handler;
     }
 }

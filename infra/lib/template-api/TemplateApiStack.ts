@@ -2,24 +2,24 @@ import { SmartStack } from '@alma-cdk/project';
 import * as cdk from 'aws-cdk-lib';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import { Construct } from 'constructs';
-import { SampleApi } from './apigw/v1/SampleApi';
+import { TemplateApi } from './apigw/v1/TemplateApi';
 
 interface Props extends cdk.StackProps {
-    sampleGet: lambda.IFunction;
+    templateGet: lambda.IFunction;
 }
 
 /**
- * API stack for lambdas and API Gateway resources.
+ * API stack for Template API lambdas and API Gateway resources.
  */
-export class SampleApiStack extends SmartStack {
+export class TemplateApiStack extends SmartStack {
     constructor(scope: Construct, id: string, props: Props) {
         super(scope, id, props);
 
-        const { sampleGet } = props;
+        const { templateGet } = props;
 
-        new SampleApi(this, 'SampleApi', {
-            sample: {
-                getFunction: sampleGet,
+        new TemplateApi(this, 'TemplateApi', {
+            template: {
+                getFunction: templateGet,
             },
         });
     }

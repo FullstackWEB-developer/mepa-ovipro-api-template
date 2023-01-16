@@ -1,10 +1,12 @@
 import * as cdk from 'aws-cdk-lib';
+import { Stack } from 'aws-cdk-lib';
 import * as s3 from 'aws-cdk-lib/aws-s3';
-import { Stack } from 'aws-cdk-lib/core';
+import { createCdkTestContext } from '../../../__test__/context';
 import { ResourceRemovalPolicyTesterAspect } from './ResourceRemovalPolicyTesterAspect';
 
 test('ResourceRemovalPolicyTesterAspect:destroyPolicyExpected', () => {
-    const stack = new Stack();
+    const scope = createCdkTestContext();
+    const stack = new Stack(scope);
     stack.node.setContext('environment', 'development');
     stack.node.setContext('account', 'dev');
     const bucket = new s3.Bucket(stack, 'id', {
@@ -16,7 +18,8 @@ test('ResourceRemovalPolicyTesterAspect:destroyPolicyExpected', () => {
 });
 
 test('ResourceRemovalPolicyTesterAspect:destroyPolicyRejected', () => {
-    const stack = new Stack();
+    const scope = createCdkTestContext();
+    const stack = new Stack(scope);
     stack.node.setContext('environment', 'production');
     stack.node.setContext('account', 'prod');
     const bucket = new s3.Bucket(stack, 'bucketId', {

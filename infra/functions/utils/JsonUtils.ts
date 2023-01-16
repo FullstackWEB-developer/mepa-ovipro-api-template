@@ -10,7 +10,7 @@ export const JsonUtils = {
         return JSON.stringify(value, cleanUp);
     },
 };
-
+// eslint-disable-next-line @typescript-eslint/naming-convention
 const cleanUp = (_key: string, value: unknown): unknown | undefined => {
     return value ?? undefined;
 };
