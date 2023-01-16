@@ -1,18 +1,18 @@
-name: Main pipeline
+name: Deploy staging environment
 on:
   push:
     branches:
       - main
 jobs:
   build:
-    name: Main branch build
+    name: Build
+    runs-on: ubuntu-latest
     permissions:
       id-token: write # needed to interact with GitHub's OIDC Token endpoint.
       contents: read
-    runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Notify slack success
         if: success()
         id: slack # IMPORTANT: reference this step ID value in future Slack steps
@@ -26,7 +26,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: "16"
+          node-version-file: "infra/.nvmrc"
           cache: "npm"
           cache-dependency-path: "./infra/package-lock.json"
       - name: set account to dev & environment to staging
@@ -48,23 +48,22 @@ jobs:
       - name: install deps & build
         working-directory: ./infra
         run: |
-          npm install
+          npm install --legacy-peer-deps
           npm run build:all
       - name: Run tests
         working-directory: ./infra
         run: |
-          npm run test
-          npm run it
+          npm run test:all
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@master
         with:
           aws-region: eu-west-1
-          role-to-assume: FIND_ME_AND_REPLACE_WITH_REPO_OIDC_ROLE_ARN
-          role-session-name: full-deploy-feature-pipeline
+          role-to-assume: arn:aws:iam::675491542586:role/TemplateBackendGHDeployRole
+          role-session-name: main-pipeline
       - name: deploy all stacks
         working-directory: ./infra
         run: |
-          npx cdk deploy --context account=${{ env.ACCOUNT }} --context environment=${{ env.ENVIRONMENT }} --require-approval never --all
+          npx cdk deploy --context account=${{ env.ACCOUNT }} --context environment=${{ env.ENVIRONMENT }} --require-approval never --concurrency 30 --all
       - name: Notify slack success
         if: success()
         env:

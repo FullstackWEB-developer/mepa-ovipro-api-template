@@ -1,0 +1,238 @@
+name: Deploy release pipeline
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        type: choice
+        description: |
+          Set to DEPLOY to start from the deploy step.
+          Set to INTEGRATION_TEST to start from the integration test step.
+          Set to NONE to skip orchestration. Will run a default build and deploy.
+        options:
+          - DEPLOY
+          - INTEGRATION_TEST
+          - NONE
+        default: NONE
+        required: false
+      environmentName:
+        description: "Environment name to deploy"
+        default: feature/test
+        required: true
+      releaseId:
+        description: Deployment release id.
+        required: false
+concurrency:
+  group: deploy-pipeline-${{ github.event.inputs.environmentName }}
+env:
+  COMPONENT: mepa-ovipro-template-backend
+  REPOSITORY: mepa-ovipro-template-backend
+  STATE_BUCKET: oviprostagingreleases
+  TEST_BUCKET: oviprodevtestsupportbucket
+  API_DOMAIN: dev-ovipro.net
+  REPORT_TITLE: mepa-ovipro-template-backend
+  DEV_ACCOUNT_DEPLOY_ROLE: arn:aws:iam::675491542586:role/TemplateBackendGHDeployRole
+jobs:
+  # Some jobs are alternating based on inputs. Make sure to not get into an infinite loop when making changes.
+  deploy-target-aws-account-and-environment:
+    runs-on: ubuntu-latest
+    outputs:
+      aws-account: ${{ steps.account-and-environment.outputs.aws-account }}
+      aws-environment: ${{ steps.account-and-environment.outputs.aws-environment }}
+      aws-account-id: ${{ steps.account-and-environment.outputs.aws-account-id }}
+    steps:
+      - name: Account and environment
+        id: account-and-environment
+        ## Conditionally set correct account and environment based on environment name
+        run: |
+          environmentName="${{ github.event.inputs.environmentName }}"
+          if [[ $environmentName == "prod" ]]; then
+            echo "::set-output name=aws-account::prod"
+            echo "::set-output name=aws-environment::production"
+            echo "::set-output name=aws-account-id::799957131063"
+          elif [[ $environmentName == "preprod" ]]; then
+            echo "::set-output name=aws-account::preprod"
+            echo "::set-output name=aws-environment::preproduction"
+            echo "::set-output name=aws-account-id::877450183205"
+          elif [[ $environmentName == "staging" ]]; then
+            echo "::set-output name=aws-account::dev"
+            echo "::set-output name=aws-environment::staging"
+            echo "::set-output name=aws-account-id::675491542586"
+          elif [[ $environmentName == "feature/"* ]]; then
+            echo "::set-output name=aws-account::dev"
+            echo "::set-output name=aws-environment::${{ github.event.inputs.environmentName }}"
+            echo "::set-output name=aws-account-id::675491542586"
+          fi
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: deploy-target-aws-account-and-environment
+    if: github.event.inputs.action == 'DEPLOY' && github.event.inputs.environmentName != ''
+    permissions:
+      id-token: write # needed to interact with GitHub's OIDC Token endpoint.
+      contents: read
+    steps:
+      ## Assume dev accounts credentials for release fetching
+      - name: Configure dev account AWS Credentials
+        uses: aws-actions/configure-aws-credentials@master
+        with:
+          aws-region: eu-west-1
+          role-to-assume: ${{ env.DEV_ACCOUNT_DEPLOY_ROLE }}
+          role-session-name: deploy-release-pipeline
+      - name: Get release
+        if: github.event.inputs.releaseId != ''
+        run: |
+          aws s3 cp s3://${{ env.STATE_BUCKET }}/releases/${{ github.event.inputs.releaseId }}/release.json . --region eu-west-1
+          echo "REVISION=$(jq -r '.components[] | select(.repository == "${{ env.REPOSITORY }}" and .component == "${{ env.COMPONENT }}").revision' release.json)" >> "$GITHUB_ENV"
+          echo "ENVIRONMENT=${{ github.event.inputs.environmentName }}" >> $GITHUB_ENV
+          echo "ACCOUNT=dev" >> $GITHUB_ENV
+          echo "COMMON_AUTOMATION_BRANCH=$(jq -r '.components[] | select(.repository == "mepa-ovipro-common-environment" and .component == "mepa-ovipro-common-environment").automationBranch' release.json)" >> "$GITHUB_ENV"
+      - uses: actions/checkout@v3
+        if: github.event.inputs.releaseId == ''
+      - uses: actions/checkout@v3
+        if: github.event.inputs.releaseId != ''
+        with:
+          ref: ${{ env.REVISION }}
+      - name: Get access for alma packages
+        run: echo "GITHUB_ACCESS_TOKEN=${{ secrets.MEPA_GH_ACTIONS_BOT_TOKEN }}" >> $GITHUB_ENV
+      - name: Set up Maven settings
+        uses: s4u/maven-settings-action@v2.3.0
+        with:
+          servers: |
+            [{
+                "id": "mepa-ovipro",
+                "username": "${{ secrets.MEPA_GH_ACTIONS_BOT_USERNAME }}",
+                "password": "${{ secrets.MEPA_GH_ACTIONS_BOT_TOKEN }}"
+            }]
+      - name: install deps & build
+        working-directory: ./infra
+        run: |
+          npm install --legacy-peer-deps
+          npm run build:all
+      ## Assume target accounts credentials for deployment
+      - name: Configure target account AWS Credentials for deployment
+        uses: aws-actions/configure-aws-credentials@master
+        with:
+          aws-region: eu-west-1
+          role-to-assume: arn:aws:iam::${{ needs.deploy-target-aws-account-and-environment.outputs.aws-account-id }}:role/TemplateBackendGHDeployRole
+          role-session-name: deploy-release-pipeline
+      - name: deploy all stacks
+        working-directory: ./infra
+        run: |
+          npx cdk deploy --context account=${{ needs.deploy-target-aws-account-and-environment.outputs.aws-account }} --context environment=${{ needs.deploy-target-aws-account-and-environment.outputs.aws-environment }} --require-approval never --concurrency 30 --all
+
+      - name: Report state
+        if: github.event.inputs.releaseId != ''
+        env:
+          GITHUB_TOKEN: ${{ secrets.MEPA_GH_ACTIONS_BOT_TOKEN }}
+        run: |
+          gh workflow run "Release pipeline" -r ${{ env.COMMON_AUTOMATION_BRANCH }} \
+            -R almamedia/mepa-ovipro-common-environment -f releaseId=${{ github.event.inputs.releaseId }} \
+            -f environmentName=${{ github.event.inputs.environmentName }} \
+            -f component=${{ env.COMPONENT }} -f repository=${{ env.REPOSITORY }} \
+            -f phase=deploy -f status=SUCCESS \
+            -f action=VALIDATE_DEPLOYMENT
+
+  integration-test:
+    runs-on: ubuntu-latest
+    needs: deploy
+    ## Disabled for now
+    if: ${{ false && always() && !cancelled() && (github.event.inputs.action == 'INTEGRATION_TEST' || needs.deploy.result == 'success') && github.event.inputs.environmentName != '' }}
+    timeout-minutes: 10
+    permissions:
+      id-token: write # needed to interact with GitHub's OIDC Token endpoint.
+      contents: read
+    steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@master
+        with:
+          aws-region: eu-west-1
+          role-to-assume: ${{ env.DEV_ACCOUNT_DEPLOY_ROLE }}
+          role-session-name: release-pipeline
+      - name: Get release
+        if: github.event.inputs.releaseId != ''
+        run: |
+          aws s3 cp s3://${{ env.STATE_BUCKET }}/releases/${{ github.event.inputs.releaseId }}/release.json . --region eu-west-1
+          echo "REVISION=$(jq -r '.components[] | select(.repository == "${{ env.REPOSITORY }}" and .component == "${{ env.COMPONENT }}").revision' release.json)" >> "$GITHUB_ENV"
+          echo "COMMON_AUTOMATION_BRANCH=$(jq -r '.components[] | select(.repository == "mepa-ovipro-common-environment" and .component == "mepa-ovipro-common-environment").automationBranch' release.json)" >> "$GITHUB_ENV"
+      - name: Get testers
+        run: |
+          echo "API_TEST_RUNNER_LAMBDA_ARN=$(aws resourcegroupstaggingapi get-resources --resource-type-filters 'lambda:function' --tag-filters 'Key=Application,Values=ApiTestRunner' | jq -r '.ResourceTagMappingList[].ResourceARN' | rev | cut -d ':' -f '1' | rev)" >> "$GITHUB_ENV"
+      - uses: actions/checkout@v3
+        if: github.event.inputs.releaseId == ''
+        with:
+          ref: ${{ github.ref_name }}
+      - uses: actions/checkout@v3
+        if: github.event.inputs.releaseId != ''
+        with:
+          ref: ${{ env.REVISION }}
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version-file: "infra/.nvmrc"
+          cache: "npm"
+          cache-dependency-path: "./api-tests/package-lock.json"
+      - name: Initialize test variables
+        working-directory: ./api-tests
+        run: |
+          ENVIRONMENT_NAME_VAR="${{ github.event.inputs.environmentName }}"
+          ENVIRONMENT_NAME_VAR=$(echo "${ENVIRONMENT_NAME_VAR////-}" | tr '[:upper:]' '[:lower:]')
+          if [[ "${ENVIRONMENT_NAME_VAR}" -eq "staging" ]]; then API="api"; else API="api-${ENVIRONMENT_NAME_VAR}"; fi
+          echo ${ENVIRONMENT_NAME_VAR}
+          npm i && ENVIRONMENT_NAME="${ENVIRONMENT_NAME_VAR}" npm run start
+          {
+            echo "BASE_URL=https://${API}.${{ env.API_DOMAIN }}"
+            echo "TEST_PATH=test-data/${{ github.event.inputs.environmentName }}/tests/${{ github.run_id }}/"
+            echo "REPORT_PATH=test-data/${{ github.event.inputs.environmentName }}/reports/${{ github.run_id }}/"
+          } >> "$GITHUB_ENV"
+      - name: Initialize test data
+        working-directory: ./api-tests
+        run: |
+          aws s3 cp . s3://${{ env.TEST_BUCKET }}/${{ env.TEST_PATH }} \
+            --exclude "*" --include "resources/*" --include "endpoints/*" --include "expectations/*" --include "tokens.json" --recursive
+      - name: Run tests
+        run: |
+          aws lambda invoke --function-name "${{ env.API_TEST_RUNNER_LAMBDA_ARN }}" --cli-binary-format raw-in-base64-out --payload '{ "testPath": "${{ env.TEST_PATH }}", "reportPath": "${{ env.REPORT_PATH }}", "testPathSuffix": "/endpoints", "baseUrl": "${{ env.BASE_URL }}" }' response.1.json
+
+      - name: Total report summary creation
+        run: |
+          while read -r response ; do
+            tests=$(cat $response|jq -r '.xunitReportAsJson' | jq -r '.testsuite' |jq -r '."@tests"')
+            ttests=$((ttests+tests))
+            errors=$(cat $response|jq -r '.xunitReportAsJson' | jq -r '.testsuite' |jq -r '."@errors"')
+            terrors=$((terrors+errors))
+            failures=$(cat $response|jq -r '.xunitReportAsJson' | jq -r '.testsuite' |jq -r '."@failures"')
+            tfailures=$((tfailures+failures))
+            skipped=$(cat $response|jq -r '.xunitReportAsJson' | jq -r '.testsuite' |jq -r '."@skipped"')
+            tskipped=$((tskipped+skipped))
+          done < <(ls -1 response.*.json)
+
+          status_code=$([ "$failures" == "0" && "$errors" == "0" ] && echo '✅' || echo '❌')
+          echo '## '"${{ env.REPORT_TITLE }}"' - Test Report' >> $GITHUB_STEP_SUMMARY
+          echo '| Num of Test Suites | Tests | Errors | Failures | Skipped | Status ' >> $GITHUB_STEP_SUMMARY
+          echo '| :--: | :--: | :---: | :--: | :--: | :--: | ' >> $GITHUB_STEP_SUMMARY
+          echo '| 1 | '${ttests}' | '${terrors}' | '${tfailures}' | '${tskipped}' | ' ${status_code}' | '>> $GITHUB_STEP_SUMMARY
+
+      - name: Report - tests
+        run: |
+          npx zx .github/workflows/scripts/generateTestReport.mjs -j response.1.json >> $GITHUB_STEP_SUMMARY
+          {
+            echo "FAILED_TESTS=$(jq -r '.testStatusCode' response.1.json)"
+            echo "MESSAGE='Failed tests: ${FAILED_TESTS} / report location: $(jq -r '.reportLocation' response.1.json)'"
+          } >> "$GITHUB_ENV"
+          echo ${{ github.event_name }}
+
+      - name: Report state
+        if: github.event.inputs.releaseId != ''
+        env:
+          GITHUB_TOKEN: ${{ secrets.MEPA_GH_ACTIONS_BOT_TOKEN }}
+        run: |
+          FAILED_TESTS=$(jq -r '.testStatusCode' response.json)
+          MESSAGE="Failed tests: ${FAILED_TESTS} / report location: $(jq -r '.reportLocation' response.json)"
+          gh workflow run "Release pipeline" -r ${{ env.COMMON_AUTOMATION_BRANCH }} \
+            -R almamedia/mepa-ovipro-common-environment -f releaseId=${{ github.event.inputs.releaseId }} \
+            -f environmentName=${{ github.event.inputs.environmentName }} \
+            -f component=${{ env.COMPONENT }} -f repository=${{ env.REPOSITORY }} \
+            -f phase=integration-test -f message="${MESSAGE}" \
+            -f status=$(echo $([[ ${FAILED_TESTS} -ne "0" ]] && echo "FAILURE" || echo "SUCCESS")) \
+            -f buildRunId=${{ github.run_id }} -f buildRunUrl=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }} \
+            -f action=VALIDATE_DEPLOYMENT

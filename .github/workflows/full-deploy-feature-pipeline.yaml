@@ -1,8 +1,10 @@
-name: Deploy full environment
+name: Deploy full feature environment
+run-name: Deploy new environment ${{ github.event.ref }}, created by @${{ github.actor }}
 on:
+  workflow_dispatch:
   create:
     branches:
-      - "feature/**"
+      - "feature/[0-9a-zA-Z]+"
 concurrency:
   group: refs/heads/${{ github.event.ref }}
   cancel-in-progress: true
@@ -14,11 +16,11 @@ jobs:
       contents: read
     if: startsWith(github.event.ref, 'feature/')
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: "16"
+          node-version-file: "infra/.nvmrc"
           cache: "npm"
           cache-dependency-path: "./infra/package-lock.json"
       - name: Notify slack success
@@ -50,11 +52,8 @@ jobs:
       - name: install deps & build
         working-directory: ./infra
         run: |
-          npm install
+          npm install --legacy-peer-deps
           npm run build:all
-      - name: Run tests
-        working-directory: ./infra
-        run: npm run test
       #############################
       # Deploy common environment #
       #############################
@@ -64,15 +63,15 @@ jobs:
           branch_exists=$(echo $(if [ "${branch_status_code}" = "200" ] ; then echo true; else echo false; fi))
           echo "common-env branch exists: ${branch_exists}, status code: ${branch_status_code}"
           echo "COMMON_ENVIRONMENT_FEATURE_BRANCH_ALREADY_EXISTS=${branch_exists}" >> $GITHUB_ENV
-      - uses: convictional/trigger-workflow-and-wait@v1.3.0
+      - uses: convictional/trigger-workflow-and-wait@v1.6.4
         if: env.COMMON_ENVIRONMENT_FEATURE_BRANCH_ALREADY_EXISTS == 'false'
         name: Deploy common-environment
         with:
           owner: almamedia
           repo: mepa-ovipro-common-environment
           github_token: ${{ secrets.MEPA_GH_ACTIONS_BOT_TOKEN }}
-          workflow_file_name: deploy-infra.yaml
-          inputs: '{ "environment_name": "${{ github.event.ref }}" }'
+          workflow_file_name: deploy-development-infra.yaml
+          client_payload: '{ "environment_name": "${{ github.event.ref }}" }'
 
       #######################
       # Deploy core backend #
@@ -83,7 +82,7 @@ jobs:
           branch_exists=$(echo $(if [ "${branch_status_code}" = "200" ] ; then echo true; else echo false; fi))
           echo "core-backend branch exists: ${branch_exists}, status code: ${branch_status_code}"
           echo "CORE_BACKEND_DEPLOY_FEATURE_BRANCH_ALREADY_EXISTS=${branch_exists}" >> $GITHUB_ENV
-      - uses: convictional/trigger-workflow-and-wait@v1.3.0
+      - uses: convictional/trigger-workflow-and-wait@v1.6.4
         if: env.CORE_BACKEND_DEPLOY_FEATURE_BRANCH_ALREADY_EXISTS == 'false'
         name: Deploy core-backend
         with:
@@ -91,17 +90,19 @@ jobs:
           repo: mepa-ovipro-core-backend
           github_token: ${{ secrets.MEPA_GH_ACTIONS_BOT_TOKEN }}
           workflow_file_name: deploy-infra.yaml
-          inputs: '{ "environment_name": "${{ github.event.ref }}" }'
+          client_payload: '{ "environment_name": "${{ github.event.ref }}" }'
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@master
         with:
           aws-region: eu-west-1
-          role-to-assume: FIND_ME_AND_REPLACE_WITH_REPO_OIDC_ROLE_ARN
+          role-to-assume: arn:aws:iam::675491542586:role/TemplateBackendGHDeployRole
           role-session-name: full-deploy-feature-pipeline
+          role-duration-seconds: 7200
       - name: deploy all stacks
         working-directory: ./infra
         run: |
-          npx cdk deploy --context account=${{ env.ACCOUNT }} --context environment=${{ env.ENVIRONMENT }} --require-approval never --all
+          npx cdk deploy --context account=${{ env.ACCOUNT }} --context environment=${{ env.ENVIRONMENT }} --require-approval never --concurrency 30 --all
       - name: Notify slack success
         if: success()
         env:

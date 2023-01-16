@@ -2,7 +2,7 @@ name: Deploy feature environment
 on:
   push:
     branches:
-      - "feature/**"
+      - "feature/[0-9a-zA-Z]+"
 concurrency:
   group: ${{ github.ref }}
 jobs:
